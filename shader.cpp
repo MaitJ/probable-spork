@@ -2,7 +2,6 @@
 #include "shader.hpp"
 #include <fstream>
 #include <iostream>
-#include <Windows.h>
 
 Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
 
@@ -59,11 +58,11 @@ void Shader::close() {
 
 
 const char* Shader::read_from_file(std::string file_name) {
-    std::ifstream shader_file("shaders\\" + file_name);
+    std::ifstream shader_file("shaders/" + file_name);
 
     if (!shader_file) {
         std::cerr << "Error opening shader file" << std::endl;
-        throw new std::exception("Error opening shader file");
+        throw new std::exception();
     }
 
     shader_file.seekg(0, shader_file.end);

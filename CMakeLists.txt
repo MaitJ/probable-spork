@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 project(PoeLite)
 set(CMAKE_CXX_STANDARD 23)
 set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 set(SOURCE_FILES main.cpp shader.cpp window.cpp utilities/obj.cpp "entities/renderable_object.cpp")
 

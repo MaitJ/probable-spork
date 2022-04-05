@@ -10,8 +10,11 @@ namespace Utilities {
 	public:
 		Obj(std::string obj_file_name);
 	public:
-		std::vector<float> vertices;
-		std::vector<unsigned int> triangles;
+        unsigned int total_vertices = 0;
+		std::vector<glm::vec3> vertices;
+        std::vector<glm::vec2> tex_vertices;
+        std::vector<glm::vec3> vec_normals;
+		std::vector<float> triangles;
 	};
 }
 

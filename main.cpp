@@ -32,11 +32,11 @@ int main(void)
 
 	glm::mat4 camera_mat = glm::mat4(1.0f);
 	camera_mat = glm::rotate(camera_mat, glm::radians(30.0f), glm::vec3(1.0f, .0f, .0f));
-	camera_mat = glm::translate(camera_mat, glm::vec3(-50.0f, -200.0f, -250.0f));
+	camera_mat = glm::translate(camera_mat, glm::vec3(-25.0f, -125.0f, -200.0f));
 
 	glm::mat4 persp_proj = glm::perspective(glm::radians(45.0f), (float)1920/(float)1080, 0.1f, 1000.0f);
 
-	RenderableObject chair("assets/chair.obj", &persp_proj, &camera_mat);
+	RenderableObject chair("assets/chair_textured.obj", "assets/wood.jpg", &persp_proj, &camera_mat);
 	chair.shader = &default_shader;
 	chair.setScale(30.0f, 30.0f, 30.0f);
 
