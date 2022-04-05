@@ -11,6 +11,10 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE utilities)
 target_include_directories(${PROJECT_NAME} PRIVATE entities)
 
+set(TESTS tests/obj_loader_test.cpp)
+
+add_executable(${TESTS})
+
 add_subdirectory("${DEPS_DIR}/glfw")
 target_link_libraries(${PROJECT_NAME} glfw)
 find_package(OpenGL REQUIRED)

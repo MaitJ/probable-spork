@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
+#define CATCH_CONFIG_MAIN
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <iostream>
@@ -36,7 +37,7 @@ int main(void)
 
 	glm::mat4 persp_proj = glm::perspective(glm::radians(45.0f), (float)1920/(float)1080, 0.1f, 1000.0f);
 
-	RenderableObject chair("assets/chair_textured.obj", "assets/wood.jpg", &persp_proj, &camera_mat);
+	RenderableObject chair("assets/cube_triangulated.obj", "assets/wood.jpg", &persp_proj, &camera_mat);
 	chair.shader = &default_shader;
 	chair.setScale(30.0f, 30.0f, 30.0f);
 

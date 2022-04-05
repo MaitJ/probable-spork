@@ -5,8 +5,8 @@
 
 Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
 
-    const char* vertex_shader_text = Shader::read_from_file("vertex_shader.vert");
-    const char* fragment_shader_text = Shader::read_from_file("fragment_shader.frag");
+    const char* vertex_shader_text = Shader::read_from_file("shaders/vertex_shader.vert");
+    const char* fragment_shader_text = Shader::read_from_file("shaders/fragment_shader.frag");
 
     unsigned int vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -58,7 +58,7 @@ void Shader::close() {
 
 
 const char* Shader::read_from_file(std::string file_name) {
-    std::ifstream shader_file("shaders/" + file_name);
+    std::ifstream shader_file(file_name);
 
     if (!shader_file) {
         std::cerr << "Error opening shader file" << std::endl;

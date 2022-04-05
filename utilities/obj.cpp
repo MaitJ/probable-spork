@@ -70,6 +70,12 @@ Obj::Obj(std::string obj_file_name) {
             }
             //Insert vertice (x, y, z), tex_s, tex_t
             //
+
+            assert(vert_count > 0);
+
+            assert(this->vertices.size() > 0);
+            assert(this->tex_vertices.size() > 0);
+            assert(this->vec_normals.size() > 0);
             
             glm::vec3* cur_face_vertices = new glm::vec3[vert_count];
             glm::vec2* cur_face_tex_vertices = new glm::vec2[vert_count];
@@ -91,7 +97,7 @@ Obj::Obj(std::string obj_file_name) {
             //[3]--||--
 
             if (vert_count > 3) {
-                for (int i = 0; i < 2; ++i) {
+                for (int i = 0; i < (vert_count - 2); ++i) {
                     for (int j = 0; j < 3; ++j) {
                         if (j < 1) {
                             indiced_triangles.insert(indiced_triangles.end(), {
