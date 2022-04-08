@@ -6,9 +6,12 @@
 class Shader {
 public:
     Shader(std::string vertex_shader_file, std::string fragment_shader_file);
+    void unbind();
     void use();
     void close();
     GLuint id;
+
+    int layout_len = 0;
 private:
     const char* read_from_file(std::string file_name);
 };

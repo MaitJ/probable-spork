@@ -15,8 +15,8 @@ class RenderableObject {
 public:
 	void render();
 	RenderableObject();
-	RenderableObject(std::string obj_file, glm::mat4* proj_mat, glm::mat4* camera_mat);
-	RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* proj_mat, glm::mat4* camera_mat);
+	RenderableObject(std::string obj_file, glm::mat4* proj_mat, glm::mat4* camera_mat, Shader* shader);
+	RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* proj_mat, glm::mat4* camera_mat, Shader* shader);
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
 	void setMatrices(glm::mat4* proj_mat, glm::mat4* camera_mat);

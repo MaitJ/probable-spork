@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 set(SOURCE_FILES shader.cpp window.cpp utilities/obj.cpp
-    entities/renderable_object.cpp)
+    entities/renderable_object.cpp entities/world_light.cpp)
 set(INCLUDE_PATHS utilities entities ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)

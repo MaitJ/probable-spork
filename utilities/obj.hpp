@@ -7,6 +7,7 @@
 namespace Utilities {
 
 	class Obj {
+        void createTriangle(std::vector<float>& container, int indice, glm::vec3* vertices, glm::vec2* tex_vertices, glm::vec3* normals);
 	public:
 		Obj(std::string obj_file_name);
 	public:

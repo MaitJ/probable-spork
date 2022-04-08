@@ -7,6 +7,20 @@
 
 using namespace Utilities;
 
+void Obj::createTriangle(std::vector<float>& container, int indice, glm::vec3* vertices, glm::vec2* tex_vertices, glm::vec3* normals) {
+
+    container.insert(container.end(), {
+            vertices[indice].x,
+            vertices[indice].y,
+            vertices[indice].z,
+            tex_vertices[indice].x,
+            tex_vertices[indice].y,
+            normals[indice].x,
+            normals[indice].y,
+            normals[indice].z
+    });
+}
+
 Obj::Obj(std::string obj_file_name) {
     std::ifstream obj_file(obj_file_name, std::ios::in);
 
@@ -100,19 +114,21 @@ Obj::Obj(std::string obj_file_name) {
                 for (int i = 0; i < (vert_count - 2); ++i) {
                     for (int j = 0; j < 3; ++j) {
                         if (j < 1) {
-                            indiced_triangles.insert(indiced_triangles.end(), {
-                                    cur_face_vertices[0].x,
-                                    cur_face_vertices[0].y,
-                                    cur_face_vertices[0].z,
-                                    cur_face_tex_vertices[0].x,
-                                    cur_face_tex_vertices[0].y});
+                            this->createTriangle(
+                                    indiced_triangles,
+                                    0,
+                                    cur_face_vertices,
+                                    cur_face_tex_vertices,
+                                    cur_face_normals
+                            );
                         } else {
-                            indiced_triangles.insert(indiced_triangles.end(), {
-                                    cur_face_vertices[i + j].x,
-                                    cur_face_vertices[i + j].y,
-                                    cur_face_vertices[i + j].z,
-                                    cur_face_tex_vertices[i + j].x,
-                                    cur_face_tex_vertices[i + j].y});
+                            this->createTriangle(
+                                    indiced_triangles,
+                                    i + j,
+                                    cur_face_vertices,
+                                    cur_face_tex_vertices,
+                                    cur_face_normals
+                            );
                         }
                         this->total_vertices++;
                     }
@@ -120,24 +136,25 @@ Obj::Obj(std::string obj_file_name) {
             } else {
                 for (int j = 0; j < 3; ++j) {
                     if (j < 1) {
-                        indiced_triangles.insert(indiced_triangles.end(), {
-                                cur_face_vertices[0].x,
-                                cur_face_vertices[0].y,
-                                cur_face_vertices[0].z,
-                                cur_face_tex_vertices[0].x,
-                                cur_face_tex_vertices[0].y});
+                        this->createTriangle(
+                                indiced_triangles,
+                                0,
+                                cur_face_vertices,
+                                cur_face_tex_vertices,
+                                cur_face_normals
+                        );
                     } else {
-                        indiced_triangles.insert(indiced_triangles.end(), {
-                                cur_face_vertices[j].x,
-                                cur_face_vertices[j].y,
-                                cur_face_vertices[j].z,
-                                cur_face_tex_vertices[j].x,
-                                cur_face_tex_vertices[j].y});
+                        this->createTriangle(
+                                indiced_triangles,
+                                j,
+                                cur_face_vertices,
+                                cur_face_tex_vertices,
+                                cur_face_normals
+                        );
                     }
                     this->total_vertices++;
                 }
             }
-
 
 
             this->triangles.insert(this->triangles.end(), indiced_triangles.begin(), indiced_triangles.end());
