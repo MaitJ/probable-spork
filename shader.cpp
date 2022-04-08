@@ -2,6 +2,8 @@
 #include "shader.hpp"
 #include <fstream>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
 
@@ -59,6 +61,19 @@ void Shader::close() {
     glDeleteProgram(this->id);
 }
 
+void Shader::setMatrix4f(std::string uniform_loc, glm::mat4 mat) {
+    this->use();
+    int uniform_location = glGetUniformLocation(this->id, uniform_loc.c_str());
+    glUniformMatrix4fv(uniform_location, 1, GL_FALSE, glm::value_ptr(mat));
+    this->unbind();
+}
+
+void Shader::setVec3f(std::string uniform_loc, glm::vec3 vec) {
+    this->use();
+    int uniform_location = glGetUniformLocation(this->id, uniform_loc.c_str());
+    glUniform3fv(uniform_location, 1, glm::value_ptr(vec));
+    this->unbind();
+}
 
 
 const char* Shader::read_from_file(std::string file_name) {

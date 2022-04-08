@@ -15,6 +15,7 @@
 #include "utilities/gl_conf.hpp"
 #include "entities/renderable_object.hpp"
 #include "entities/world_light.hpp"
+#include "entities/camera.hpp"
 
  
 int main(void)
@@ -32,17 +33,20 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glm::mat4 camera_mat = glm::mat4(1.0f);
-	camera_mat = glm::rotate(camera_mat, glm::radians(30.0f), glm::vec3(1.0f, .0f, .0f));
-	camera_mat = glm::translate(camera_mat, glm::vec3(-25.0f, -175.0f, -200.0f));
+    Camera camera;
+    glm::vec3 camera_pos = glm::vec3(-25.0f, -175.0f, -200.0f);
+    camera.setRotation(glm::radians(30.0f), glm::vec3(1.0f, .0f, .0f));
+    camera.setPosition(camera_pos.x, camera_pos.y, camera_pos.z);
+
+    default_shader.setVec3f("camera_pos", camera_pos);
 
 	glm::mat4 persp_proj = glm::perspective(glm::radians(45.0f), (float)1920/(float)1080, 0.1f, 1000.0f);
 
     WorldLight light;
     light.shader = &default_shader;
-    light.setPosition(100.0f, 200.0f, 150.0f);
+    light.setPosition(100.0f, 150.0f, 100.0f);
 
-	RenderableObject chair("assets/chair_textured.obj", "assets/wood.jpg", &persp_proj, &camera_mat, &default_shader);
+	RenderableObject chair("assets/chair_textured.obj", "assets/wood.jpg", &persp_proj, &camera.getCameraMat(), &default_shader);
 	chair.shader = &default_shader;
 	chair.setScale(30.0f, 30.0f, 30.0f);
 
@@ -50,7 +54,7 @@ int main(void)
 	plane.shader = &default_shader;
 	plane.setScale(100.0f, 100.0f, 100.0f);
 	plane.setPos(0.0f, 0.0f, -100.0f);
-	plane.setMatrices(&persp_proj, &camera_mat);
+	plane.setMatrices(&persp_proj, &camera.getCameraMat());
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{

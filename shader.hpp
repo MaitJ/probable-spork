@@ -2,6 +2,7 @@
 #define SHADER_H
 #include <glad/glad.h>
 #include <string>
+#include <glm/glm.hpp>
 
 class Shader {
 public:
@@ -9,6 +10,9 @@ public:
     void unbind();
     void use();
     void close();
+    void setMatrix4f(std::string uniform_loc, glm::mat4 mat);
+    void setVec3f(std::string uniform_loc, glm::vec3 vec);
+
     GLuint id;
 
     int layout_len = 0;
