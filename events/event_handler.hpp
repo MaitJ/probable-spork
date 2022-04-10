@@ -23,6 +23,9 @@ public:
     static void pollEvents();
     static void registerSubscriber(void* object, Events event, std::function<void()> callback);
     static void emitEvent(Events event);
+
+    template <typename T>
+    static void emitEvent(Events event, T val);
 };
 
 #endif

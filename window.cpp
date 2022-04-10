@@ -16,6 +16,11 @@ void GameWindow::error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
 }
 
+void GameWindow::mouse_pos_callback(GLFWwindow* window, double xpos, double ypos) {
+    std::cout << "x: " << xpos << " y: " << ypos << std::endl;
+    
+}
+
 GameWindow::GameWindow() {
     glfwSetErrorCallback(error_callback);
  
@@ -43,6 +48,13 @@ GameWindow::GameWindow() {
     }
 
     glfwSetKeyCallback(this->window, key_callback);
+
+    //Mouse input
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(this->window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    glfwSetCursorPosCallback(this->window, mouse_pos_callback);
  
     glfwMakeContextCurrent(this->window);
     gladLoadGL();

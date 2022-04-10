@@ -11,6 +11,8 @@ public:
     void setPosition(float x, float y, float z);
     void setRotation(float angle, glm::vec3 axis);
     glm::mat4& getCameraMat();
+
+
 };
 
 #endif

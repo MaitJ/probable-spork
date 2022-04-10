@@ -23,3 +23,8 @@ void EventHandler::pollEvents() {
 void EventHandler::emitEvent(Events event) {
     EventHandler::event_queue.push(event);
 }
+
+template <typename T>
+static void emitEvent(Events event, T val) {
+    
+}
