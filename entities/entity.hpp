@@ -9,7 +9,6 @@ class Entity {
 public:
 	glm::vec3 position;
 	Dimensions dimensions;
-
 	
 	RenderableObject* renderable_object;
 

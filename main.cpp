@@ -16,6 +16,7 @@
 #include "entities/renderable_object.hpp"
 #include "entities/world_light.hpp"
 #include "entities/camera.hpp"
+#include "events/event_handler.hpp"
 
  
 int main(void)
@@ -55,6 +56,7 @@ int main(void)
 	plane.setScale(100.0f, 100.0f, 100.0f);
 	plane.setPos(0.0f, 0.0f, -100.0f);
 	plane.setMatrices(&persp_proj, &camera.getCameraMat());
+    EventHandler::emitEvent(Events::LIGHT_TOGGLE);
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{
@@ -64,6 +66,7 @@ int main(void)
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();
+        EventHandler::pollEvents();
 	}
  
 	default_shader.close();

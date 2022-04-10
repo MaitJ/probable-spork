@@ -6,18 +6,21 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 set(SOURCE_FILES shader.cpp window.cpp utilities/obj.cpp
-    entities/renderable_object.cpp entities/world_light.cpp entities/camera.cpp)
+    entities/renderable_object.cpp entities/world_light.cpp entities/camera.cpp
+    events/event_handler.cpp)
 set(INCLUDE_PATHS utilities entities ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE utilities)
 target_include_directories(${PROJECT_NAME} PRIVATE entities)
+target_include_directories(${PROJECT_NAME} PRIVATE events)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(source ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} source)
 target_include_directories(source PRIVATE utilities)
 target_include_directories(source PRIVATE entities)
+target_include_directories(source PRIVATE events)
 target_include_directories(source PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory("${DEPS_DIR}/glfw")

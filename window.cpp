@@ -1,12 +1,15 @@
 #include <stdlib.h>
 #include "window.hpp"
 #include <iostream>
+#include <event_handler.hpp>
 
 void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     if (key == GLFW_KEY_A && action == GLFW_PRESS)
         std::cout << "A pressed" << std::endl;
+    if (key == GLFW_KEY_L && action == GLFW_PRESS)
+        EventHandler::emitEvent(Events::LIGHT_TOGGLE);
 }
 
 void GameWindow::error_callback(int error, const char* description) {
