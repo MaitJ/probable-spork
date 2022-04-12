@@ -11,7 +11,7 @@ struct WorldLight {
     Shader* shader = nullptr;
 
     void setPosition(float x, float y, float z);
-    void onLightToggle() const;
+    void onLightToggle(int value) const;
 };
 
 #endif

@@ -56,7 +56,6 @@ int main(void)
 	plane.setScale(100.0f, 100.0f, 100.0f);
 	plane.setPos(0.0f, 0.0f, -100.0f);
 	plane.setMatrices(&persp_proj, &camera.getCameraMat());
-    EventHandler::emitEvent(Events::LIGHT_TOGGLE);
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{

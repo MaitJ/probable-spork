@@ -8,8 +8,10 @@ void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int act
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     if (key == GLFW_KEY_A && action == GLFW_PRESS)
         std::cout << "A pressed" << std::endl;
-    if (key == GLFW_KEY_L && action == GLFW_PRESS)
-        EventHandler::emitEvent(Events::LIGHT_TOGGLE);
+    if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        EventArgs<int> new_event(EventType::LIGHT_TOGGLE, 1);
+        EventHandler::emitEvent(new_event);
+    }
 }
 
 void GameWindow::error_callback(int error, const char* description) {

@@ -18,10 +18,12 @@ void WorldLight::setPosition(float x, float y, float z) {
 }
 
 WorldLight::WorldLight() {
-    std::function<void()> on_toggle = std::bind(&WorldLight::onLightToggle, this);
-    EventHandler::registerSubscriber(this, Events::LIGHT_TOGGLE, on_toggle);
+    std::function<void(int)> on_toggle = std::bind(&WorldLight::onLightToggle, this, std::placeholders::_1);
+    EventArgs<int> on_toggle_event(EventType::LIGHT_TOGGLE, 5);
+    EventHandler::registerSubscriber<int>(on_toggle_event, on_toggle);
 }
 
-void WorldLight::onLightToggle() const {
-    std::cout << "Received light toggle event in WorldLight" << std::endl;
+
+void WorldLight::onLightToggle(int value) const {
+    std::cout << "Received light toggle event in WorldLight, received value: " << value << std::endl;
 }
