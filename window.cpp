@@ -6,11 +6,11 @@
 void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
-    if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        std::cout << "A pressed" << std::endl;
+    if (key == GLFW_KEY_A && action == GLFW_PRESS){
+        EventHandler::emitEvent(Event<int>(EventType::MOVE_LEFT, 15));
+    }
     if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-        EventArgs<int> new_event(EventType::LIGHT_TOGGLE, 1);
-        EventHandler::emitEvent(new_event);
+        EventHandler::emitEvent(Event<void>(EventType::LIGHT_TOGGLE));
     }
 }
 

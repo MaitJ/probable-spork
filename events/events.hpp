@@ -9,18 +9,25 @@ enum EventType {
     COUNT = 3
 };
 
-class Event {
+class EventBase {
 public:
     EventType event_type;
-    Event(EventType ev_type) : event_type{ev_type} {}
-    virtual ~Event() = default;
+    EventBase(EventType ev_type) : event_type{ev_type} {}
+    virtual ~EventBase() = default;
 };
 
 template <typename T>
-class EventArgs : public Event {
+class Event : public EventBase {
 public:
-    EventArgs(EventType ev_type, T value) : Event(ev_type), val{value} {}
+    Event(EventType ev_type, T value) : EventBase(ev_type), val{value} {}
     T val;
+};
+
+template <>
+class Event<void> : public EventBase{
+
+public:
+    Event(EventType ev_type) : EventBase(ev_type) {}
 };
 
 #endif
