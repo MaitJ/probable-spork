@@ -36,7 +36,7 @@ int main(void)
 
     Camera camera;
     glm::vec3 camera_pos = glm::vec3(-25.0f, -175.0f, -200.0f);
-    camera.setRotation(glm::radians(30.0f), glm::vec3(1.0f, .0f, .0f));
+    //camera.setRotation(glm::radians(30.0f), glm::vec3(1.0f, .0f, .0f));
     camera.setPosition(camera_pos.x, camera_pos.y, camera_pos.z);
 
     default_shader.setVec3f("camera_pos", camera_pos);
@@ -55,11 +55,11 @@ int main(void)
 	plane.shader = &default_shader;
 	plane.setScale(100.0f, 100.0f, 100.0f);
 	plane.setPos(0.0f, 0.0f, -100.0f);
-	plane.setMatrices(&persp_proj, &camera.getCameraMat());
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        plane.setMatrices(&persp_proj, &camera.getCameraMat());
 		chair.render();
 		plane.render();
 

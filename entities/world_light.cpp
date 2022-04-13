@@ -18,19 +18,6 @@ void WorldLight::setPosition(float x, float y, float z) {
 }
 
 WorldLight::WorldLight() {
-    std::function<void()> callback_fn = std::bind(&WorldLight::onLightToggle, this);
-    EventHandler::registerSubscriber<EventType::LIGHT_TOGGLE>(callback_fn);
-
-    std::function<void(int)> move_left_callback = std::bind(&WorldLight::onMoveLeft, this, std::placeholders::_1);
-    EventHandler::registerSubscriber<int, EventType::MOVE_LEFT>(move_left_callback);
-}
-
-void WorldLight::onLightToggle() const {
-    std::cout << "Got light toggle event" << std::endl;
-}
-
-void WorldLight::onMoveLeft(int units) {
-    std::cout << "Move left, units: " << units << std::endl;
 }
 
 

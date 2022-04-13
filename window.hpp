@@ -3,9 +3,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <mouse.hpp>
 
 class GameWindow {
-    static double prev_mouse_x, prev_mouse_y;
 public:
     GLFWwindow* window;
 public:

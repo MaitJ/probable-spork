@@ -2,25 +2,21 @@
 #include "window.hpp"
 #include <iostream>
 #include <event_handler.hpp>
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <mouse.hpp>
 
 void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
-        EventHandler::emitEvent(Event<int>(EventType::MOVE_LEFT, 15));
-    }
-    if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-        EventHandler::emitEvent(Event<void>(EventType::LIGHT_TOGGLE));
+        glm::mat4 cam_mov = glm::rotate(glm::mat4(1.0f), glm::radians(-10.f), glm::vec3(.0f, 1.f, .0f));
+        EventHandler::emitEvent<glm::mat4>(Event<glm::mat4>(EventType::CAMERA_MOVEMENT,cam_mov));
     }
 }
 
 void GameWindow::error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
-}
-
-void GameWindow::mouse_pos_callback(GLFWwindow* window, double xpos, double ypos) {
-    std::cout << "x: " << xpos << " y: " << ypos << std::endl;
-    
 }
 
 GameWindow::GameWindow() {
@@ -55,8 +51,9 @@ GameWindow::GameWindow() {
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (glfwRawMouseMotionSupported())
         glfwSetInputMode(this->window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    
 
-    glfwSetCursorPosCallback(this->window, mouse_pos_callback);
+    glfwSetCursorPosCallback(this->window, Mouse::movement_callback);
  
     glfwMakeContextCurrent(this->window);
     gladLoadGL();
