@@ -7,8 +7,9 @@ enum EventType {
     MOVE_LEFT = 0,
     LIGHT_TOGGLE = 1,
     MOVE_CAM_VEC2 = 2,
-    CAMERA_MOVEMENT = 3,
-    COUNT = 4
+    CAMERA_ORIENTATION = 3,
+    CAMERA_MOVEMENT = 4,
+    COUNT = 5
 };
 
 class EventBase {

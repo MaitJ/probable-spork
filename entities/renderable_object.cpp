@@ -125,7 +125,7 @@ void RenderableObject::render() {
 	glUniformMatrix3fv(normal_mat_loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 
 	int MVPLoc = glGetUniformLocation(this->shader->id, "MVP");
-	glm::mat4 MVP = *this->proj_mat * (*this->camera_mat) * this->pos_mat * this->scale_mat;
+	glm::mat4 MVP = *this->proj_mat * (*this->camera_mat) * model_mat;
 	int textured_loc = glGetUniformLocation(this->shader->id, "is_textured");
 	glBindVertexArray(this->vao);
     glBindTexture(GL_TEXTURE_2D, this->to);

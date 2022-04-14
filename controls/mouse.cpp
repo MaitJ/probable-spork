@@ -15,7 +15,7 @@ void Mouse::movement_callback(GLFWwindow* window, double xpos, double ypos) {
     glm::highp_vec2 norm = glm::normalize(difference) / 5.0f;
     norm *= Mouse::sensitivity;
 
-    EventHandler::emitEvent<glm::vec2>(Event<glm::vec2>(EventType::CAMERA_MOVEMENT, norm));
+    EventHandler::emitEvent<glm::vec2>(Event<glm::vec2>(EventType::CAMERA_ORIENTATION, norm));
 
     Mouse::prev_pos.x = xpos;
     Mouse::prev_pos.y = ypos;

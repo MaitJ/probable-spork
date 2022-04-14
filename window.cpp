@@ -4,13 +4,14 @@
 #include <event_handler.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include "controls/keyboard.hpp"
 
 void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     if (key == GLFW_KEY_A && action == GLFW_PRESS){
         glm::mat4 cam_mov = glm::rotate(glm::mat4(1.0f), glm::radians(-10.f), glm::vec3(.0f, 1.f, .0f));
-        EventHandler::emitEvent<glm::mat4>(Event<glm::mat4>(EventType::CAMERA_MOVEMENT,cam_mov));
+        EventHandler::emitEvent<glm::mat4>(Event<glm::mat4>(EventType::CAMERA_ORIENTATION,cam_mov));
     }
 }
 
@@ -44,7 +45,7 @@ GameWindow::GameWindow() {
         exit(EXIT_FAILURE);
     }
 
-    glfwSetKeyCallback(this->window, key_callback);
+    glfwSetKeyCallback(this->window, Keyboard::key_callback);
 
     //Mouse input
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
