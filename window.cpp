@@ -4,7 +4,6 @@
 #include <event_handler.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
-#include <mouse.hpp>
 
 void GameWindow::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)

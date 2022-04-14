@@ -6,6 +6,7 @@
 
 class Mouse {
     static float sensitivity;
+    static glm::vec3 rotation;
     static glm::highp_vec2 prev_pos;
 
 public:

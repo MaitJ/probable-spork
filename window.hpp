@@ -3,7 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <mouse.hpp>
+#include "../controls/mouse.hpp"
 
 class GameWindow {
 public:
