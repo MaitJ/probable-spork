@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(SOURCE_FILES shader.cpp window.cpp utilities/obj.cpp
     entities/renderable_object.cpp entities/world_light.cpp entities/camera.cpp
     events/event_handler.cpp events/subscriber.cpp controls/mouse.cpp
-    controls/keyboard.cpp)
+    controls/keyboard.cpp utilities/matrices.cpp)
 set(INCLUDE_PATHS utilities entities ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)

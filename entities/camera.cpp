@@ -4,6 +4,7 @@
 #include <event_handler.hpp>
 #include <functional>
 #include <iostream>
+#include "../utilities/matrices.cpp"
 
 void Camera::setPosition(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
@@ -26,10 +27,10 @@ void Camera::recalcMatrix() {
         this->orientation.x = 180.0f;
     }
     
-    if (this->orientation.y >= 90.0f) {
-        this->orientation.y = 90.0f;
-    } else if (this->orientation.y <= -90.0f) {
-        this->orientation.y = -90.0f;
+    if (this->orientation.y > 89.9f) {
+        this->orientation.y = 89.9f;
+    } else if (this->orientation.y <= -89.9f) {
+        this->orientation.y = -89.9f;
     }
 
     glm::vec3 direction;
@@ -39,18 +40,12 @@ void Camera::recalcMatrix() {
 
     this->camera_front = glm::normalize(direction);
 
-    this->camera_mat = glm::lookAt(this->position, this->position + this->camera_front, this->camera_up);
-    //this->camera_mat = glm::translate(glm::mat4(1.0f), this->position);
-
-
-    //glm::quat x_rot = glm::angleAxis(glm::radians(-this->orientation.x), glm::vec3(.0f, 1.f, .0f));
-    //glm::quat y_rot = glm::angleAxis(glm::radians(-this->orientation.y), glm::vec3(1.f, .0f, .0f));
-    //glm::mat4 rotation_mat = glm::toMat4(x_rot * y_rot);
-
-    //this->camera_mat = rotation_mat * this->camera_mat;
+    //this->camera_mat = glm::lookAt(this->position, this->position + this->camera_front, this->camera_up);
+    this->camera_mat = Matrices::lookat(this->position, this->position + this->camera_front, this->camera_up);
 }
 
-Camera::Camera() {
+Camera::Camera(glm::mat4* view_proj) {
+    this->view_proj = view_proj;
     recalcMatrix();
     EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(std::bind(&Camera::onOrientationChange, this, std::placeholders::_1));
     EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(std::bind(&Camera::onMove, this, std::placeholders::_1));
@@ -59,22 +54,23 @@ Camera::Camera() {
 void Camera::onMove(Direction dir) {
     switch (dir) {
         case Direction::FORWARD:
-            this->position += this->camera_front * 2.f;
+            this->position += this->camera_front * 5.f;
         break;
         case Direction::BACK:
-            this->position -= this->camera_front * 2.f;
+            this->position -= this->camera_front * 5.f;
         break;
         case Direction::LEFT:
-            this->position -= glm::cross(camera_front, camera_up) * 2.f;
+            this->position -= glm::cross(camera_front, camera_up) * 5.f;
         break;
         case Direction::RIGHT:
-            this->position += glm::cross(camera_front, camera_up) * 2.f;
+            this->position += glm::cross(camera_front, camera_up) * 5.f;
         break;
     }
     recalcMatrix();
 }
 
 void Camera::onOrientationChange(glm::vec2 rotation) {
+    std::cout << "x: " << orientation.x << " y: " << orientation.y << std::endl;
     this->orientation.x += rotation.x;
     this->orientation.y += rotation.y;
     recalcMatrix();

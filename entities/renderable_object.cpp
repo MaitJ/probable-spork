@@ -13,13 +13,11 @@ RenderableObject::RenderableObject() {
 	glGenBuffers(1, &this->ebo);
 }
 
-void RenderableObject::baseObjSetup(Utilities::Obj* obj, glm::mat4* proj_mat, glm::mat4* camera_mat) {
+void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
+    calcModel();
     assert(this->shader != nullptr);
     
     assert(this->shader->layout_len > 0);
-
-	this->proj_mat = proj_mat;
-	this->camera_mat = camera_mat;
 
 	glGenVertexArrays(1, &this->vao);
 	glGenBuffers(1, &this->vbo);
@@ -55,20 +53,22 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj, glm::mat4* proj_mat, gl
 
 }
 
-RenderableObject::RenderableObject(std::string obj_file, glm::mat4* proj_mat, glm::mat4* camera_mat, Shader* shader) {
+RenderableObject::RenderableObject(std::string obj_file, glm::mat4* view_proj, Shader* shader) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
+    this->view_proj = view_proj;
     this->shader = shader;
-    this->baseObjSetup(obj, proj_mat, camera_mat);
+    this->baseObjSetup(obj);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     delete obj;
 }
 
-RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* proj_mat, glm::mat4* camera_mat, Shader* shader) {
+RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* view_proj, Shader* shader) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
+    this->view_proj = view_proj;
     this->shader = shader;
-    this->baseObjSetup(obj, proj_mat, camera_mat);
+    this->baseObjSetup(obj);
 
     int tex_width, tex_height, tex_nrchannels;
     unsigned char* img_data = stbi_load(tex_file.c_str(), &tex_width, &tex_height, &tex_nrchannels, 0);
@@ -94,38 +94,47 @@ RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, g
 
 void RenderableObject::setScale(float x, float y, float z) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
+    calcModel();
 }
 void RenderableObject::setPos(float x, float y, float z) {
 	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
+    calcModel();
+}
+
+void RenderableObject::calcModel() {
+    this->model_mat = this->pos_mat * this->scale_mat * glm::toMat4(this->orientation);
+}
+
+void RenderableObject::setOrientation(float x, float y, float z) {
+    glm::quat x_rot = glm::angleAxis(glm::radians(x), glm::vec3(1.f, .0f, .0f));
+    glm::quat y_rot = glm::angleAxis(glm::radians(y), glm::vec3(0.f, 1.f, .0f));
+    glm::quat z_rot = glm::angleAxis(glm::radians(z), glm::vec3(0.f, .0f, 1.f));
+
+    this->orientation = x_rot * y_rot * z_rot;
+    calcModel();
 }
 
 void RenderableObject::glBind() {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
 }
-void RenderableObject::setMatrices(glm::mat4* proj_mat, glm::mat4* camera_mat) {
-	this->proj_mat = proj_mat;
-	this->camera_mat = camera_mat;
-}
 
 void RenderableObject::render() {
 	assert(this->shader != nullptr);
-	assert(this->proj_mat != nullptr);
-	assert(this->camera_mat != nullptr);
+	assert(this->view_proj != nullptr);
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
 
 	this->shader->use();
     int model_loc = glGetUniformLocation(this->shader->id, "Model");
-    glm::mat4 model_mat = this->pos_mat * this->scale_mat * glm::mat4(1.0f);
-	glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model_mat));
+	glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(this->model_mat));
 
-    glm::mat3 normal_mat = glm::transpose(glm::inverse(model_mat));
+    glm::mat3 normal_mat = glm::transpose(glm::inverse(this->model_mat));
     int normal_mat_loc = glGetUniformLocation(this->shader->id, "normal_mat");
 	glUniformMatrix3fv(normal_mat_loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 
 	int MVPLoc = glGetUniformLocation(this->shader->id, "MVP");
-	glm::mat4 MVP = *this->proj_mat * (*this->camera_mat) * model_mat;
+	glm::mat4 MVP = *this->view_proj * model_mat;
 	int textured_loc = glGetUniformLocation(this->shader->id, "is_textured");
 	glBindVertexArray(this->vao);
     glBindTexture(GL_TEXTURE_2D, this->to);
@@ -139,14 +148,15 @@ void RenderableObject::render() {
 namespace Renderables {
 
 	template <PrimitiveShape>
-	RenderableObject Primitive();
+	RenderableObject Primitive(glm::mat4* view_proj);
 
 	template <>
-	RenderableObject Primitive<PLANE>() {
+	RenderableObject Primitive<PLANE>(glm::mat4* view_proj) {
 		RenderableObject prim_obj;
 
 		prim_obj.glBind();
 
+        prim_obj.view_proj = view_proj;
 		float plane_vertices[] = {
 			-1.0f, 0.0f, 1.0f,
 			1.0f, 0.0f, 1.0f,
