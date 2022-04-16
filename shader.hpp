@@ -6,6 +6,7 @@
 
 class Shader {
 public:
+    Shader();
     Shader(std::string vertex_shader_file, std::string fragment_shader_file);
     void unbind();
     void use();
@@ -18,6 +19,7 @@ public:
     int layout_len = 0;
 private:
     const char* read_from_file(std::string file_name);
+
 };
 
 #endif

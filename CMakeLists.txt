@@ -5,7 +5,7 @@ set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
-set(SOURCE_FILES shader.cpp window.cpp utilities/obj.cpp
+set(SOURCE_FILES shader.cpp window.cpp engine.cpp utilities/obj.cpp
     entities/renderable_object.cpp entities/world_light.cpp entities/camera.cpp
     events/event_handler.cpp events/subscriber.cpp controls/mouse.cpp
     controls/keyboard.cpp utilities/matrices.cpp)
