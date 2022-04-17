@@ -38,8 +38,8 @@ typedef std::size_t event_id_type;
 struct EventId {
 
     template <typename... Arguments>
-    static inline event_id_type get_unique_id(EventType event_type) {
-        static event_id_type id = counter + event_type + 10;
+    constexpr static inline event_id_type get_unique_id(EventType event_type) {
+        const event_id_type id = counter + event_type + 10;
         return id;
     }
 

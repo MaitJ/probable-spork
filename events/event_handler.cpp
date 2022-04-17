@@ -8,21 +8,25 @@ std::map<event_id_type, std::queue<EventBase*>> EventHandler::event_args_queue =
 std::map<event_id_type, std::vector<SubscriberBase*>> EventHandler::subscribers_args = {};
 
 void EventHandler::pollEvents() {
-    for (auto it = EventHandler::event_args_queue.begin(); it != EventHandler::event_args_queue.end(); ++it) {
-        std::queue<EventBase*>& cur_queue = it->second;
-        for (int i = 0; i < cur_queue.size(); ++i) {
-            //Pass the event_id to calllback, so callback can find the right event to forward
-            //event_args_queue and subscriber_args are so event_id_type for Event<int>(EventType::MOVE_LEFT) == Subscriber<int, EventType::MOVE_LEFT>
-            std::vector<SubscriberBase*>& cur_subscribers = EventHandler::subscribers_args[it->first];
 
-            for (int j = 0; j < cur_subscribers.size(); ++j) {
-                cur_subscribers[j]->callback(it->first);
+    for (auto& [key, queue]: EventHandler::event_args_queue) {
+        int que_size = queue.size();
+
+        int count = 0;
+        while (count < que_size) {
+
+            std::vector<SubscriberBase*>& cur_subscribers = EventHandler::subscribers_args[key];
+
+            for (SubscriberBase* const& subscriber : cur_subscribers) {
+                subscriber->callback(key);
             }
 
-            EventBase* cur_event = cur_queue.front();
-            cur_queue.pop();
+            EventBase* cur_event = queue.front();
+            queue.pop();
             delete cur_event;
+            count++;
         }
+        
     }
 }
 
