@@ -49,10 +49,10 @@ private:
 namespace Renderables {
 
 	template <PrimitiveShape>
-	RenderableObject Primitive(glm::mat4* view_proj);
+	RenderableObject Primitive(glm::mat4* view_proj, Shader* shader);
 
 	template <>
-	RenderableObject Primitive<PLANE>(glm::mat4* view_proj);
+	RenderableObject Primitive<PLANE>(glm::mat4* view_proj, Shader* shader);
 }
 
 #endif // !RENDERABLE_ENTITY_H

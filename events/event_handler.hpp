@@ -19,7 +19,6 @@ public:
     static std::map<event_id_type, std::vector<SubscriberBase*>> subscribers_args;
 
     static void pollEvents();
-    static void registerSubscriber(EventBase event, std::function<void()> callback);
 
     template <typename T, EventType event_type>
     static void registerSubscriber(std::function<void(T)> callback) {

@@ -4,12 +4,13 @@
 #include <stdlib.h>
 
 enum EventType {
-    MOVE_LEFT = 0,
-    LIGHT_TOGGLE = 1,
-    MOVE_CAM_VEC2 = 2,
-    CAMERA_ORIENTATION = 3,
-    CAMERA_MOVEMENT = 4,
-    COUNT = 5
+    TEST = 0,
+    MOVE_LEFT = 1,
+    LIGHT_TOGGLE = 2,
+    MOVE_CAM_VEC2 = 3,
+    CAMERA_ORIENTATION = 4,
+    CAMERA_MOVEMENT = 5,
+    COUNT = 6
 };
 
 class EventBase {

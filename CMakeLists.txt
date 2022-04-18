@@ -29,10 +29,18 @@ target_link_libraries(source glfw)
 find_package(OpenGL REQUIRED)
 target_link_libraries(source OpenGL::GL)
 
+find_package(fmt)
+target_link_libraries(source fmt::fmt)
+
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/vertex_shader.vert"
     "${CMAKE_CURRENT_BINARY_DIR}/shaders/vertex_shader.vert")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/fragment_shader.frag"
     "${CMAKE_CURRENT_BINARY_DIR}/shaders/fragment_shader.frag")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/test_obj.obj"
+    "${CMAKE_CURRENT_BINARY_DIR}/tests/test_obj.obj")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.sh"
+    "${CMAKE_CURRENT_BINARY_DIR}/tests.sh")
+
 
 add_library(glad STATIC "${DEPS_DIR}/glad/glad.c")
 target_include_directories(glad PUBLIC "${DEPS_DIR}/")

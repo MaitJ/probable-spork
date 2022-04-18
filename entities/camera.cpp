@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include "../utilities/matrices.cpp"
+#include <fmt/core.h>
 
 void Camera::setPosition(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
@@ -21,10 +22,10 @@ glm::mat4& Camera::getCameraMat() {
 
 void Camera::recalcMatrix() {
 
-    if (this->orientation.x >= 180.0f) {
-        this->orientation.x = -180.0f;
-    } else if (this->orientation.x <= -180.f) {
-        this->orientation.x = 180.0f;
+    if (this->orientation.x > 179.f) {
+        this->orientation.x = -179.f;
+    } else if (this->orientation.x < -179.f) {
+        this->orientation.x = 179.f;
     }
     
     if (this->orientation.y > 89.9f) {
@@ -70,7 +71,6 @@ void Camera::onMove(Direction dir) {
 }
 
 void Camera::onOrientationChange(glm::vec2 rotation) {
-    std::cout << "x: " << orientation.x << " y: " << orientation.y << std::endl;
     this->orientation.x += rotation.x;
     this->orientation.y += rotation.y;
     recalcMatrix();

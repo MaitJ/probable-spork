@@ -148,30 +148,38 @@ void RenderableObject::render() {
 namespace Renderables {
 
 	template <PrimitiveShape>
-	RenderableObject Primitive(glm::mat4* view_proj);
+	RenderableObject Primitive(glm::mat4* view_proj, Shader* shader);
 
 	template <>
-	RenderableObject Primitive<PLANE>(glm::mat4* view_proj) {
+	RenderableObject Primitive<PLANE>(glm::mat4* view_proj, Shader* shader) {
 		RenderableObject prim_obj;
+        prim_obj.shader = shader;
 
 		prim_obj.glBind();
 
         prim_obj.view_proj = view_proj;
 		float plane_vertices[] = {
-			-1.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, -1.0f,
+			-1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
+			1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
+			1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
 
-			-1.0f, 0.0f, 1.0f,
-			-1.0f, 0.0f, -1.0f,
-			1.0f, 0.0f, -1.0f
+			-1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
+			-1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
+			1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f
 		};
+        prim_obj.calcModel();
 
 		prim_obj.total_vertices = 6;
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+		glEnableVertexAttribArray(2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
