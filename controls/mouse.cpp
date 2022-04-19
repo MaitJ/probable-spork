@@ -4,7 +4,6 @@
 #include <glm/gtx/quaternion.hpp>
 #include <event_handler.hpp>
 #include <iostream>
-#include <fmt/core.h>
 #include <cmath>
 
 glm::highp_vec2 Mouse::prev_pos = glm::highp_vec2(.0f);
@@ -29,7 +28,6 @@ void Mouse::movement_callback(GLFWwindow* window, double xpos, double ypos) {
         difference.y = -1.0f;
 
 
-    fmt::print("diff x: {}, diff y: {}\n", difference.x, difference.y);
     EventHandler::emitEvent<glm::vec2>(Event<glm::vec2>(EventType::CAMERA_ORIENTATION, difference));
 
     Mouse::prev_pos.x = xpos;

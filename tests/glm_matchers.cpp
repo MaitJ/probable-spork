@@ -34,6 +34,31 @@ IsGlmVecsEqualMatcher<T> IsGlmVecsEqual(T vecs) {
     return {vecs};
 }
 
+template <typename GlmVec>
+class IsGlmVecEqualMatcher : public Catch::MatcherBase<GlmVec> {
+    GlmVec vector;
+
+public:
+    IsGlmVecEqualMatcher(GlmVec vector) : vector{vector} {}
+
+    bool match(GlmVec const& in) const override {
+        return (in.x == vector.x &&
+                in.y == vector.y &&
+                in.z == vector.z);
+    }
+
+    std::string describe() const override {
+        std::ostringstream ss;
+        ss << "Vectors are not equal";
+        return ss.str();
+    }
+};
+
+template <typename T>
+IsGlmVecEqualMatcher<T> IsGlmVecEqual(T vector) {
+    return {vector};
+}
+
 
 namespace Catch {
     template<>
