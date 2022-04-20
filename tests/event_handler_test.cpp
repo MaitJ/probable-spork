@@ -13,7 +13,7 @@ public:
 
     TestClass() {
         EventHandler::registerSubscriber<EventType::TEST>(this, &TestClass::onTestVoid);
-        //EventHandler::registerSubscriber<glm::vec3, EventType::TEST>(this, &TestClass::onTestValue);
+        EventHandler::registerSubscriber<glm::vec3, EventType::TEST>(this, &TestClass::onTestValue);
     }
     
     void onTestVoid() {
@@ -31,7 +31,7 @@ public:
 
     void unsubscribeValue() {
         EventHandler::unsubscribe<glm::vec3, EventType::TEST>(this, &TestClass::onTestValue);
-        this->test_vec = glm::vec3(1.f, 1.f, 1.f);
+        this->test_vec = glm::vec3(0.f, 0.f, 0.f);
     }
 
 };
@@ -54,7 +54,6 @@ TEST_CASE("Event handler emit/receive event works", "[event_handler]") {
         REQUIRE(!test_class.is_called_void);
     }
 
-    /*
     SECTION("Valued event gets received") {
         vec3 test_vec(1.f, 1.f, 1.f);
         EventHandler::emitEvent(Event<glm::vec3>(EventType::TEST, test_vec));
@@ -64,12 +63,11 @@ TEST_CASE("Event handler emit/receive event works", "[event_handler]") {
 
     SECTION("Valued event unsubscribe works") {
         test_class.unsubscribeValue();
-        vec3 test_vec(0.f, 0.f, 0.f);
+        vec3 test_vec(1.f, 1.f, 1.f);
         EventHandler::emitEvent(Event<glm::vec3>(EventType::TEST, test_vec));
         EventHandler::pollEvents();
 
-        REQUIRE_THAT(test_class.test_vec, IsGlmVecEqual<glm::vec3>(test_vec));
+        REQUIRE_THAT(test_class.test_vec, IsGlmVecEqual<glm::vec3>(vec3(.0f, .0f, .0f)));
         
     }
-    */
 }

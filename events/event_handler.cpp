@@ -37,6 +37,7 @@ void EventHandler::emitEvent(Event<void> event) {
 }
 
 std::size_t EventId::counter = 0;
+std::size_t EventId::event_counter = 0;
 
 
 
