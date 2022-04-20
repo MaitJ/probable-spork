@@ -23,6 +23,9 @@ public:
     void setOrientation(float x, float y, float z);
 	void glBind();
 
+    void setRenderVars(glm::mat4* view_proj, Shader* shader);
+    void loadModel(std::string obj_file, std::string tex_file);
+
     void calcModel();
 
 	Shader* shader = nullptr;
@@ -43,6 +46,8 @@ private:
 	glm::mat4 scale_mat = glm::mat4(1.0f);
 	glm::mat4 pos_mat = glm::mat4(1.0f);
     glm::quat orientation = glm::quat(1.0f, .0f, .0f, .0f);
+
+    void loadTexture(std::string tex_file);
 
 };
 

@@ -6,11 +6,13 @@
 #include "window.hpp"
 #include "entities/camera.hpp"
 #include "entities/world_light.hpp"
+#include "entities/player.hpp"
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"
 
 class Engine {
+
     GameWindow game_window;
     Shader default_shader;
     glm::mat4 view_proj = glm::mat4(1.0f);

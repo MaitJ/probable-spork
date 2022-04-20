@@ -2,6 +2,7 @@
 #include "utilities/gl_conf.hpp"
 
 #include "entities/renderable_object.hpp"
+#include "entities/player.hpp"
 #include "events/event_handler.hpp"
 
 glm::mat4 Engine::createPerspectiveMatrix(float window_width, float window_height, float fov) {
@@ -32,6 +33,16 @@ void Engine::start() {
 	plane.setPos(0.0f, -100.0f, .0f);
     plane.setOrientation(0.f, .0f, .0f);
 
+	RenderableObject koksal("assets/koksal.obj", "assets/koksal_baba.jpg", &view_proj, &default_shader);
+	koksal.setScale(20.0f, 20.0f, 20.0f);
+	koksal.setPos(0.0f, -100.0f, .0f);
+    koksal.setOrientation(0.f, .0f, .0f);
+    Player test_player(&view_proj, &default_shader);
+
+	RenderableObject penguin("assets/PenguinBaseMesh.obj", "assets/PenguinDiffuseColor.jpg", &view_proj, &default_shader);
+	penguin.setScale(50.0f, 50.0f, 50.0f);
+	penguin.setPos(.0f, .0f, -100.0f);
+    penguin.setOrientation(0.f, .0f, .0f);
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{
@@ -40,6 +51,9 @@ void Engine::start() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		chair.render();
 		plane.render();
+        test_player.render();
+        koksal.render();
+        penguin.render();
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();

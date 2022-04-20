@@ -41,8 +41,11 @@ void Camera::recalcMatrix() {
 
     this->camera_front = glm::normalize(direction);
 
-    //this->camera_mat = glm::lookAt(this->position, this->position + this->camera_front, this->camera_up);
     this->camera_mat = Matrices::lookat(this->position, this->position + this->camera_front, this->camera_up);
+}
+
+glm::vec3& Camera::getCameraPos() {
+    return this->position;
 }
 
 Camera::Camera(glm::mat4* view_proj) {
@@ -50,10 +53,6 @@ Camera::Camera(glm::mat4* view_proj) {
     recalcMatrix();
     EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(this, &Camera::onOrientationChange);
     EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(this, &Camera::onMove);
-    //EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(std::bind(&Camera::onOrientationChange, this, std::placeholders::_1));
-    //EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(std::bind(&Camera::onMove, this, std::placeholders::_1));
-    
-    //EventHandler::unsubscribe<glm::vec2, CAMERA_ORIENTATION>(this, &Camera::onOrientationChange);
 }
 
 void Camera::onMove(Direction dir) {

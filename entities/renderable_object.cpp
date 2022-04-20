@@ -64,12 +64,23 @@ RenderableObject::RenderableObject(std::string obj_file, glm::mat4* view_proj, S
     delete obj;
 }
 
-RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* view_proj, Shader* shader) {
+void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
+    this->baseObjSetup(obj);
+    this->loadTexture(tex_file);
+    
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    delete obj;
+}
+
+void RenderableObject::setRenderVars(glm::mat4* view_proj, Shader* shader) {
     this->view_proj = view_proj;
     this->shader = shader;
-    this->baseObjSetup(obj);
+}
 
+void RenderableObject::loadTexture(std::string tex_file) {
     int tex_width, tex_height, tex_nrchannels;
     unsigned char* img_data = stbi_load(tex_file.c_str(), &tex_width, &tex_height, &tex_nrchannels, 0);
 
@@ -82,9 +93,16 @@ RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, g
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    //Shader has is_textured uniform!!!
-    //
     stbi_image_free(img_data);
+}
+
+RenderableObject::RenderableObject(std::string obj_file, std::string tex_file, glm::mat4* view_proj, Shader* shader) {
+    Utilities::Obj* obj = new Utilities::Obj(obj_file);
+    this->view_proj = view_proj;
+    this->shader = shader;
+    this->baseObjSetup(obj);
+
+    this->loadTexture(tex_file);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
