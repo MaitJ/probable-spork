@@ -7,6 +7,7 @@
 #include "entities/camera.hpp"
 #include "entities/world_light.hpp"
 #include "entities/player.hpp"
+#include "entities/renderable_manager.hpp"
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"

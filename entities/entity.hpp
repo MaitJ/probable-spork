@@ -4,14 +4,19 @@
 #include <glm/glm.hpp>
 #include <utilities/types.hpp>
 #include "renderable_object.hpp"
+#include "../components/transform.hpp"
 
 class Entity {
-public:
-	glm::vec3 position;
-	Dimensions dimensions;
-	
-	RenderableObject* renderable_object;
+	RenderableObject* renderable = nullptr;
+    bool is_visible = false;
 
+public:
+    Entity();
+    ~Entity();
+    Transform transform;
+
+    void attachRenderable(RenderableObject* renderable);
+    bool isVisible();
 };
 
 #endif // !ENTITY_H

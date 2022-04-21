@@ -21,39 +21,35 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
 
 }
 
+
+
 void Engine::start() {
 
 	RenderableObject chair("assets/chair_textured.obj", "assets/wood.jpg", &view_proj, &default_shader);
 	chair.setScale(20.0f, 20.0f, 20.0f);
-    chair.setPos(20.f, -100.0f, -100.f);
+    chair.setPos(20.f, 0.0f, -100.f);
     chair.setOrientation(0.f, .0f, .0f);
+
+    RenderableManager::addRenderable(&chair);
 
 	RenderableObject plane = Renderables::Primitive<PrimitiveShape::PLANE>(&view_proj, &default_shader);
 	plane.setScale(500.0f, 500.0f, 500.0f);
-	plane.setPos(0.0f, -100.0f, .0f);
+	plane.setPos(0.0f, 0.0f, .0f);
     plane.setOrientation(0.f, .0f, .0f);
 
-	RenderableObject koksal("assets/koksal.obj", "assets/koksal_baba.jpg", &view_proj, &default_shader);
-	koksal.setScale(20.0f, 20.0f, 20.0f);
-	koksal.setPos(0.0f, -100.0f, .0f);
-    koksal.setOrientation(0.f, .0f, .0f);
-    Player test_player(&view_proj, &default_shader);
+    RenderableManager::addRenderable(&plane);
 
-	RenderableObject penguin("assets/PenguinBaseMesh.obj", "assets/PenguinDiffuseColor.jpg", &view_proj, &default_shader);
-	penguin.setScale(50.0f, 50.0f, 50.0f);
-	penguin.setPos(.0f, .0f, -100.0f);
-    penguin.setOrientation(0.f, .0f, .0f);
+    Player test_player(&view_proj, &default_shader);
+    test_player.transform.setDimensions(20.f, 20.f, 20.f);
+
+
 
 	while (!glfwWindowShouldClose(game_window.window))
 	{
         view_proj = persp_proj * camera.getCameraMat();
         //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		chair.render();
-		plane.render();
-        test_player.render();
-        koksal.render();
-        penguin.render();
+        RenderableManager::renderObjects();
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();

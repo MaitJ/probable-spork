@@ -14,7 +14,7 @@ void Obj::createTriangle(std::vector<float>& container, int indice, glm::vec3* v
             vertices[indice].y,
             vertices[indice].z,
             tex_vertices[indice].x,
-            tex_vertices[indice].y,
+            1 - tex_vertices[indice].y,
             normals[indice].x,
             normals[indice].y,
             normals[indice].z
