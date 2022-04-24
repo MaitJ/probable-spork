@@ -5,7 +5,18 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define VERTEX_SHADER_FILE "vertex_shader.vert"
+#define FRAGMENT_SHADER_FILE "fragment_shader.frag"
+#define WF_VERTEX_SHADER_FILE "wf_vertex_shader.vert"
+#define WF_FRAGMENT_SHADER_FILE "wf_fragment_shader.frag"
+
 Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
+    this->loadAndCompile(vertex_shader_file, fragment_shader_file);
+}
+
+Shader::Shader() {}
+
+void Shader::loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file) {
 
     const char* vertex_shader_text = Shader::read_from_file("shaders/vertex_shader.vert");
     const char* fragment_shader_text = Shader::read_from_file("shaders/fragment_shader.frag");
@@ -49,15 +60,15 @@ Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file)
 }
 
 
-void Shader::use() {
+void Shader::use() const {
     glUseProgram(this->id);
 }
 
-void Shader::unbind() {
+void Shader::unbind() const {
     glUseProgram(0);
 }
 
-void Shader::close() {
+void Shader::close() const {
     glDeleteProgram(this->id);
 }
 
@@ -94,4 +105,31 @@ const char* Shader::read_from_file(std::string file_name) {
     shader_file.close();
 
     return file_content;
+}
+
+namespace MainShaders {
+    namespace {
+        Shader default_shader;
+        Shader wf_shader;
+    }
+
+    Shader* loadDefaultShader() {
+        default_shader.loadAndCompile(VERTEX_SHADER_FILE, FRAGMENT_SHADER_FILE);
+        default_shader.layout_len = 8;
+        return &default_shader;
+    }
+
+    Shader* loadWfShader() {
+        wf_shader.loadAndCompile(WF_VERTEX_SHADER_FILE, WF_FRAGMENT_SHADER_FILE);
+        wf_shader.layout_len = 3;
+        return &wf_shader;
+    }
+
+    Shader const& getDefaultShader() {
+        return default_shader;
+    }
+
+    Shader const& getWfShader() {
+        return wf_shader;
+    }
 }

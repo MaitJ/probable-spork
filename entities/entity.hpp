@@ -7,16 +7,26 @@
 #include "../components/transform.hpp"
 
 class Entity {
-	RenderableObject* renderable = nullptr;
+	RenderableObject renderable;
     bool is_visible = false;
 
 public:
     Entity();
-    ~Entity();
     Transform transform;
 
-    void attachRenderable(RenderableObject* renderable);
+    void enableWireframe();
+    void loadModel(const std::string obj_file, const std::string texture_file);
+    RenderableObject& getRenderableObject();
     bool isVisible();
+
 };
 
+namespace PrimitiveObjects {
+
+	template <PrimitiveShape>
+	void loadPrimitive(Entity& ent);
+
+	template <>
+	void loadPrimitive<PLANE>(Entity& ent);
+}
 #endif // !ENTITY_H

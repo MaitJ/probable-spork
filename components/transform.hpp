@@ -2,12 +2,14 @@
 #define TRANSFORM_H
 
 #include <glm/glm.hpp>
+
+class RenderableObject;
 #include "../entities/renderable_object.hpp"
 
 class Transform {
 
     bool is_renderable = false;
-    RenderableObject* renderable = nullptr;
+    RenderableObject* renderable;
     glm::vec3 position = glm::vec3(1.f);
     glm::vec3 orientation = glm::vec3(1.f);
     glm::vec3 dimensions = glm::vec3(1.f);

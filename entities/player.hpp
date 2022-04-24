@@ -4,16 +4,15 @@
 #include <glm/glm.hpp>
 #include "renderable_object.hpp"
 #include "../components/transform.hpp"
+#include "entity.hpp"
 
 struct Player {
 
     Player();
     Player(glm::mat4* view_proj, Shader* shader);
-    void makeRenderable(glm::mat4* view_proj, Shader* shader);
-    void render();
     bool isVisible();
     
-    Transform transform;
+    Entity game_ent;
 
 private:
     bool is_visible = false;
