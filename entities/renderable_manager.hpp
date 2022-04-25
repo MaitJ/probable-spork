@@ -10,7 +10,7 @@ namespace RenderableManager {
     void enableDimensionWireframes();
     void initPerspectiveMatrix(float window_width, float window_height, float fov);
     glm::mat4 const& getPerspectiveMat();
-    glm::mat4* getViewProjMat();
+    glm::mat4& getViewProjMat();
 
 }
 

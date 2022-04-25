@@ -52,6 +52,7 @@ namespace PrimitiveObjects {
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
         glEnableVertexAttribArray(2);
         RenderableManager::addRenderable(&ent_renderable);
+        ent.transform.attachRenderable(&ent_renderable);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

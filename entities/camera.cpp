@@ -48,7 +48,7 @@ glm::vec3& Camera::getCameraPos() {
     return this->position;
 }
 
-Camera::Camera(glm::mat4* view_proj) : view_proj(view_proj) {
+Camera::Camera(glm::mat4& view_proj) : view_proj(view_proj) {
     recalcMatrix();
     EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(this, &Camera::onOrientationChange);
     EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(this, &Camera::onMove);

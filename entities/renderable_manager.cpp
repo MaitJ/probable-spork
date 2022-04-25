@@ -15,8 +15,8 @@ namespace RenderableManager {
         persp_mat = glm::perspective(glm::radians(fov), window_width/window_height, 0.1f, 1000.f);
     }
 
-    mat4* getViewProjMat() {
-        return &view_proj;
+    mat4& getViewProjMat() {
+        return view_proj;
     }
     mat4 const& getPerspectiveMat() {
         return persp_mat;

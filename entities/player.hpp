@@ -9,7 +9,7 @@
 struct Player {
 
     Player();
-    Player(glm::mat4* view_proj, Shader* shader);
+    Player(glm::mat4& view_proj, Shader* shader);
     bool isVisible();
     
     Entity game_ent;
@@ -18,7 +18,7 @@ private:
     bool is_visible = false;
 
     RenderableObject render_obj;
-    void setupRenderable(glm::mat4* view_proj, Shader* shader);
+    void setupRenderable(glm::mat4& view_proj, Shader* shader);
 
 };
 

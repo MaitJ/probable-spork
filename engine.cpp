@@ -16,14 +16,14 @@ glm::mat4 Engine::createPerspectiveMatrix(float window_width, float window_heigh
 }
 
 Engine::Engine(float window_width, float window_height, float fov) : default_shader(MainShaders::loadDefaultShader()), view_proj(RenderableManager::getViewProjMat()), persp_proj(RenderableManager::getPerspectiveMat()), camera(RenderableManager::getViewProjMat()) {
-    assert(this->view_proj != nullptr);
+    //assert(this->view_proj != nullptr);
     Utilities::setupGl();
 
 
     this->world_light.shader = default_shader;
     this->world_light.setPosition(100.0f, 150.0f, 100.0f);
 
-    *this->view_proj = this->persp_proj * camera.getCameraMat();
+    this->view_proj = this->persp_proj * camera.getCameraMat();
 
 }
 
@@ -40,7 +40,7 @@ void Engine::start() {
 
 
     Entity plane;
-    PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(std::ref(plane));
+    PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(plane);
 	plane.transform.setDimensions(500.0f, 500.0f, 500.0f);
 	plane.transform.setPosition(0.0f, 0.0f, .0f);
     plane.transform.setOrientation(0.f, .0f, .0f);
@@ -52,7 +52,7 @@ void Engine::start() {
 
 	while (!glfwWindowShouldClose(game_window.window))
     {
-        *this->view_proj = this->persp_proj * camera.getCameraMat();
+        this->view_proj = this->persp_proj * camera.getCameraMat();
 
         //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

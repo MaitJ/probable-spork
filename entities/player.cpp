@@ -7,11 +7,11 @@
 
 Player::Player() {}
 
-Player::Player(glm::mat4* view_proj, Shader* shader) {
+Player::Player(glm::mat4& view_proj, Shader* shader) {
     this->setupRenderable(view_proj, shader);
 }
 
-void Player::setupRenderable(glm::mat4* view_proj, Shader* shader) {
+void Player::setupRenderable(glm::mat4& view_proj, Shader* shader) {
     this->game_ent.loadModel(PLAYER_MODEL, PLAYER_TEXTURE);
     this->is_visible = true;
 

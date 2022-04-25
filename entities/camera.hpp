@@ -18,12 +18,12 @@ class Camera {
     glm::vec3 camera_front = glm::vec3(.0f, .0f, -1.f);
     glm::vec3 camera_up = glm::vec3(.0f, 1.0f, .0f);
 
-    glm::mat4* view_proj = nullptr;
+    glm::mat4& view_proj;
 
     void recalcMatrix();
 
 public:
-    Camera(glm::mat4* view_proj);
+    Camera(glm::mat4& view_proj);
     void setPosition(float x, float y, float z);
     void setRotation(float angle, glm::vec3 axis);
     glm::mat4& getCameraMat();

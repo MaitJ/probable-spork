@@ -1,7 +1,8 @@
 #include "transform.hpp"
 
-
 Transform::Transform() {}
+
+Transform::Transform(RenderableObject* renderable) : renderable(renderable) {}
 
 Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions) {
     this->position = position;
@@ -22,6 +23,7 @@ void Transform::attachRenderable(RenderableObject* obj) {
     this->is_renderable = true;
 }
 void Transform::setOrientation(float yaw, float pitch, float roll) {
+    assert(this->renderable != nullptr);
     this->orientation.y = yaw;
     this->orientation.x = pitch;
     this->orientation.z = roll;
@@ -31,6 +33,7 @@ void Transform::setOrientation(float yaw, float pitch, float roll) {
 
 }
 void Transform::setPosition(float x, float y, float z) {
+    assert(this->renderable != nullptr);
     this->position.x = x;
     this->position.y = y;
     this->position.z = z;
@@ -39,6 +42,7 @@ void Transform::setPosition(float x, float y, float z) {
         this->renderable->setPos(x, y, z);
 }
 void Transform::setDimensions(float width, float height, float length) {
+    assert(this->renderable != nullptr);
     this->dimensions.x = width;
     this->dimensions.y = height;
     this->dimensions.z = length;

@@ -132,7 +132,7 @@ void RenderableObject::glBind() {
 }
 
 void RenderableObject::enableWireframe(Transform& transform) {
-    this->wireframe = true;
+    this->is_wireframe_enabled = true;
 
 	glGenVertexArrays(1, &this->wf_vao);
 	glGenBuffers(1, &this->wf_vbo);
@@ -188,7 +188,7 @@ void RenderableObject::enableWireframe(Transform& transform) {
 
 void RenderableObject::render() {
 
-    assert(this->view_proj != nullptr);
+    //assert(this->view_proj != nullptr);
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
 
@@ -201,7 +201,7 @@ void RenderableObject::render() {
 	glUniformMatrix3fv(normal_mat_loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 
 	int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
-	glm::mat4 MVP = *this->view_proj * model_mat;
+	glm::mat4 MVP = this->view_proj * model_mat;
 	int textured_loc = glGetUniformLocation(this->shader.id, "is_textured");
 	glBindVertexArray(this->vao);
     glBindTexture(GL_TEXTURE_2D, this->to);
@@ -212,43 +212,3 @@ void RenderableObject::render() {
 }
 
 
-namespace Renderables {
-
-	template <PrimitiveShape>
-	RenderableObject Primitive(glm::mat4* view_proj, Shader* shader);
-
-	template <>
-	RenderableObject Primitive<PLANE>(glm::mat4* view_proj, Shader* shader) {
-		RenderableObject prim_obj;
-
-		prim_obj.glBind();
-
-        prim_obj.view_proj = RenderableManager::getViewProjMat();
-		float plane_vertices[] = {
-			-1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-			1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-			1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
-
-			-1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-			-1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
-			1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f
-		};
-        prim_obj.calcModel();
-
-		prim_obj.total_vertices = 6;
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-		return prim_obj;
-	}
-}

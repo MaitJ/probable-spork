@@ -27,7 +27,6 @@ public:
 	void glBind();
 
     void loadModel(std::string obj_file, std::string tex_file);
-
     void calcModel();
 
 	Shader const& shader;
@@ -35,16 +34,19 @@ public:
 
 	unsigned int total_vertices = 0;
 
-    glm::mat4* view_proj = nullptr;
+    glm::mat4& view_proj;
 
-    void enableWireframe(Transform& transform);
+
+    //Make a separate wireframe class
+    RenderableObject wireframe;
+    bool is_wireframe_enabled = false;
+    void enableWireframe();
 
 private:
     void baseObjSetup(Utilities::Obj* obj);
 
 private:
     bool textured = false;
-    bool wireframe = false;
     //Vertex buffer, vertex array, element array, texture object
 	unsigned int vbo, vao, ebo, to = 0;
     //Wireframe buffers
@@ -58,14 +60,5 @@ private:
     void loadTexture(std::string tex_file);
 
 };
-
-namespace Renderables {
-
-	template <PrimitiveShape>
-	RenderableObject Primitive(glm::mat4* view_proj, Shader* shader);
-
-	template <>
-	RenderableObject Primitive<PLANE>(glm::mat4* view_proj, Shader* shader);
-}
 
 #endif // !RENDERABLE_ENTITY_H
