@@ -50,12 +50,12 @@ void Transform::setDimensions(float width, float height, float length) {
     if (this->is_renderable)
         this->renderable->setScale(width, height, length);
 }
-glm::vec3& Transform::getPosition() {
+glm::vec3 const& Transform::getPosition() const {
     return this->position;
 }
-glm::vec3& Transform::getOrientation() {
+glm::vec3 const& Transform::getOrientation() const {
     return this->orientation;
 }
-glm::vec3& Transform::getDimensions() {
+glm::vec3 const& Transform::getDimensions() const {
     return this->dimensions;
 }

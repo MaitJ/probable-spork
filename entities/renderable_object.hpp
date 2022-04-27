@@ -18,39 +18,36 @@ enum PrimitiveShape {
 class RenderableObject {
 public:
 	void render();
-	RenderableObject();
+	RenderableObject(bool gen_buffers);
+	RenderableObject(bool gen_buffers, Shader& shader);
 	RenderableObject(std::string obj_file);
 	RenderableObject(std::string obj_file, std::string tex_file);
+    //Tee vec3 variandid ka
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
     void setOrientation(float x, float y, float z);
+	void setScale(glm::vec3 const& scale);
+	void setPos(glm::vec3 const& pos);
+    void setOrientation(glm::vec3 const& orientation);
 	void glBind();
+    void genBuffers();
 
     void loadModel(std::string obj_file, std::string tex_file);
     void calcModel();
 
-	Shader const& shader;
-    Shader const& wf_shader;
+	Shader& shader;
 
 	unsigned int total_vertices = 0;
 
     glm::mat4& view_proj;
-
-
-    //Make a separate wireframe class
-    RenderableObject wireframe;
-    bool is_wireframe_enabled = false;
-    void enableWireframe();
 
 private:
     void baseObjSetup(Utilities::Obj* obj);
 
 private:
     bool textured = false;
-    //Vertex buffer, vertex array, element array, texture object
+    bool is_wireframe = false;
 	unsigned int vbo, vao, ebo, to = 0;
-    //Wireframe buffers
-	unsigned int wf_vbo, wf_vao = 0;
 
     glm::mat4 model_mat = glm::mat4(1.0f);
 	glm::mat4 scale_mat = glm::mat4(1.0f);

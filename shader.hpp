@@ -27,7 +27,7 @@ private:
 
 namespace MainShaders{
     Shader const& getWfShader();
-    Shader const& getDefaultShader();
+    Shader& getDefaultShader();
     Shader* loadWfShader();
     Shader* loadDefaultShader();
 }

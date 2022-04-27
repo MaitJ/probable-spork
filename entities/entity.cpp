@@ -1,10 +1,16 @@
 #include "entity.hpp"
 #include "renderable_manager.hpp"
 
-Entity::Entity() {}
+int Entity::entity_count = 0;
+
+Entity::Entity() : renderable(true), wireframe(this->transform, Entity::entity_count) {
+    this->entity_id = entity_count;
+    Entity::entity_count++;
+}
 
 void Entity::enableWireframe() {
-    this->renderable.enableWireframe(this->transform);
+    this->is_wireframed = true;
+    RenderableManager::addWireframe(this->wireframe);
 }
 void Entity::loadModel(const std::string obj_file, const std::string texture_file) {
     //Currently doesn't have a MVP matrix

@@ -5,9 +5,9 @@
 #define PLAYER_TEXTURE "assets/koksal_baba.jpg"
 
 
-Player::Player() {}
+Player::Player() : render_obj(true) {}
 
-Player::Player(glm::mat4& view_proj, Shader* shader) {
+Player::Player(glm::mat4& view_proj, Shader* shader) : render_obj(true) {
     this->setupRenderable(view_proj, shader);
 }
 

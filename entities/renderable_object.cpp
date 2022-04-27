@@ -4,15 +4,32 @@
 #include "renderable_manager.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <fmt/core.h>
 #include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../deps/stb_image.h"
 
-RenderableObject::RenderableObject() : shader(MainShaders::getDefaultShader()), wf_shader(MainShaders::getWfShader()), view_proj(RenderableManager::getViewProjMat()) {
-	glGenVertexArrays(1, &this->vao);
-	glGenBuffers(1, &this->vbo);
-	glGenBuffers(1, &this->ebo);
+RenderableObject::RenderableObject(bool gen_buffers) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
+    if (gen_buffers) {
+        glGenVertexArrays(1, &this->vao);
+        glGenBuffers(1, &this->vbo);
+        glGenBuffers(1, &this->ebo);
+    }
+}
+RenderableObject::RenderableObject(bool gen_buffers, Shader& shader) : shader(shader), view_proj(RenderableManager::getViewProjMat()) {
+    if (gen_buffers) {
+        glGenVertexArrays(1, &this->vao);
+        glGenBuffers(1, &this->vbo);
+        glGenBuffers(1, &this->ebo);
+    }
+    this->is_wireframe = true;
+}
+
+void RenderableObject::genBuffers() {
+    glGenVertexArrays(1, &this->vao);
+    glGenBuffers(1, &this->vbo);
+    glGenBuffers(1, &this->ebo);
 }
 
 void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
@@ -54,7 +71,7 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
     RenderableManager::addRenderable(this);
 }
 
-RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::getDefaultShader()), wf_shader(MainShaders::getWfShader()), view_proj(RenderableManager::getViewProjMat()) {
+RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
     this->baseObjSetup(obj);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -92,7 +109,7 @@ void RenderableObject::loadTexture(std::string tex_file) {
     stbi_image_free(img_data);
 }
 
-RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) : shader(MainShaders::getDefaultShader()),  wf_shader(MainShaders::getWfShader()), view_proj(RenderableManager::getViewProjMat()) {
+RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
     this->baseObjSetup(obj);
 
@@ -103,6 +120,25 @@ RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) :
     glBindTexture(GL_TEXTURE_2D, 0);
     delete obj;
 }
+
+void RenderableObject::setScale(glm::vec3 const& scale) {
+	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+    calcModel();
+}
+void RenderableObject::setPos(glm::vec3 const& pos) {
+	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(pos));
+    calcModel();
+}
+
+void RenderableObject::setOrientation(glm::vec3 const& orientation) {
+    glm::quat x_rot = glm::angleAxis(glm::radians(orientation.x), glm::vec3(1.f, .0f, .0f));
+    glm::quat y_rot = glm::angleAxis(glm::radians(orientation.y), glm::vec3(0.f, 1.f, .0f));
+    glm::quat z_rot = glm::angleAxis(glm::radians(orientation.z), glm::vec3(0.f, .0f, 1.f));
+
+    this->orientation = x_rot * y_rot * z_rot;
+    calcModel();
+}
+
 
 void RenderableObject::setScale(float x, float y, float z) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
@@ -129,70 +165,27 @@ void RenderableObject::setOrientation(float x, float y, float z) {
 void RenderableObject::glBind() {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+    glBindTexture(GL_TEXTURE_2D, this->to);
 }
 
-void RenderableObject::enableWireframe(Transform& transform) {
-    this->is_wireframe_enabled = true;
-
-	glGenVertexArrays(1, &this->wf_vao);
-	glGenBuffers(1, &this->wf_vbo);
-    glBindVertexArray(this->wf_vao);
-
-
-    float wf_vertices[] = {
-        //Front triangles
-        -1.f, .0f, 1.f,
-        1.f, .0f, 1.f,
-        -1.f, 1.0f, 1.f,
-        1.f, .0f, 1.f,
-        1.f, 1.0f, 1.f,
-        -1.f, 1.0f, 1.f,
-
-        //Back triangles
-        -1.f, .0f, -1.f,
-        1.f, .0f, -1.f,
-        -1.f, 1.0f, -1.f,
-        1.f, .0f, -1.f,
-        1.f, 1.0f, -1.f,
-        -1.f, 1.0f, -1.f,
-
-        //Left side
-        -1.f, .0f, 1.f,
-        -1.f, .0f, -1.f,
-        -1.f, 1.0f, 1.f,
-
-        -1.f, .0f, -1.f,
-        -1.f, 1.0f, -1.f,
-        -1.f, 1.0f, 1.f,
-
-        //Right side
-        1.f, .0f, 1.f,
-        1.f, .0f, -1.f,
-        1.f, 1.0f, 1.f,
-
-        1.f, .0f, -1.f,
-        1.f, 1.0f, -1.f,
-        1.f, 1.0f, 1.f,
-    };
-
-	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(float), wf_vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-    
-}
 
 void RenderableObject::render() {
 
-    //assert(this->view_proj != nullptr);
-
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
-
 	this->shader.use();
+    this->glBind();
+    //assert(this->view_proj != nullptr);
+    if (is_wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
+        glm::mat4 MVP = this->view_proj * model_mat;
+        glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
+        glDrawArrays(GL_TRIANGLES, 0, this->total_vertices);
+        return;
+    }
+
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     int model_loc = glGetUniformLocation(this->shader.id, "Model");
 	glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(this->model_mat));
 
@@ -203,11 +196,8 @@ void RenderableObject::render() {
 	int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
 	glm::mat4 MVP = this->view_proj * model_mat;
 	int textured_loc = glGetUniformLocation(this->shader.id, "is_textured");
-	glBindVertexArray(this->vao);
-    glBindTexture(GL_TEXTURE_2D, this->to);
 	glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
     glUniform1i(textured_loc, this->textured);
-    glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glDrawArrays(GL_TRIANGLES, 0, this->total_vertices);
 }
 

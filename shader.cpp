@@ -18,8 +18,8 @@ Shader::Shader() {}
 
 void Shader::loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file) {
 
-    const char* vertex_shader_text = Shader::read_from_file("shaders/vertex_shader.vert");
-    const char* fragment_shader_text = Shader::read_from_file("shaders/fragment_shader.frag");
+    const char* vertex_shader_text = Shader::read_from_file("shaders/" + vertex_shader_file);
+    const char* fragment_shader_text = Shader::read_from_file("shaders/" + fragment_shader_file);
 
     unsigned int vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -125,7 +125,7 @@ namespace MainShaders {
         return &wf_shader;
     }
 
-    Shader const& getDefaultShader() {
+    Shader& getDefaultShader() {
         return default_shader;
     }
 

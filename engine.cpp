@@ -25,6 +25,7 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
 
     this->view_proj = this->persp_proj * camera.getCameraMat();
 
+    Wireframe::initWireframeModel();
 }
 
 
@@ -37,6 +38,7 @@ void Engine::start() {
 	chair.transform.setDimensions(20.0f, 20.0f, 20.0f);
     chair.transform.setPosition(20.f, 0.0f, -100.f);
     chair.transform.setOrientation(0.f, .0f, .0f);
+    chair.enableWireframe();
 
 
     Entity plane;
@@ -47,6 +49,7 @@ void Engine::start() {
 
     Player test_player(view_proj, default_shader);
     test_player.game_ent.transform.setDimensions(20.f, 20.f, 20.f);
+    test_player.game_ent.enableWireframe();
 
 
 
