@@ -8,11 +8,11 @@ class Wireframe {
     static RenderableObject wf_renderable;
 
     int entity_id;
+    Transform const& ent_transform;
     
 public:
     Wireframe(Transform& transform, int entity_id);
     //Transformi sees on yhine render obj
-    Transform const& transform;
     static void initWireframeModel();
     void render() const;
 };

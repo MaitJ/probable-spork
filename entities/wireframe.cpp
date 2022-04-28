@@ -3,7 +3,7 @@
 #include <fmt/core.h>
 #include <glm/gtx/string_cast.hpp>
 
-Wireframe::Wireframe(Transform& transform, int entity_id) : entity_id{entity_id}, transform(transform)  {}
+Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity_id}, ent_transform(ent_transform)  {}
 
 Shader Wireframe::wf_shader;
 RenderableObject Wireframe::wf_renderable = RenderableObject(false, Wireframe::wf_shader);
@@ -69,9 +69,9 @@ void Wireframe::initWireframeModel() {
 
 void Wireframe::render() const {
     //Calli wf_renderable this->transformi asjadega ja renderda wf
-    wf_renderable.setPos(this->transform.getPosition());
-    wf_renderable.setOrientation(this->transform.getOrientation());
-    wf_renderable.setScale(this->transform.getDimensions());
+    wf_renderable.setPos(this->ent_transform.getPosition());
+    wf_renderable.setOrientation(this->ent_transform.getOrientation());
+    wf_renderable.setScale(this->ent_transform.getDimensions());
     wf_renderable.calcModel();
     //RenderableManager::addWireframe(*this);
     wf_renderable.render();

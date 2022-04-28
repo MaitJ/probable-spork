@@ -18,6 +18,7 @@ glm::mat4 Engine::createPerspectiveMatrix(float window_width, float window_heigh
 Engine::Engine(float window_width, float window_height, float fov) : default_shader(MainShaders::loadDefaultShader()), view_proj(RenderableManager::getViewProjMat()), persp_proj(RenderableManager::getPerspectiveMat()), camera(RenderableManager::getViewProjMat()) {
     //assert(this->view_proj != nullptr);
     Utilities::setupGl();
+    camera.setPosition(0.f, 50.f, 0.f);
 
 
     this->world_light.shader = default_shader;
@@ -35,9 +36,14 @@ void Engine::start() {
 
     Entity chair;
     chair.loadModel("assets/chair_textured.obj", "assets/wood.jpg");
-	chair.transform.setDimensions(20.0f, 20.0f, 20.0f);
+    
+	chair.renderable.setScale(20.0f, 20.0f, 20.0f);
+    chair.renderable.setPos(20.f, 0.0f, -100.f);
+    chair.renderable.setOrientation(0.f, .0f, .0f);
+
+    //Transformi ja renderable positisioon ei ole synkroonis
     chair.transform.setPosition(20.f, 0.0f, -100.f);
-    chair.transform.setOrientation(0.f, .0f, .0f);
+    chair.transform.setDimensions(20.f, 30.f, 20.f);
     chair.enableWireframe();
 
 
@@ -48,8 +54,7 @@ void Engine::start() {
     plane.transform.setOrientation(0.f, .0f, .0f);
 
     Player test_player(view_proj, default_shader);
-    test_player.game_ent.transform.setDimensions(20.f, 20.f, 20.f);
-    test_player.game_ent.enableWireframe();
+    test_player.game_ent.renderable.setScale(20.f, 20.f, 20.f);
 
 
 

@@ -12,16 +12,18 @@ class Entity {
 
     int entity_id;
 
-	RenderableObject renderable;
-    Wireframe wireframe;
     bool is_visible = false;
     bool is_wireframed = false;
+    Wireframe wireframe;
 
 public:
     Entity();
+    //This should be objects own transform/collisions
     Transform transform;
+	RenderableObject renderable;
 
     void enableWireframe();
+    void enableCollisions();
     void loadModel(const std::string obj_file, const std::string texture_file);
     RenderableObject& getRenderableObject();
     bool isVisible();

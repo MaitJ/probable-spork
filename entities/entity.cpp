@@ -3,7 +3,7 @@
 
 int Entity::entity_count = 0;
 
-Entity::Entity() : renderable(true), wireframe(this->transform, Entity::entity_count) {
+Entity::Entity() :  wireframe(this->transform, Entity::entity_count), renderable(true) {
     this->entity_id = entity_count;
     Entity::entity_count++;
 }
@@ -15,7 +15,7 @@ void Entity::enableWireframe() {
 void Entity::loadModel(const std::string obj_file, const std::string texture_file) {
     //Currently doesn't have a MVP matrix
     this->renderable.loadModel(obj_file, texture_file);
-    this->transform.attachRenderable(&this->renderable);
+    //this->transform.attachRenderable(&this->renderable);
 }
 
 bool Entity::isVisible() {
