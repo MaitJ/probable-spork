@@ -1,5 +1,7 @@
 #include "entity.hpp"
 #include "renderable_manager.hpp"
+#include "../collisions/collision_manager.hpp"
+#include <functional>
 
 int Entity::entity_count = 0;
 
@@ -16,6 +18,10 @@ void Entity::loadModel(const std::string obj_file, const std::string texture_fil
     //Currently doesn't have a MVP matrix
     this->renderable.loadModel(obj_file, texture_file);
     //this->transform.attachRenderable(&this->renderable);
+}
+
+void Entity::enableCollisions() {
+    CollisionManager::addCollidable(*this);
 }
 
 bool Entity::isVisible() {

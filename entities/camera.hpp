@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include "player.hpp"
 
 enum Direction {
     FORWARD,
@@ -24,12 +25,15 @@ class Camera {
 
 public:
     Camera(glm::mat4& view_proj);
+    Camera(glm::mat4& view_proj, Player* player);
     void setPosition(float x, float y, float z);
     void setRotation(float angle, glm::vec3 axis);
     glm::mat4& getCameraMat();
     glm::vec3& getCameraPos();
     void onOrientationChange(glm::vec2 angles);
     void onMove(Direction dir);
+
+    Player* player = nullptr;
 };
 
 #endif

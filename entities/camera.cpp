@@ -53,20 +53,46 @@ Camera::Camera(glm::mat4& view_proj) : view_proj(view_proj) {
     EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(this, &Camera::onOrientationChange);
     EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(this, &Camera::onMove);
 }
+Camera::Camera(glm::mat4& view_proj, Player* player) : view_proj(view_proj) {
+    recalcMatrix();
+    EventHandler::registerSubscriber<glm::vec2, EventType::CAMERA_ORIENTATION>(this, &Camera::onOrientationChange);
+    EventHandler::registerSubscriber<Direction, EventType::CAMERA_MOVEMENT>(this, &Camera::onMove);
+    this->player = player;
+}
 
 void Camera::onMove(Direction dir) {
     switch (dir) {
         case Direction::FORWARD:
             this->position += this->camera_front * 5.f;
+            if (player != nullptr) {
+                glm::vec3 new_pos = player->game_ent.transform.getPosition();
+                new_pos.z += 0.5f;
+                player->game_ent.transform.setPosition(new_pos.x, new_pos.y, new_pos.z);
+            }
         break;
         case Direction::BACK:
             this->position -= this->camera_front * 5.f;
+            if (player != nullptr) {
+                glm::vec3 new_pos = player->game_ent.transform.getPosition();
+                new_pos.z -= 0.5f;
+                player->game_ent.transform.setPosition(new_pos.x, new_pos.y, new_pos.z);
+            }
         break;
         case Direction::LEFT:
             this->position -= glm::cross(camera_front, camera_up) * 5.f;
+            if (player != nullptr) {
+                glm::vec3 new_pos = player->game_ent.transform.getPosition();
+                new_pos.x -= 0.5f;
+                player->game_ent.transform.setPosition(new_pos.x, new_pos.y, new_pos.z);
+            }
         break;
         case Direction::RIGHT:
             this->position += glm::cross(camera_front, camera_up) * 5.f;
+            if (player != nullptr) {
+                glm::vec3 new_pos = player->game_ent.transform.getPosition();
+                new_pos.x += 0.5f;
+                player->game_ent.transform.setPosition(new_pos.x, new_pos.y, new_pos.z);
+            }
         break;
     }
     recalcMatrix();
