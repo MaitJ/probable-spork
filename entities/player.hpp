@@ -5,14 +5,17 @@
 #include "renderable_object.hpp"
 #include "../components/transform.hpp"
 #include "entity.hpp"
+#include "camera.hpp"
 
 struct Player {
 
-    Player();
-    Player(glm::mat4& view_proj, Shader* shader);
+    Player(Camera& camera);
+    Player(glm::mat4& view_proj, Shader* shader, Camera& camera);
     bool isVisible();
+    void onMove(Direction dir);
     
     Entity game_ent;
+    Camera& camera;
 
 private:
     bool is_visible = false;

@@ -9,7 +9,7 @@ enum EventType {
     LIGHT_TOGGLE = 2,
     MOVE_CAM_VEC2 = 3,
     CAMERA_ORIENTATION = 4,
-    CAMERA_MOVEMENT = 5,
+    MOVEMENT = 5,
     COUNT = 6
 };
 

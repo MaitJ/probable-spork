@@ -72,7 +72,6 @@ void Wireframe::render() const {
     wf_renderable.setPos(this->ent_transform.getPosition());
     wf_renderable.setOrientation(this->ent_transform.getOrientation());
     wf_renderable.setScale(this->ent_transform.getDimensions());
-    wf_renderable.calcModel();
     //RenderableManager::addWireframe(*this);
     wf_renderable.render();
 }

@@ -8,16 +8,16 @@ void Keyboard::key_callback(GLFWwindow* window, int key, int scancode, int actio
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 
     if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::CAMERA_MOVEMENT, Direction::FORWARD));
+        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::MOVEMENT, Direction::FORWARD));
     }
     if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::CAMERA_MOVEMENT, Direction::LEFT));
+        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::MOVEMENT, Direction::LEFT));
     }
     if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::CAMERA_MOVEMENT, Direction::BACK));
+        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::MOVEMENT, Direction::BACK));
     }
     if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)){
-        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::CAMERA_MOVEMENT, Direction::RIGHT));
+        EventHandler::emitEvent<Direction>(Event<Direction>(EventType::MOVEMENT, Direction::RIGHT));
     }
 
 }

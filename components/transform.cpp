@@ -45,12 +45,28 @@ void Transform::setDimensions(float width, float height, float length) {
     if (this->renderable != nullptr)
         this->renderable->setScale(width, height, length);
 }
-glm::vec3 const& Transform::getPosition() const {
+glm::vec3& Transform::getPosition() {
     return this->position;
 }
-glm::vec3 const& Transform::getOrientation() const {
+glm::vec3& Transform::getOrientation() {
     return this->orientation;
 }
-glm::vec3 const& Transform::getDimensions() const {
+glm::vec3& Transform::getDimensions() {
     return this->dimensions;
+}
+glm::vec3 Transform::left() const {
+    glm::vec3 left(.0f);
+
+    left.x = this->position.x - (this->dimensions.x / 2.f);
+    left.y = this->position.y - (this->dimensions.y / 2.f);
+    left.z = this->position.z - (this->dimensions.z / 2.f);
+    return left;
+}
+glm::vec3 Transform::right() const {
+    glm::vec3 right(.0f);
+
+    right.x = this->position.x + (this->dimensions.x / 2.f);
+    right.y = this->position.y + (this->dimensions.y / 2.f);
+    right.z = this->position.z + (this->dimensions.z / 2.f);
+    return right;
 }

@@ -51,7 +51,6 @@ namespace PrimitiveObjects {
             -1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
             1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f
         };
-        ent_renderable.calcModel();
 
         ent_renderable.total_vertices = 6;
 

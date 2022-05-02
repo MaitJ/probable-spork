@@ -8,7 +8,7 @@ class Wireframe {
     static RenderableObject wf_renderable;
 
     int entity_id;
-    Transform const& ent_transform;
+    Transform& ent_transform;
     
 public:
     Wireframe(Transform& transform, int entity_id);

@@ -34,8 +34,6 @@ void RenderableObject::genBuffers() {
 
 void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
 
-    calcModel();
-
 	glGenVertexArrays(1, &this->vao);
 	glGenBuffers(1, &this->vbo);
 	glGenBuffers(1, &this->ebo);
@@ -123,11 +121,9 @@ RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) :
 
 void RenderableObject::setScale(glm::vec3 const& scale) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
-    calcModel();
 }
 void RenderableObject::setPos(glm::vec3 const& pos) {
 	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(pos));
-    calcModel();
 }
 
 void RenderableObject::setOrientation(glm::vec3 const& orientation) {
@@ -136,17 +132,14 @@ void RenderableObject::setOrientation(glm::vec3 const& orientation) {
     glm::quat z_rot = glm::angleAxis(glm::radians(orientation.z), glm::vec3(0.f, .0f, 1.f));
 
     this->orientation = x_rot * y_rot * z_rot;
-    calcModel();
 }
 
 
 void RenderableObject::setScale(float x, float y, float z) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
-    calcModel();
 }
 void RenderableObject::setPos(float x, float y, float z) {
 	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
-    calcModel();
 }
 
 void RenderableObject::calcModel() {
@@ -159,7 +152,6 @@ void RenderableObject::setOrientation(float x, float y, float z) {
     glm::quat z_rot = glm::angleAxis(glm::radians(z), glm::vec3(0.f, .0f, 1.f));
 
     this->orientation = x_rot * y_rot * z_rot;
-    calcModel();
 }
 
 void RenderableObject::glBind() {
@@ -175,6 +167,7 @@ void RenderableObject::render() {
 	this->shader.use();
     this->glBind();
     //assert(this->view_proj != nullptr);
+    calcModel();
     if (is_wireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");

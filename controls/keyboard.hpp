@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include <GLFW/glfw3.h>
+#include "../window.hpp"
 
 class Keyboard {
 public:

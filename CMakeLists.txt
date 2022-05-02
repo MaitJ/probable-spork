@@ -14,24 +14,18 @@ set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp)
 set(COMPONENT_FILES components/transform.cpp)
+set(COLLISION_FILES collisions/collision_manager.cpp)
 
-set(INCLUDE_PATHS utilities entities events components ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_PATHS utilities entities events components collisions ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_PATHS})
-#target_include_directories(${PROJECT_NAME} PRIVATE utilities)
-#target_include_directories(${PROJECT_NAME} PRIVATE entities)
-#target_include_directories(${PROJECT_NAME} PRIVATE events)
-#target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(source ${SOURCE_FILES} ${ENTITY_FILES} ${EVENT_FILES}
-    ${CONTROL_FILES} ${UTILITY_FILES} ${INCLUDE_PATHS} ${COMPONENT_FILES})
+    ${CONTROL_FILES} ${UTILITY_FILES} ${INCLUDE_PATHS} ${COMPONENT_FILES}
+    ${COLLISION_FILES})
 target_link_libraries(${PROJECT_NAME} source)
 target_include_directories(source PRIVATE ${INCLUDE_PATHS})
-#target_include_directories(source PRIVATE utilities)
-#target_include_directories(source PRIVATE entities)
-#target_include_directories(source PRIVATE events)
-#target_include_directories(source PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory("${DEPS_DIR}/glfw")
 target_link_libraries(source glfw)

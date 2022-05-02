@@ -25,9 +25,12 @@ public:
     void setPosition(float x, float y, float z);
     void setDimensions(float width, float height, float length);
 
-    glm::vec3 const& getOrientation() const;
-    glm::vec3 const& getPosition() const;
-    glm::vec3 const& getDimensions() const;
+    glm::vec3& getOrientation();
+    glm::vec3& getPosition();
+    glm::vec3& getDimensions();
+
+    glm::vec3 left() const;
+    glm::vec3 right() const;
 };
 
 #endif

@@ -6,9 +6,10 @@
 
 
 class CollisionManager {
-    static std::vector<std::reference_wrapper<const Entity>> collision_objects;
+    static std::vector<std::reference_wrapper<Entity>> collision_objects;
 public:
-    void addCollidable(Entity const& ent) const;
+    static void addCollidable(Entity& ent);
+    static void checkCollisions();
 };
 
 #endif

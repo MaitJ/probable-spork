@@ -5,6 +5,7 @@
 #include "entities/player.hpp"
 #include "events/event_handler.hpp"
 #include "entities/entity.hpp"
+#include "collisions/collision_manager.hpp"
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"
@@ -43,8 +44,10 @@ void Engine::start() {
 
     //Transformi ja renderable positisioon ei ole synkroonis
     chair.transform.setPosition(20.f, 0.0f, -100.f);
-    chair.transform.setDimensions(20.f, 30.f, 20.f);
+    chair.transform.setDimensions(25.f, 60.f, 25.f);
+    chair.transform.setOrientation(0.f, .0f, .0f);
     chair.enableWireframe();
+    chair.enableCollisions();
 
 
     Entity plane;
@@ -53,18 +56,23 @@ void Engine::start() {
 	plane.transform.setPosition(0.0f, 0.0f, .0f);
     plane.transform.setOrientation(0.f, .0f, .0f);
 
-    Player test_player(view_proj, default_shader);
+    Player test_player(view_proj, default_shader, this->camera);
+    test_player.game_ent.transform.setDimensions(20.f, 20.f, 20.f);
     test_player.game_ent.renderable.setScale(20.f, 20.f, 20.f);
+    test_player.game_ent.enableCollisions();
+    test_player.game_ent.enableWireframe();
 
 
 
 	while (!glfwWindowShouldClose(game_window.window))
     {
+        this->camera.recalcMatrix();
         this->view_proj = this->persp_proj * camera.getCameraMat();
 
         //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderableManager::renderObjects();
+        CollisionManager::checkCollisions();
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();
