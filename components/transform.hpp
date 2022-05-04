@@ -31,6 +31,8 @@ public:
 
     glm::vec3 left() const;
     glm::vec3 right() const;
+    void setLeft(glm::vec3 left);
+    void setRight(glm::vec3 right);
 };
 
 #endif
