@@ -3,11 +3,11 @@
 #include "../collisions/collision_manager.hpp"
 #include <functional>
 
-int Entity::entity_count = 0;
 
-Entity::Entity() :  wireframe(this->transform, Entity::entity_count), renderable(true) {
-    this->entity_id = entity_count;
-    Entity::entity_count++;
+Entity::Entity(int entity_id, Context const& ctx) :   wireframe(this->transform, entity_id), entity_id{entity_id} , renderable(false), ctx(ctx) {
+    this->entity_id = entity_id;
+}
+Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe(this->transform, old_ent.entity_id), renderable(old_ent.renderable), ctx(old_ent.ctx){
 }
 
 void Entity::enableWireframe() {

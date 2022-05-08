@@ -13,17 +13,18 @@ set(ENTITY_FILES entities/renderable_object.cpp entities/world_light.cpp
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp)
+set(WORLD_FILES world/context.cpp)
 set(COMPONENT_FILES components/transform.cpp)
 set(COLLISION_FILES collisions/collision_manager.cpp)
 
-set(INCLUDE_PATHS utilities entities events components collisions ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_PATHS utilities entities events components collisions world ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_PATHS})
 
 add_library(source ${SOURCE_FILES} ${ENTITY_FILES} ${EVENT_FILES}
     ${CONTROL_FILES} ${UTILITY_FILES} ${INCLUDE_PATHS} ${COMPONENT_FILES}
-    ${COLLISION_FILES})
+    ${COLLISION_FILES} ${WORLD_FILES})
 target_link_libraries(${PROJECT_NAME} source)
 target_include_directories(source PRIVATE ${INCLUDE_PATHS})
 

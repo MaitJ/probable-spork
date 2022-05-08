@@ -8,6 +8,7 @@
 #include "entities/world_light.hpp"
 #include "entities/player.hpp"
 #include "entities/renderable_manager.hpp"
+#include "world/context.hpp"
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"
@@ -20,6 +21,7 @@ class Engine {
     glm::mat4 const& persp_proj;
     Camera camera;
     WorldLight world_light;
+    Context ctx;
 
     glm::mat4 createPerspectiveMatrix(float window_width, float window_height, float fov);
 

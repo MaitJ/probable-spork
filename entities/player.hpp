@@ -7,14 +7,16 @@
 #include "entity.hpp"
 #include "camera.hpp"
 
+class Context;
+
 struct Player {
 
-    Player(Camera& camera);
-    Player(glm::mat4& view_proj, Shader* shader, Camera& camera);
+    Player(Camera& camera, Context& ctx);
+    Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx);
     bool isVisible();
     void onMove(Direction dir);
     
-    Entity game_ent;
+    Entity& game_ent;
     Camera& camera;
 
 private:

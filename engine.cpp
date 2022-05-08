@@ -35,31 +35,32 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
 void Engine::start() {
     assert(this->default_shader != nullptr);
 
-    Entity chair;
+    Entity& chair = ctx.createEntity();
     chair.loadModel("assets/chair_textured.obj", "assets/wood.jpg");
     
 	chair.renderable.setScale(20.0f, 20.0f, 20.0f);
     chair.renderable.setPos(20.f, 0.0f, -100.f);
     chair.renderable.setOrientation(0.f, .0f, .0f);
 
-    //Transformi ja renderable positisioon ei ole synkroonis
     chair.transform.setPosition(20.f, 0.0f, -100.f);
     chair.transform.setDimensions(25.f, 60.f, 25.f);
     chair.transform.setOrientation(0.f, .0f, .0f);
     chair.enableWireframe();
-    chair.enableCollisions();
+    //chair.enableCollisions();
 
 
+    /*
     Entity plane;
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(plane);
 	plane.transform.setDimensions(500.0f, 500.0f, 500.0f);
 	plane.transform.setPosition(0.0f, 0.0f, .0f);
     plane.transform.setOrientation(0.f, .0f, .0f);
+    */
 
-    Player test_player(view_proj, default_shader, this->camera);
+    Player test_player(view_proj, default_shader, this->camera, this->ctx);
     test_player.game_ent.transform.setDimensions(20.f, 20.f, 20.f);
     test_player.game_ent.renderable.setScale(20.f, 20.f, 20.f);
-    test_player.game_ent.enableCollisions();
+    //test_player.game_ent.enableCollisions();
     test_player.game_ent.enableWireframe();
 
 

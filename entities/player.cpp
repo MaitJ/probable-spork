@@ -1,15 +1,16 @@
 #include "player.hpp"
 #include "renderable_manager.hpp"
 #include "../events/event_handler.hpp"
+#include "../world/context.hpp"
 #include <glm/ext/matrix_transform.hpp>
 
 #define PLAYER_MODEL "assets/koksal.obj"
 #define PLAYER_TEXTURE "assets/koksal_baba.jpg"
 
 
-Player::Player(Camera& camera) : camera(camera), render_obj(true) {}
+Player::Player(Camera& camera, Context& ctx) : game_ent(ctx.createEntity()), camera(camera), render_obj(true) {}
 
-Player::Player(glm::mat4& view_proj, Shader* shader, Camera& camera) :  camera(camera), render_obj(true) {
+Player::Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx) :  game_ent(ctx.createEntity()), camera(camera), render_obj(true) {
     this->setupRenderable(view_proj, shader);
     EventHandler::registerSubscriber<Direction, EventType::MOVEMENT>(this, &Player::onMove);
 }
