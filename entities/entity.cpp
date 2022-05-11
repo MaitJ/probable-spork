@@ -4,7 +4,7 @@
 #include <functional>
 
 
-Entity::Entity(int entity_id, Context const& ctx) :   wireframe(this->transform, entity_id), entity_id{entity_id} , renderable(false), ctx(ctx) {
+Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), renderable(false), ctx(ctx) {
     this->entity_id = entity_id;
 }
 Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe(this->transform, old_ent.entity_id), renderable(old_ent.renderable), ctx(old_ent.ctx){
@@ -20,9 +20,12 @@ void Entity::loadModel(const std::string obj_file, const std::string texture_fil
     //this->transform.attachRenderable(&this->renderable);
 }
 
+//
+/* 
 void Entity::enableCollisions() {
     CollisionManager::addCollidable(*this);
 }
+*/
 
 bool Entity::isVisible() {
     return this->is_visible;

@@ -2,6 +2,7 @@
 #define CONTEXT_H
 
 #include <vector>
+#include <memory>
 
 class Entity;
 #include "../entities/entity.hpp"
@@ -12,12 +13,17 @@ struct Player;
 class Context {
     static int ent_counter;
     static int getNewEntId();
-    std::vector<Entity> world_ents;
+    //If there is a need for static objects without collisions
+    //then make separate container for those
+    std::vector<std::shared_ptr<Entity>> world_ents;
 
 public:
     Context();
-    Entity& createEntity();
-    Entity& getEntity(int entity_id);
+    //These can be weak pointers because, there will not be a case
+    //where entities should be destroyed before the context
+    std::weak_ptr<Entity> createEntity();
+    std::weak_ptr<Entity> getEntity(int entity_id);
+    std::vector<std::shared_ptr<Entity>> const& getWorldEnts() const;    
 };
 
 #endif

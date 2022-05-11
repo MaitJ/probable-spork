@@ -6,6 +6,7 @@
 #include "../components/transform.hpp"
 #include "entity.hpp"
 #include "camera.hpp"
+#include <memory>
 
 class Context;
 
@@ -15,8 +16,9 @@ struct Player {
     Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx);
     bool isVisible();
     void onMove(Direction dir);
+
     
-    Entity& game_ent;
+    std::shared_ptr<Entity> game_ent;
     Camera& camera;
 
 private:
@@ -25,6 +27,7 @@ private:
     RenderableObject render_obj;
     void setupRenderable(glm::mat4& view_proj, Shader* shader);
 
+    void handleCollisions(glm::vec3 const& camera_front, bool in_positive_dir);
 };
 
 #endif

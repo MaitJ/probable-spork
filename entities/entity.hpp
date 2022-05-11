@@ -27,7 +27,10 @@ public:
     Context const& ctx;
 
     void enableWireframe();
+
+    /*Excluded because there's a better way
     void enableCollisions();
+     */
     void loadModel(const std::string obj_file, const std::string texture_file);
     RenderableObject& getRenderableObject();
     bool isVisible();

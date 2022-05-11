@@ -33,19 +33,20 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
 
 
 void Engine::start() {
+    using namespace std;
     assert(this->default_shader != nullptr);
 
-    Entity& chair = ctx.createEntity();
-    chair.loadModel("assets/chair_textured.obj", "assets/wood.jpg");
+    shared_ptr<Entity> chair = ctx.createEntity().lock();
+    chair->loadModel("assets/chair_textured.obj", "assets/wood.jpg");
     
-	chair.renderable.setScale(20.0f, 20.0f, 20.0f);
-    chair.renderable.setPos(20.f, 0.0f, -100.f);
-    chair.renderable.setOrientation(0.f, .0f, .0f);
+	chair->renderable.setScale(20.0f, 20.0f, 20.0f);
+    chair->renderable.setPos(20.f, 0.0f, -100.f);
+    chair->renderable.setOrientation(0.f, .0f, .0f);
 
-    chair.transform.setPosition(20.f, 0.0f, -100.f);
-    chair.transform.setDimensions(25.f, 60.f, 25.f);
-    chair.transform.setOrientation(0.f, .0f, .0f);
-    chair.enableWireframe();
+    chair->transform.setPosition(20.f, 0.0f, -100.f);
+    chair->transform.setDimensions(25.f, 60.f, 25.f);
+    chair->transform.setOrientation(0.f, .0f, .0f);
+    chair->enableWireframe();
     //chair.enableCollisions();
 
 
@@ -58,10 +59,10 @@ void Engine::start() {
     */
 
     Player test_player(view_proj, default_shader, this->camera, this->ctx);
-    test_player.game_ent.transform.setDimensions(20.f, 20.f, 20.f);
-    test_player.game_ent.renderable.setScale(20.f, 20.f, 20.f);
+    test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
+    test_player.game_ent->renderable.setScale(20.f, 20.f, 20.f);
     //test_player.game_ent.enableCollisions();
-    test_player.game_ent.enableWireframe();
+    test_player.game_ent->enableWireframe();
 
 
 
@@ -73,7 +74,6 @@ void Engine::start() {
         //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderableManager::renderObjects();
-        CollisionManager::checkCollisions();
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();
