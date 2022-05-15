@@ -30,6 +30,11 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
     Wireframe::initWireframeModel();
 }
 
+void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end) {
+    std::chrono::duration<double> time_span(end - begin);
+    auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(time_span);
+    this->dt.set(seconds.count());
+}
 
 
 void Engine::start() {
@@ -68,6 +73,10 @@ void Engine::start() {
 
 	while (!glfwWindowShouldClose(game_window.window))
     {
+        auto f_start = std::chrono::high_resolution_clock::now();
+        EventHandler::pollEvents();
+        test_player.updateVelocity(this->dt);
+
         this->camera.recalcMatrix();
         this->view_proj = this->persp_proj * camera.getCameraMat();
 
@@ -77,8 +86,8 @@ void Engine::start() {
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();
-        EventHandler::pollEvents();
-	}
+        this->updateDt(f_start, std::chrono::high_resolution_clock::now());
+    }
 
     this->close();
 

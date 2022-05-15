@@ -12,7 +12,8 @@ set(ENTITY_FILES entities/renderable_object.cpp entities/world_light.cpp
     entities/entity.cpp entities/wireframe.cpp)
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
-set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp)
+set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp
+    utilities/deltatime.cpp)
 set(WORLD_FILES world/context.cpp)
 set(COMPONENT_FILES components/transform.cpp)
 set(COLLISION_FILES collisions/collision_manager.cpp)

@@ -9,6 +9,8 @@
 #include "entities/player.hpp"
 #include "entities/renderable_manager.hpp"
 #include "world/context.hpp"
+#include "deltatime.hpp"
+#include <chrono>
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"
@@ -22,6 +24,7 @@ class Engine {
     Camera camera;
     WorldLight world_light;
     Context ctx;
+    DeltaTime dt;
 
     glm::mat4 createPerspectiveMatrix(float window_width, float window_height, float fov);
 
@@ -29,6 +32,7 @@ public:
     Engine(float window_width, float window_height, float fov);
     void start();
     void close();
+    void updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end);
 };
 
 #endif
