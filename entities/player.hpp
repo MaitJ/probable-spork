@@ -32,6 +32,8 @@ private:
     void handleCollisions();
     void performMovement(float& player_axis, float& camera_axis, float const& camera_front_axis);
 
+    void limitMovement();
+
 
 
     glm::vec3 velocity = glm::vec3(0.f);

@@ -9,7 +9,7 @@ class RenderableObject;
 class Transform {
 
     RenderableObject* renderable = nullptr;
-    glm::vec3 position = glm::vec3(1.f);
+    glm::vec3 position = glm::vec3(0.f);
     glm::vec3 orientation = glm::vec3(1.f);
     glm::vec3 dimensions = glm::vec3(1.f);
 

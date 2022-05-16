@@ -86,19 +86,42 @@ void Player::getMovementInputs() {
     mov_dir.y = 0.f;
 
     if (Keyboard::key_states[GLFW_KEY_W]) {
-        this->acceleration += mov_dir * this->speed;
+        this->acceleration += mov_dir;
     }
     if (Keyboard::key_states[GLFW_KEY_S]) {
-        this->acceleration += -mov_dir * this->speed;
+        this->acceleration += -mov_dir;
     }
     if (Keyboard::key_states[GLFW_KEY_A]) {
-        this->acceleration += -mov_dir_cross * this->speed;
+        this->acceleration += -mov_dir_cross;
     }
     if (Keyboard::key_states[GLFW_KEY_D]) {
-        this->acceleration += mov_dir_cross * this->speed;
+        this->acceleration += mov_dir_cross;
     }
-    //this->acceleration = glm::normalize(this->acceleration);
+
+    float len_of_dir = sqrt(
+            (this->acceleration.x * this->acceleration.x) +
+            (this->acceleration.y * this->acceleration.y) +
+            (this->acceleration.z * this->acceleration.z));
+
+    if (len_of_dir > 1.f)
+        this->acceleration = glm::normalize(this->acceleration);
+
+    this->acceleration *= this->speed;
+
+
 }
+
+void Player::limitMovement() {
+
+    if (abs(this->velocity.x) < 0.05f)
+        this->velocity.x = 0.f;
+    if (abs(this->velocity.y) < 0.05f)
+        this->velocity.y = 0.f;
+    if (abs(this->velocity.z) < 0.05f)
+        this->velocity.z = 0.f;
+
+}
+
 void Player::updateMovement(DeltaTime const& dt) {
 
     this->getMovementInputs();
@@ -107,6 +130,7 @@ void Player::updateMovement(DeltaTime const& dt) {
     this->velocity *= this->friction;
 
     //Set velocity to 0 if it's near 0 and limit the upper bound
+    limitMovement();
 
     this->handleCollisions();
     //Check in which direction is the movement
