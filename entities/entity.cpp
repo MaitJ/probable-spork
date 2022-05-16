@@ -42,6 +42,7 @@ namespace PrimitiveObjects {
 	template <>
 	void loadPrimitive<PLANE>(Entity& ent) {
         RenderableObject& ent_renderable = ent.getRenderableObject();
+        ent_renderable.genBuffers();
         ent_renderable.glBind();
 
         ent_renderable.view_proj = RenderableManager::getViewProjMat();

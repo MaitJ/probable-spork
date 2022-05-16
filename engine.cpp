@@ -55,13 +55,11 @@ void Engine::start() {
     //chair.enableCollisions();
 
 
-    /*
-    Entity plane;
-    PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(plane);
-	plane.transform.setDimensions(500.0f, 500.0f, 500.0f);
-	plane.transform.setPosition(0.0f, 0.0f, .0f);
-    plane.transform.setOrientation(0.f, .0f, .0f);
-    */
+    shared_ptr<Entity> plane = ctx.createStaticEntity().lock();
+    PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
+	plane->transform.setDimensions(500.0f, 500.0f, 500.0f);
+	plane->transform.setPosition(0.0f, 0.0f, .0f);
+    plane->transform.setOrientation(0.f, .0f, .0f);
 
     Player test_player(view_proj, default_shader, this->camera, this->ctx);
     test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
@@ -75,7 +73,7 @@ void Engine::start() {
     {
         auto f_start = std::chrono::high_resolution_clock::now();
         EventHandler::pollEvents();
-        test_player.updateVelocity(this->dt);
+        test_player.updateMovement(this->dt);
 
         this->camera.recalcMatrix();
         this->view_proj = this->persp_proj * camera.getCameraMat();

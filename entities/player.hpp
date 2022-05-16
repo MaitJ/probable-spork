@@ -16,7 +16,6 @@ struct Player {
     Player(Camera& camera, Context& ctx);
     Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx);
     bool isVisible();
-    void onMove(Direction dir);
 
     void updateMovement(DeltaTime const& dt);
     
@@ -29,12 +28,14 @@ private:
     RenderableObject render_obj;
     void setupRenderable(glm::mat4& view_proj, Shader* shader);
 
-    void handleCollisions(glm::vec3 const& camera_front, bool in_positive_dir);
-    void performMovement(float& player_axis, float& camera_axis, float const& camera_front_axis, bool in_positive_dir);
+    void getMovementInputs();
+    void handleCollisions();
+    void performMovement(float& player_axis, float& camera_axis, float const& camera_front_axis);
 
 
 
     glm::vec3 velocity = glm::vec3(0.f);
+    glm::vec3 acceleration = glm::vec3(0.f);
 
     void setVelocity(float const x, float const y, float const z);
     void setVelocity(glm::vec3 const velocity);
@@ -42,8 +43,8 @@ private:
     glm::vec3& getVelocity();
 
 
-    float friction = .2f;
-    float speed = 2.f;
+    float friction = .8f;
+    float speed = 25.f;
 
 
 };
