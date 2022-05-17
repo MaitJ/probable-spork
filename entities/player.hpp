@@ -11,6 +11,12 @@
 
 class Context;
 
+enum CollisionAxis {
+    X = 0,
+    Y = 1,
+    Z = 2
+};
+
 struct Player {
 
     Player(Camera& camera, Context& ctx);
@@ -21,6 +27,8 @@ struct Player {
     
     std::shared_ptr<Entity> game_ent;
     Camera& camera;
+
+    void resetCameraPos();
 
 private:
     bool is_visible = false;
@@ -33,6 +41,7 @@ private:
     void performMovement(float& player_axis, float& camera_axis, float const& camera_front_axis);
 
     void limitMovement();
+    void resolveCollision(CollisionAxis collision_axis);
 
 
 
@@ -44,6 +53,7 @@ private:
 
     glm::vec3& getVelocity();
 
+    float head_offset = 20.f;
 
     float friction = .8f;
     float speed = 25.f;

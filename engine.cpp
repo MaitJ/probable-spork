@@ -44,7 +44,7 @@ void Engine::start() {
     shared_ptr<Entity> chair = ctx.createEntity().lock();
     chair->loadModel("assets/chair_textured.obj", "assets/wood.jpg");
     
-	chair->renderable.setScale(20.0f, 20.0f, 20.0f);
+	chair->renderable.setScale(10.0f, 10.0f, 10.0f);
     chair->renderable.setPos(20.f, 0.0f, -100.f);
     chair->renderable.setOrientation(0.f, .0f, .0f);
 
@@ -55,17 +55,21 @@ void Engine::start() {
     //chair.enableCollisions();
 
 
-    shared_ptr<Entity> plane = ctx.createStaticEntity().lock();
+    shared_ptr<Entity> plane = ctx.createEntity().lock();
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
-	plane->transform.setDimensions(500.0f, 500.0f, 500.0f);
+	plane->transform.setDimensions(500.0f, 1.0f, 500.0f);
 	plane->transform.setPosition(0.0f, 0.0f, .0f);
     plane->transform.setOrientation(0.f, .0f, .0f);
+    plane->enableWireframe();
 
     Player test_player(view_proj, default_shader, this->camera, this->ctx);
+    test_player.game_ent->transform.setPosition(0.f, 20.f, 0.f);
     test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
+    test_player.game_ent->transform.setOrientation(0.f, 0.f, 0.f);
     test_player.game_ent->renderable.setScale(20.f, 20.f, 20.f);
     //test_player.game_ent.enableCollisions();
     test_player.game_ent->enableWireframe();
+    test_player.resetCameraPos();
 
 
 

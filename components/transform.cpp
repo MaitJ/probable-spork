@@ -57,27 +57,27 @@ glm::vec3& Transform::getDimensions() {
 glm::vec3 Transform::left() const {
     glm::vec3 left(.0f);
 
-    left.x = this->position.x - this->dimensions.x;
-    left.y = this->position.y - this->dimensions.y;
-    left.z = this->position.z - this->dimensions.z;
+    left.x = this->position.x - (this->dimensions.x / 2.0f);
+    left.y = this->position.y - (this->dimensions.y / 2.0f);
+    left.z = this->position.z - (this->dimensions.z / 2.0f);
     return left;
 }
 glm::vec3 Transform::right() const {
     glm::vec3 right(.0f);
 
-    right.x = this->position.x + this->dimensions.x;
-    right.y = this->position.y + this->dimensions.y;
-    right.z = this->position.z + this->dimensions.z;
+    right.x = this->position.x + (this->dimensions.x / 2.0f);
+    right.y = this->position.y + (this->dimensions.y / 2.0f);
+    right.z = this->position.z + (this->dimensions.z / 2.0f);
     return right;
 }
 
 void Transform::setLeft(glm::vec3 left) {
-    this->position.x = left.x + this->dimensions.x;
-    this->position.y = left.y + this->dimensions.y;
-    this->position.z = left.z + this->dimensions.z;
+    this->position.x = left.x + (this->dimensions.x / 2.0f);
+    this->position.y = left.y + (this->dimensions.y / 2.0f);
+    this->position.z = left.z + (this->dimensions.z / 2.0f);
 }
 void Transform::setRight(glm::vec3 right) {
-    this->position.x = right.x - this->dimensions.x;
-    this->position.y = right.y - this->dimensions.y;
-    this->position.z = right.z - this->dimensions.z;
+    this->position.x = right.x - (this->dimensions.x / 2.0f);
+    this->position.y = right.y - (this->dimensions.y / 2.0f);
+    this->position.z = right.z - (this->dimensions.z / 2.0f);
 }

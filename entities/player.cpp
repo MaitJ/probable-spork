@@ -32,48 +32,51 @@ void Player::performMovement(float& player_axis, float& camera_axis, float const
     camera_axis += camera_front_axis;
 }
 
-void Player::handleCollisions() {
+void Player::resolveCollision(CollisionAxis collision_axis) {
     glm::vec3& player_pos = this->game_ent->transform.getPosition();
     glm::vec3& player_dim = this->game_ent->transform.getDimensions();
     glm::vec3& camera_pos = camera.getCameraPos();
 
-    performMovement(player_pos.z, camera_pos.z, this->velocity.z);
 
-    //Check for z axis collisions
     for (auto& collidable: CollisionManager::getCollidables(*this->game_ent, this->game_ent->ctx)) {
         
-        if (this->velocity.z > 0.0f) {
+        //velocity[collision_axis] works because, vec3 is array [x, y, z]
+        if ((collision_axis == CollisionAxis::Y ? 
+                -this->velocity[collision_axis] : 
+                this->velocity[collision_axis]) > 0.0f) {
             //Need to add player dimension because the position
-            //is centered in world space
+            //is in players center
             //Set players right to collidables left
-            player_pos.z = collidable->transform.left().z - player_dim.z;
-            camera_pos.z = collidable->transform.left().z - player_dim.z;
-            //this->velocity = glm::vec3(0.f);
+            player_pos[collision_axis] = collidable->transform.left()[collision_axis] - (player_dim[collision_axis] / 2.0f);
+            camera_pos[collision_axis] = collidable->transform.left()[collision_axis] - (player_dim[collision_axis] / 2.0f);
+
+            if (collision_axis == CollisionAxis::Y) {
+                camera_pos[collision_axis] += this->head_offset;
+            }
             continue;
         }
 
         //Set players left to collidables right
-        camera_pos.z = collidable->transform.right().z + player_dim.z;
-        player_pos.z = collidable->transform.right().z + player_dim.z;
-        //this->velocity = glm::vec3(0.f);
+        camera_pos[collision_axis] = collidable->transform.right()[collision_axis] + (player_dim[collision_axis] / 2.0f);
+        player_pos[collision_axis] = collidable->transform.right()[collision_axis] + (player_dim[collision_axis] / 2.0f);
+        if (collision_axis == CollisionAxis::Y) {
+            camera_pos[collision_axis] += this->head_offset;
+        }
     }
+}
+
+void Player::handleCollisions() {
+    glm::vec3& player_pos = this->game_ent->transform.getPosition();
+    glm::vec3& camera_pos = camera.getCameraPos();
+
+    performMovement(player_pos.z, camera_pos.z, this->velocity.z);
+    resolveCollision(CollisionAxis::Z);
 
     performMovement(player_pos.x, camera_pos.x, this->velocity.x);
+    resolveCollision(CollisionAxis::X);
 
-    //Check for x axis collisions
-    for (auto& collidable: CollisionManager::getCollidables(*this->game_ent, this->game_ent->ctx)) {
-        
-        if (this->velocity.x > 0.0f){
-            player_pos.x = collidable->transform.left().x - player_dim.x;
-            camera_pos.x = collidable->transform.left().x - player_dim.x;
-            //this->velocity = glm::vec3(0.f);
-            continue;
-        }
-
-        player_pos.x = collidable->transform.right().x + player_dim.x;
-        camera_pos.x = collidable->transform.right().x + player_dim.x;
-        //this->velocity = glm::vec3(0.f);
-    }
+    performMovement(player_pos.y, camera_pos.y, -this->velocity.y);
+    resolveCollision(CollisionAxis::Y);
 
 }
 
@@ -106,18 +109,20 @@ void Player::getMovementInputs() {
     if (len_of_dir > 1.f)
         this->acceleration = glm::normalize(this->acceleration);
 
-    this->acceleration *= this->speed;
+    //Apply gravity
+    this->acceleration.y += game_ent->ctx.gravity;
 
+    this->acceleration *= this->speed;
 
 }
 
 void Player::limitMovement() {
 
-    if (abs(this->velocity.x) < 0.05f)
+    if (abs(this->velocity.x) < 0.005f)
         this->velocity.x = 0.f;
-    if (abs(this->velocity.y) < 0.05f)
+    if (abs(this->velocity.y) < 0.005f)
         this->velocity.y = 0.f;
-    if (abs(this->velocity.z) < 0.05f)
+    if (abs(this->velocity.z) < 0.005f)
         this->velocity.z = 0.f;
 
 }
@@ -126,16 +131,26 @@ void Player::updateMovement(DeltaTime const& dt) {
 
     this->getMovementInputs();
 
+
     this->velocity += this->acceleration * (float)dt.get();
     this->velocity *= this->friction;
 
-    //Set velocity to 0 if it's near 0 and limit the upper bound
+    fmt::print("Velocity: ({0:.4f},{1:.4f},{2:.4f})\n", this->velocity.x, this->velocity.y, this->velocity.z);
+
+    //Set velocity to 0 if it's near 0 
     limitMovement();
 
     this->handleCollisions();
-    //Check in which direction is the movement
 
     this->acceleration = glm::vec3(0.f, 0.f, 0.f);
+}
+
+void Player::resetCameraPos() {
+    glm::vec3& camera_pos = this->camera.getCameraPos();
+    glm::vec3 const& player_pos = this->game_ent->transform.getPosition();
+    camera_pos.x = player_pos.x;
+    camera_pos.y = player_pos.y + this->head_offset;
+    camera_pos.z = player_pos.z;
 }
 
 void Player::setVelocity(float const x, float const y, float const z) {

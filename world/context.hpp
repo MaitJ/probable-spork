@@ -23,7 +23,6 @@ class Context {
     //If there is a need for static objects without collisions
     //then make separate container for those
     std::vector<std::shared_ptr<Entity>> world_ents;
-
     std::vector<std::shared_ptr<Entity>> static_ents;
 
 public:
@@ -34,6 +33,9 @@ public:
     std::weak_ptr<Entity> getEntity(int entity_id);
     std::vector<std::shared_ptr<Entity>> const& getWorldEnts() const;    
     std::weak_ptr<Entity> createStaticEntity();
+
+    //Variables
+    float gravity = 3.f;
 };
 
 #endif

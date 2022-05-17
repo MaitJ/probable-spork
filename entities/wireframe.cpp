@@ -18,36 +18,36 @@ void Wireframe::initWireframeModel() {
     wf_renderable.view_proj = RenderableManager::getViewProjMat();
     float wf_vertices[] = {
         //Front triangles
-        -1.f, .0f, 1.f,
-        1.f, .0f, 1.f,
+        -1.f, -1.0f, 1.f,
+        1.f, -1.0f, 1.f,
         -1.f, 1.0f, 1.f,
-        1.f, .0f, 1.f,
+        1.f, -1.0f, 1.f,
         1.f, 1.0f, 1.f,
         -1.f, 1.0f, 1.f,
 
         //Back triangles
-        -1.f, .0f, -1.f,
-        1.f, .0f, -1.f,
+        -1.f, -1.0f, -1.f,
+        1.f, -1.0f, -1.f,
         -1.f, 1.0f, -1.f,
-        1.f, .0f, -1.f,
+        1.f, -1.0f, -1.f,
         1.f, 1.0f, -1.f,
         -1.f, 1.0f, -1.f,
 
         //Left side
-        -1.f, .0f, 1.f,
-        -1.f, .0f, -1.f,
+        -1.f, -1.0f, 1.f,
+        -1.f, -1.0f, -1.f,
         -1.f, 1.0f, 1.f,
 
-        -1.f, .0f, -1.f,
+        -1.f, -1.0f, -1.f,
         -1.f, 1.0f, -1.f,
         -1.f, 1.0f, 1.f,
 
         //Right side
-        1.f, .0f, 1.f,
-        1.f, .0f, -1.f,
+        1.f, -1.0f, 1.f,
+        1.f, -1.0f, -1.f,
         1.f, 1.0f, 1.f,
 
-        1.f, .0f, -1.f,
+        1.f, -1.0f, -1.f,
         1.f, 1.0f, -1.f,
         1.f, 1.0f, 1.f,
     };
@@ -71,7 +71,7 @@ void Wireframe::render() const {
     //Calli wf_renderable this->transformi asjadega ja renderda wf
     wf_renderable.setPos(this->ent_transform.getPosition());
     wf_renderable.setOrientation(this->ent_transform.getOrientation());
-    wf_renderable.setScale(this->ent_transform.getDimensions());
+    wf_renderable.setScale((this->ent_transform.getDimensions() / 2.f));
     //RenderableManager::addWireframe(*this);
     wf_renderable.render();
 }
