@@ -33,6 +33,7 @@ public:
     void genBuffers();
 
     void loadModel(std::string obj_file, std::string tex_file);
+    void loadGLTFModel(std::string file_name);
     void calcModel();
 
 	Shader& shader;

@@ -71,6 +71,17 @@ void Engine::start() {
     test_player.game_ent->enableWireframe();
     test_player.resetCameraPos();
 
+    shared_ptr<Entity> jonesy = ctx.createEntity().lock();
+    jonesy->renderable.loadGLTFModel("assets/Jonesy_2.gltf");
+    jonesy->renderable.setScale(1.f, 1.f, 1.f);
+    jonesy->renderable.setPos(-25.0f, 20.f, -50.f);
+
+    jonesy->transform.setPosition(-25.f, 0.f, -50.f);
+    jonesy->transform.setDimensions(50.f, 50.f, 50.f);
+    jonesy->transform.setOrientation(0.f, .0f, .0f);
+    jonesy->enableWireframe();
+
+
 
 
 	while (!glfwWindowShouldClose(game_window.window))

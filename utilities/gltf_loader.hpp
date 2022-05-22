@@ -9,6 +9,8 @@ public:
 
     std::vector<float> getMeshVertexData();
 
+    int num_of_tris;
+
 private:
     tinygltf::Model model;
 
@@ -16,7 +18,7 @@ private:
     std::vector<ComponentType> getMeshIndices(tinygltf::Accessor const& indice_accessor);
 
     template <typename T>
-    void getAttribData(int accessor_indice, std::vector<T>& o_vec);
+    void getAttribData(int accessor_indice, int num_of_components, std::vector<T>& o_vec);
 
     std::vector<glm::vec3> getPositionData();
 

@@ -37,21 +37,21 @@ std::vector<ComponentType> GLTFLoader::getMeshIndices(tinygltf::Accessor const& 
 }
 
 template <typename T>
-void GLTFLoader::getAttribData(int accessor_indice, std::vector<T>& o_vec) {
+void GLTFLoader::getAttribData(int accessor_indice, int num_of_components,  std::vector<T>& o_vec) {
     using namespace tinygltf;
     Accessor& accessor = this->model.accessors[accessor_indice];
     BufferView& bf_view = this->model.bufferViews[accessor.bufferView];
     std::vector<unsigned char>& p_buffer_data = this->model.buffers[bf_view.buffer].data;
 
-    o_vec.reserve(accessor.count);
+    o_vec.reserve(accessor.count * num_of_components);
 
     unsigned char* cur_byte = &p_buffer_data[bf_view.byteOffset];
 
-    for (int i = 0; i < accessor.count; ++i) {
+    for (int i = 0; i < (accessor.count * num_of_components); ++i) {
         T value = *reinterpret_cast<T*>(cur_byte);
         o_vec.insert(o_vec.begin() + i, value);
 
-        cur_byte += sizeof(float) + bf_view.byteStride;
+        cur_byte += sizeof(T) + bf_view.byteStride;
     }
 }
 
@@ -73,13 +73,13 @@ std::vector<float> GLTFLoader::getMeshVertexData() {
             for (auto& [key, value] : primitive.attributes) {
 
                 if (key == "POSITION")
-                    getAttribData<float>(value, pos);
+                    getAttribData<float>(value, 3, pos);
 
                 if (key == "NORMAL")
-                    getAttribData<float>(value, normals);
+                    getAttribData<float>(value, 3, normals);
 
                 if (key == "TEXCOORD_0")
-                    getAttribData<float>(value, tex);
+                    getAttribData<float>(value, 2, tex);
 
             }
 
@@ -88,13 +88,16 @@ std::vector<float> GLTFLoader::getMeshVertexData() {
             switch (indice_accessor.componentType) {
                 case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
                     std::vector<unsigned short> mesh_indices = getMeshIndices<unsigned short>(indice_accessor);
-                    vertex_data.reserve(mesh_indices.size() * 12);
+                    vertex_data.reserve(mesh_indices.size() * 8);
+
+                    this->num_of_tris = mesh_indices.size() * 8;
 
                     for (int i = 0; i < mesh_indices.size(); ++i) {
-                        vertex_data.insert(vertex_data.end(), {pos[i], pos[i + 1], pos[i + 2]});
-                        vertex_data.insert(vertex_data.end(), {tex[i], tex[i + 1]});
-                        vertex_data.insert(vertex_data.end(), {normals[i], normals[i + 1], normals[i + 2]});
+                        vertex_data.insert(vertex_data.end(), {pos[mesh_indices[i]], pos[mesh_indices[i] + 1], pos[mesh_indices[i] + 2]});
+                        vertex_data.insert(vertex_data.end(), {tex[mesh_indices[i]], tex[mesh_indices[i] + 1]});
+                        vertex_data.insert(vertex_data.end(), {normals[mesh_indices[i]], normals[mesh_indices[i] + 1], normals[mesh_indices[i] + 2]});
                     }
+
 
                 break;
 

@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <fmt/core.h>
+#include "../utilities/gltf_loader.hpp"
 #include <iostream>
 
 //#define STB_IMAGE_IMPLEMENTATION
@@ -79,6 +80,50 @@ RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::g
     delete obj;
 }
 
+void RenderableObject::loadGLTFModel(std::string file_name) {
+    bool loaded;
+    GLTFLoader model("assets/Jonesy_2.gltf", loaded);
+
+    std::vector<float> vertex_data = model.getMeshVertexData();
+
+	glGenVertexArrays(1, &this->vao);
+	glGenBuffers(1, &this->vbo);
+	glGenBuffers(1, &this->ebo);
+	glBindVertexArray(this->vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+    glGenTextures(1, &this->to);
+    glBindTexture(GL_TEXTURE_2D, this->to);
+
+    //First have to bind texture object
+    //If image isn't big enough
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+    //Setup a mipmap
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    
+
+    this->total_vertices = model.num_of_tris;
+
+    RenderableManager::addRenderable(this);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
 void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
 

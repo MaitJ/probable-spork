@@ -21,9 +21,6 @@ int main(void) {
 
     std::vector<float> vertex_data = jonesy.getMeshVertexData();
 
-    for (int i = 0; i < vertex_data.size(); ++i) {
-        fmt::print("{0}\n", vertex_data[i]);
-    }
 
     RenderableManager::initPerspectiveMatrix(WINDOW_WIDTH, WINDOW_HEIGHT, FOV);
     Engine engine(1920, 1080, 90);
