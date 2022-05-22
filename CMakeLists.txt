@@ -13,12 +13,12 @@ set(ENTITY_FILES entities/renderable_object.cpp entities/world_light.cpp
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp
-    utilities/deltatime.cpp)
+    utilities/deltatime.cpp utilities/gltf_loader.cpp)
 set(WORLD_FILES world/context.cpp)
 set(COMPONENT_FILES components/transform.cpp)
 set(COLLISION_FILES collisions/collision_manager.cpp)
 
-set(INCLUDE_PATHS utilities entities events components collisions world ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_PATHS utilities entities events components collisions world deps ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_PATHS})

@@ -7,7 +7,7 @@
 #include <fmt/core.h>
 #include <iostream>
 
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "../deps/stb_image.h"
 
 RenderableObject::RenderableObject(bool gen_buffers) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
@@ -56,6 +56,7 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
     //Setup a mipmap
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fmt::print("Minfilter: {0}\n", GL_LINEAR_MIPMAP_LINEAR);
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);

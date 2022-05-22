@@ -135,8 +135,6 @@ void Player::updateMovement(DeltaTime const& dt) {
     this->velocity += this->acceleration * (float)dt.get();
     this->velocity *= this->friction;
 
-    fmt::print("Velocity: ({0:.4f},{1:.4f},{2:.4f})\n", this->velocity.x, this->velocity.y, this->velocity.z);
-
     //Set velocity to 0 if it's near 0 
     limitMovement();
 
