@@ -3,4 +3,5 @@ out/
 deps/
 .vs/
 .cache/
-
+assets/
+.idea/

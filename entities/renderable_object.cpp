@@ -57,7 +57,6 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
     //Setup a mipmap
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    fmt::print("Minfilter: {0}\n", GL_LINEAR_MIPMAP_LINEAR);
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
@@ -80,9 +79,9 @@ RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::g
     delete obj;
 }
 
-void RenderableObject::loadGLTFModel(std::string file_name) {
+void RenderableObject::loadGLTFModel(const std::string& file_name) {
     bool loaded;
-    GLTFLoader model("assets/Jonesy_2.gltf", loaded);
+    GLTFLoader model(file_name, loaded);
 
     std::vector<float> vertex_data = model.getMeshVertexData();
 
@@ -125,7 +124,7 @@ void RenderableObject::loadGLTFModel(std::string file_name) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
-    Utilities::Obj* obj = new Utilities::Obj(obj_file);
+    auto* obj = new Utilities::Obj(obj_file);
 
     //Throws error because this call doesn't include shader
     this->baseObjSetup(obj);
@@ -200,7 +199,7 @@ void RenderableObject::setOrientation(float x, float y, float z) {
     this->orientation = x_rot * y_rot * z_rot;
 }
 
-void RenderableObject::glBind() {
+void RenderableObject::glBind() const {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glBindTexture(GL_TEXTURE_2D, this->to);

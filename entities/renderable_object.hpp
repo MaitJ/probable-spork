@@ -29,11 +29,11 @@ public:
 	void setScale(glm::vec3 const& scale);
 	void setPos(glm::vec3 const& pos);
     void setOrientation(glm::vec3 const& orientation);
-	void glBind();
+	void glBind() const;
     void genBuffers();
 
     void loadModel(std::string obj_file, std::string tex_file);
-    void loadGLTFModel(std::string file_name);
+    void loadGLTFModel(const std::string& file_name);
     void calcModel();
 
 	Shader& shader;

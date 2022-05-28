@@ -1,7 +1,9 @@
 #include "gltf_loader.hpp"
+#include "glm/detail/type_quat.hpp"
+#include "glm/gtx/quaternion.hpp"
 #include <fmt/core.h>
 
-GLTFLoader::GLTFLoader(std::string file_name, bool& loaded) {
+GLTFLoader::GLTFLoader(std::string const& file_name, bool& loaded) : num_of_tris{0} {
     tinygltf::TinyGLTF loader;
     std::string warn;
     std::string err;
@@ -37,13 +39,11 @@ std::vector<ComponentType> GLTFLoader::getMeshIndices(tinygltf::Accessor const& 
 }
 
 template <typename T>
-void GLTFLoader::getAttribData(int accessor_indice, int num_of_components,  std::vector<T>& o_vec) {
+void GLTFLoader::getAttribData(int accessor_index, int num_of_components, std::vector<T>& o_vec) {
     using namespace tinygltf;
-    Accessor& accessor = this->model.accessors[accessor_indice];
+    Accessor& accessor = this->model.accessors[accessor_index];
     BufferView& bf_view = this->model.bufferViews[accessor.bufferView];
     std::vector<unsigned char>& p_buffer_data = this->model.buffers[bf_view.buffer].data;
-
-    o_vec.reserve(accessor.count * num_of_components);
 
     unsigned char* cur_byte = &p_buffer_data[bf_view.byteOffset];
 
@@ -60,42 +60,61 @@ std::vector<float> GLTFLoader::getMeshVertexData() {
     std::vector<tinygltf::Accessor>& accessors = this->model.accessors;
 
     std::vector<float> vertex_data;
-    
-    for (tinygltf::Mesh& mesh : this->model.meshes) {
+
+
+
+    for (tinygltf::Node& node : this->model.nodes) {
+
+        tinygltf::Mesh& mesh = this->model.meshes[node.mesh];
 
         for (tinygltf::Primitive& primitive : mesh.primitives) {
 
-            std::vector<float> pos;
-            std::vector<float> normals;
-            std::vector<float> tex;
-            
+            std::vector<glm::vec3> position_vertices;
+            std::vector<glm::vec3> normal_vertices;
+            std::vector<glm::vec2> tex_vertices;
+
 
             for (auto& [key, value] : primitive.attributes) {
 
-                if (key == "POSITION")
+                if (key == "POSITION") {
+                    std::vector<float> pos;
                     getAttribData<float>(value, 3, pos);
+                    groupVec3Floats(pos, position_vertices);
+                }
 
-                if (key == "NORMAL")
+
+                if (key == "NORMAL") {
+                    std::vector<float> normals;
                     getAttribData<float>(value, 3, normals);
 
-                if (key == "TEXCOORD_0")
+                    groupVec3Floats(normals, normal_vertices);
+                }
+
+
+                if (key == "TEXCOORD_0") {
+                    std::vector<float> tex;
                     getAttribData<float>(value, 2, tex);
 
+                    groupVec2Floats(tex, tex_vertices);
+                }
+
             }
+
+            //Apply node transformations
+            applyNodeTransformations(node, position_vertices);
 
             Accessor& indice_accessor = accessors[primitive.indices];
 
             switch (indice_accessor.componentType) {
                 case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
                     std::vector<unsigned short> mesh_indices = getMeshIndices<unsigned short>(indice_accessor);
-                    vertex_data.reserve(mesh_indices.size() * 8);
 
-                    this->num_of_tris = mesh_indices.size() * 8;
+                    this->num_of_tris += mesh_indices.size();
 
-                    for (int i = 0; i < mesh_indices.size(); ++i) {
-                        vertex_data.insert(vertex_data.end(), {pos[mesh_indices[i]], pos[mesh_indices[i] + 1], pos[mesh_indices[i] + 2]});
-                        vertex_data.insert(vertex_data.end(), {tex[mesh_indices[i]], tex[mesh_indices[i] + 1]});
-                        vertex_data.insert(vertex_data.end(), {normals[mesh_indices[i]], normals[mesh_indices[i] + 1], normals[mesh_indices[i] + 2]});
+                    for (unsigned short mesh_index : mesh_indices) {
+                        vertex_data.insert(vertex_data.end(), {position_vertices[mesh_index][0], position_vertices[mesh_index][1], position_vertices[mesh_index][2]});
+                        vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
+                        vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
                     }
 
 
@@ -109,4 +128,70 @@ std::vector<float> GLTFLoader::getMeshVertexData() {
     }
 
     return vertex_data;
+}
+
+void GLTFLoader::applyNodeTransformations(tinygltf::Node& node, std::vector<glm::vec3>& position_vertices) {
+    glm::vec3 t_translation(0.f);
+    glm::quat t_rotation;
+    glm::vec3 t_scale(1.f);
+
+    if (!node.scale.empty())
+        t_scale = nodeTransformToGLVec3F(node.scale);
+
+    if (!node.rotation.empty())
+        t_rotation = nodeQuatToGLQuat(node.rotation);
+
+    nodeTransformMesh(t_translation, t_rotation, t_scale, position_vertices);
+}
+
+glm::quat GLTFLoader::nodeQuatToGLQuat(std::vector<double> quaternion) {
+    return glm::inverse(glm::quat((float)quaternion[3], (float)quaternion[0], (float)quaternion[1], (float)quaternion[2]));
+}
+
+glm::vec3 GLTFLoader::nodeTransformToGLVec3F(std::vector<double> transform) {
+    return {(float)transform[0], (float)transform[1], (float)transform[2]};
+}
+
+//Because I can't insert vec4's into vertex_data beacuse of shader
+//here the translation property is useless
+void GLTFLoader::nodeTransformMesh(glm::vec3 translation,
+                               glm::quat rotation,
+                               glm::vec3 scale,
+                               std::vector<glm::vec3>& position_vertices) {
+
+    glm::mat4 scale_mat = glm::scale(glm::mat4(1.f), scale);
+    glm::mat4 translation_mat = glm::translate(glm::mat4(1.f), translation);
+    glm::mat4 rotation_mat = glm::toMat4(rotation);
+
+    glm::mat4 MVP = translation_mat * rotation_mat * scale_mat;
+
+    for (auto& pos : position_vertices) {
+        glm::vec4 result = glm::vec4(pos, 1.f) * MVP;
+        pos = result;
+    }
+
+
+}
+
+void GLTFLoader::groupVec3Floats(const std::vector<float> &floats, std::vector<glm::vec3>& o_vertices) {
+
+    for (int i = 0; i < floats.size();) {
+        glm::vec3 new_vector(.0f);
+        new_vector.x = floats[i++];
+        new_vector.y = floats[i++];
+        new_vector.z = floats[i++];
+        o_vertices.push_back(new_vector);
+    }
+
+}
+
+void GLTFLoader::groupVec2Floats(const std::vector<float> &floats, std::vector<glm::vec2> &o_vertices) {
+
+    int i = 0;
+    while (i < floats.size()) {
+        glm::vec2 new_vector(.0f);
+        new_vector.x = floats[i++];
+        new_vector.y = floats[i++];
+        o_vertices.push_back(new_vector);
+    }
 }

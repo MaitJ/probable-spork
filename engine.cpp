@@ -71,15 +71,16 @@ void Engine::start() {
     test_player.game_ent->enableWireframe();
     test_player.resetCameraPos();
 
-    shared_ptr<Entity> jonesy = ctx.createEntity().lock();
-    jonesy->renderable.loadGLTFModel("assets/Jonesy_2.gltf");
-    jonesy->renderable.setScale(1.f, 1.f, 1.f);
-    jonesy->renderable.setPos(-25.0f, 20.f, -50.f);
+    shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
+    chair_gltf->renderable.loadGLTFModel("assets/chair.gltf");
+    chair_gltf->renderable.setScale(10.f, 10.f, 10.f);
+    chair_gltf->renderable.setPos(-25.0f, 0.f, -50.f);
+    chair_gltf->renderable.setOrientation(0.f, .0f, .0f);
 
-    jonesy->transform.setPosition(-25.f, 0.f, -50.f);
-    jonesy->transform.setDimensions(50.f, 50.f, 50.f);
-    jonesy->transform.setOrientation(0.f, .0f, .0f);
-    jonesy->enableWireframe();
+    chair_gltf->transform.setPosition(-25.f, 0.f, -50.f);
+    chair_gltf->transform.setDimensions(50.f, 50.f, 50.f);
+    chair_gltf->transform.setOrientation(0.f, .0f, .0f);
+    chair_gltf->enableWireframe();
 
 
 
