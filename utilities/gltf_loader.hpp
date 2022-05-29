@@ -3,13 +3,23 @@
 
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
+
+struct Mesh {
+    std::vector<float> vertex_data;
+    tinygltf::Material material;
+    tinygltf::Sampler sampler;
+    tinygltf::Image image;
+    unsigned int vertices;
+};
+
 class GLTFLoader {
 public:
     GLTFLoader(std::string const& file_name, bool& loaded);
 
-    std::vector<float> getMeshVertexData();
+    std::vector<Mesh> getMeshes();
+    void getMeshData(tinygltf::Node const& node, Mesh& t_mesh);
 
-    size_t num_of_tris;
+    size_t indices;
 
 private:
     tinygltf::Model model;
@@ -25,12 +35,12 @@ private:
 
     glm::quat nodeQuatToGLQuat(std::vector<double> quaternion);
     void nodeTransformMesh(glm::vec3 translation, glm::quat rotation, glm::vec3 scale,
-                           std::vector<glm::vec3> &position_vertices);
+                           std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
 
 
     glm::vec3 nodeTransformToGLVec3F(std::vector<double> transform);
 
-    void applyNodeTransformations(tinygltf::Node &node, std::vector<glm::vec3> &position_vertices);
+    void applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
 };
 
 #endif

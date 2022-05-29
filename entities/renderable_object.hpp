@@ -17,12 +17,12 @@ enum PrimitiveShape {
 //Right handed coord system
 class RenderableObject {
 public:
+    ~RenderableObject();
 	void render();
 	RenderableObject(bool gen_buffers);
 	RenderableObject(bool gen_buffers, Shader& shader);
 	RenderableObject(std::string obj_file);
 	RenderableObject(std::string obj_file, std::string tex_file);
-    //Tee vec3 variandid ka
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
     void setOrientation(float x, float y, float z);
@@ -38,17 +38,22 @@ public:
 
 	Shader& shader;
 
-	unsigned int total_vertices = 0;
+	//unsigned int total_vertices = 0;
+    std::vector<unsigned int> total_vertices;
 
     glm::mat4& view_proj;
 
-private:
-    void baseObjSetup(Utilities::Obj* obj);
+    unsigned int* tos = nullptr;
+    int texture_count = 0;
+
+    int primitives_count;
+    unsigned int* primitive_offsets = nullptr;
 
 private:
     bool textured = false;
     bool is_wireframe = false;
-	unsigned int vbo, vao, ebo, to = 0;
+	unsigned int vbo, vao, ebo;
+
 
     glm::mat4 model_mat = glm::mat4(1.0f);
 	glm::mat4 scale_mat = glm::mat4(1.0f);
@@ -56,6 +61,7 @@ private:
     glm::quat orientation = glm::quat(1.0f, .0f, .0f, .0f);
 
     void loadTexture(std::string tex_file);
+    void baseObjSetup(Utilities::Obj* obj);
 
 };
 

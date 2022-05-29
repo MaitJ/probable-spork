@@ -56,7 +56,9 @@ namespace PrimitiveObjects {
             1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f
         };
 
-        ent_renderable.total_vertices = 6;
+        ent_renderable.total_vertices.push_back(6);
+        ent_renderable.primitive_offsets = new unsigned int[1] {0};
+        ent_renderable.primitives_count = 1;
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);

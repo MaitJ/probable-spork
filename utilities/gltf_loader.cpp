@@ -3,7 +3,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include <fmt/core.h>
 
-GLTFLoader::GLTFLoader(std::string const& file_name, bool& loaded) : num_of_tris{0} {
+GLTFLoader::GLTFLoader(std::string const& file_name, bool& loaded) : indices{0} {
     tinygltf::TinyGLTF loader;
     std::string warn;
     std::string err;
@@ -55,82 +55,87 @@ void GLTFLoader::getAttribData(int accessor_index, int num_of_components, std::v
     }
 }
 
-std::vector<float> GLTFLoader::getMeshVertexData() {
+void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
     using namespace tinygltf;
     std::vector<tinygltf::Accessor>& accessors = this->model.accessors;
 
     std::vector<float> vertex_data;
 
+    tinygltf::Mesh& mesh = this->model.meshes[node.mesh];
 
+    for (tinygltf::Primitive& primitive : mesh.primitives) {
 
-    for (tinygltf::Node& node : this->model.nodes) {
+        std::vector<glm::vec3> position_vertices;
+        std::vector<glm::vec3> normal_vertices;
+        std::vector<glm::vec2> tex_vertices;
 
-        tinygltf::Mesh& mesh = this->model.meshes[node.mesh];
+        //Setting materials on the mesh for every primitive
+        tinygltf::Material& primitive_material = this->model.materials[primitive.material];
+        tinygltf::Texture& texture = this->model.textures[primitive_material.
+                                                          pbrMetallicRoughness.
+                                                          baseColorTexture.index];
+        tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
+        tinygltf::Image& image = this->model.images[texture.source];
 
-        for (tinygltf::Primitive& primitive : mesh.primitives) {
+        t_mesh.sampler = sampler;
+        t_mesh.material = primitive_material;
+        t_mesh.image = image;
 
-            std::vector<glm::vec3> position_vertices;
-            std::vector<glm::vec3> normal_vertices;
-            std::vector<glm::vec2> tex_vertices;
+        for (auto& [key, value] : primitive.attributes) {
 
-
-            for (auto& [key, value] : primitive.attributes) {
-
-                if (key == "POSITION") {
-                    std::vector<float> pos;
-                    getAttribData<float>(value, 3, pos);
-                    groupVec3Floats(pos, position_vertices);
-                }
-
-
-                if (key == "NORMAL") {
-                    std::vector<float> normals;
-                    getAttribData<float>(value, 3, normals);
-
-                    groupVec3Floats(normals, normal_vertices);
-                }
-
-
-                if (key == "TEXCOORD_0") {
-                    std::vector<float> tex;
-                    getAttribData<float>(value, 2, tex);
-
-                    groupVec2Floats(tex, tex_vertices);
-                }
-
+            if (key == "POSITION") {
+                std::vector<float> pos;
+                getAttribData<float>(value, 3, pos);
+                groupVec3Floats(pos, position_vertices);
             }
 
-            //Apply node transformations
-            applyNodeTransformations(node, position_vertices);
 
-            Accessor& indice_accessor = accessors[primitive.indices];
+            if (key == "NORMAL") {
+                std::vector<float> normals;
+                getAttribData<float>(value, 3, normals);
 
-            switch (indice_accessor.componentType) {
-                case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
-                    std::vector<unsigned short> mesh_indices = getMeshIndices<unsigned short>(indice_accessor);
-
-                    this->num_of_tris += mesh_indices.size();
-
-                    for (unsigned short mesh_index : mesh_indices) {
-                        vertex_data.insert(vertex_data.end(), {position_vertices[mesh_index][0], position_vertices[mesh_index][1], position_vertices[mesh_index][2]});
-                        vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
-                        vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
-                    }
+                groupVec3Floats(normals, normal_vertices);
+            }
 
 
-                break;
+            if (key == "TEXCOORD_0") {
+                std::vector<float> tex;
+                getAttribData<float>(value, 2, tex);
 
+                groupVec2Floats(tex, tex_vertices);
             }
 
         }
-        
+
+        //Apply node transformations
+        applyNodeTransformations(node, position_vertices, normal_vertices);
+
+        Accessor& indice_accessor = accessors[primitive.indices];
+
+        switch (indice_accessor.componentType) {
+            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+                std::vector<unsigned short> mesh_indices = getMeshIndices<unsigned short>(indice_accessor);
+
+                t_mesh.vertices = mesh_indices.size();
+
+                for (unsigned short mesh_index : mesh_indices) {
+                    vertex_data.insert(vertex_data.end(), {position_vertices[mesh_index][0], position_vertices[mesh_index][1], position_vertices[mesh_index][2]});
+                    vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
+                    vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
+                }
+
+
+            break;
+
+        }
 
     }
+        
 
-    return vertex_data;
+    t_mesh.vertex_data = vertex_data;
 }
 
-void GLTFLoader::applyNodeTransformations(tinygltf::Node& node, std::vector<glm::vec3>& position_vertices) {
+void GLTFLoader::applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3>& position_vertices, std::vector<glm::vec3>& normal_vertices) {
     glm::vec3 t_translation(0.f);
     glm::quat t_rotation;
     glm::vec3 t_scale(1.f);
@@ -141,7 +146,7 @@ void GLTFLoader::applyNodeTransformations(tinygltf::Node& node, std::vector<glm:
     if (!node.rotation.empty())
         t_rotation = nodeQuatToGLQuat(node.rotation);
 
-    nodeTransformMesh(t_translation, t_rotation, t_scale, position_vertices);
+    nodeTransformMesh(t_translation, t_rotation, t_scale, position_vertices, normal_vertices);
 }
 
 glm::quat GLTFLoader::nodeQuatToGLQuat(std::vector<double> quaternion) {
@@ -157,7 +162,8 @@ glm::vec3 GLTFLoader::nodeTransformToGLVec3F(std::vector<double> transform) {
 void GLTFLoader::nodeTransformMesh(glm::vec3 translation,
                                glm::quat rotation,
                                glm::vec3 scale,
-                               std::vector<glm::vec3>& position_vertices) {
+                               std::vector<glm::vec3>& position_vertices,
+                               std::vector<glm::vec3>& normal_vertices) {
 
     glm::mat4 scale_mat = glm::scale(glm::mat4(1.f), scale);
     glm::mat4 translation_mat = glm::translate(glm::mat4(1.f), translation);
@@ -165,9 +171,16 @@ void GLTFLoader::nodeTransformMesh(glm::vec3 translation,
 
     glm::mat4 MVP = translation_mat * rotation_mat * scale_mat;
 
+    //TODO(transform_normals?) maybe I should transform the normals aswell?
     for (auto& pos : position_vertices) {
         glm::vec4 result = glm::vec4(pos, 1.f) * MVP;
         pos = result;
+    }
+
+    for (auto& normal : normal_vertices) {
+        glm::vec4 result = glm::vec4(normal, 1.f) * MVP;
+        normal = result;
+
     }
 
 
@@ -194,4 +207,19 @@ void GLTFLoader::groupVec2Floats(const std::vector<float> &floats, std::vector<g
         new_vector.y = floats[i++];
         o_vertices.push_back(new_vector);
     }
+}
+
+std::vector<Mesh> GLTFLoader::getMeshes() {
+
+    std::vector<Mesh> meshes;
+
+    for (auto& node : this->model.nodes) {
+        Mesh t_mesh;
+
+        getMeshData(node, t_mesh);
+
+        meshes.push_back(t_mesh);
+    }
+
+    return meshes;
 }

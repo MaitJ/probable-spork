@@ -53,7 +53,9 @@ void Wireframe::initWireframeModel() {
     };
     wf_renderable.calcModel();
 
-    wf_renderable.total_vertices = 24;
+    wf_renderable.total_vertices.push_back(24);
+    wf_renderable.primitive_offsets = new unsigned int[1] {0};
+    wf_renderable.primitives_count = 1;
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(wf_vertices), wf_vertices, GL_STATIC_DRAW);
 

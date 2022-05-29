@@ -46,8 +46,13 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-    glGenTextures(1, &this->to);
-    glBindTexture(GL_TEXTURE_2D, this->to);
+    this->tos = new unsigned int[1];
+    glGenTextures(1, this->tos);
+    glBindTexture(GL_TEXTURE_2D, this->tos[0]);
+    this->texture_count = 1;
+
+    this->primitives_count = 1;
+    this->primitive_offsets = new unsigned int[1] { 0};
 
     //First have to bind texture object
     //If image isn't big enough
@@ -65,7 +70,7 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
     glEnableVertexAttribArray(2);
     
 
-    this->total_vertices = obj->total_vertices;
+    this->total_vertices.push_back(obj->total_vertices);
 
     RenderableManager::addRenderable(this);
 }
@@ -79,45 +84,77 @@ RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::g
     delete obj;
 }
 
+template <typename T>
+unsigned int sumOfVerticesBytes(std::vector<Mesh> const& meshes) {
+    unsigned int sum = 0;
+    for (int i = 0; i < meshes.size(); ++i) {
+        sum += meshes[i].vertex_data.size() * sizeof(T);
+    }
+    return sum;
+}
+
 void RenderableObject::loadGLTFModel(const std::string& file_name) {
     bool loaded;
     GLTFLoader model(file_name, loaded);
 
-    std::vector<float> vertex_data = model.getMeshVertexData();
+    std::vector<Mesh> meshes = model.getMeshes();
 
-	glGenVertexArrays(1, &this->vao);
-	glGenBuffers(1, &this->vbo);
-	glGenBuffers(1, &this->ebo);
-	glBindVertexArray(this->vao);
+    glGenVertexArrays(1, &this->vao);
+    glGenBuffers(1, &this->vbo);
+    glGenBuffers(1, &this->ebo);
 
-	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(float), vertex_data.data(), GL_STATIC_DRAW);
+    this->tos = new unsigned int[meshes.size()];
+    glGenBuffers(meshes.size(), this->tos);
+    this->texture_count = meshes.size();
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+    this->primitives_count = meshes.size();
 
-    glGenTextures(1, &this->to);
-    glBindTexture(GL_TEXTURE_2D, this->to);
+    this->primitive_offsets = new unsigned int[meshes.size()];
+    this->primitive_offsets[0] = 0;
 
-    //First have to bind texture object
-    //If image isn't big enough
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glBindVertexArray(this->vao);
+    glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
 
-    //Setup a mipmap
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    unsigned int total_vertice_bytes = sumOfVerticesBytes<float>(meshes);
+    glBufferData(GL_ARRAY_BUFFER, total_vertice_bytes, nullptr, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+    for (int i = 0; i < meshes.size(); ++i) {
+        //! Probably goes out of bounds
+        this->primitive_offsets[i + 1] = this->primitive_offsets[i] + meshes[i].vertices;
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    
+        //Need to use glBufferSubData, because this overwrites the buffer
+        //Instead I need to append to buffer, inorder to keep previous vertex data
+        //The 8 is the data size in the shader, so pos vec3 + tex vec2 + normals vec3 3 + 2 + 3 = 8
+        glBufferSubData(GL_ARRAY_BUFFER, this->primitive_offsets[i] * 8 * sizeof(float), meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data());
+        //glBufferData(GL_ARRAY_BUFFER, meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data(), GL_STATIC_DRAW);
 
-    this->total_vertices = model.num_of_tris;
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
 
-    RenderableManager::addRenderable(this);
+        glBindTexture(GL_TEXTURE_2D, this->tos[i]);
+
+        //First have to bind texture object
+        //If image isn't big enough
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+        //Setup a mipmap
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+
+
+        //this->total_vertices = model.indices;
+        this->total_vertices.push_back(meshes[i].vertices);
+
+        RenderableManager::addRenderable(this);
+    }
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -202,7 +239,6 @@ void RenderableObject::setOrientation(float x, float y, float z) {
 void RenderableObject::glBind() const {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-    glBindTexture(GL_TEXTURE_2D, this->to);
 }
 
 
@@ -218,7 +254,7 @@ void RenderableObject::render() {
         int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
         glm::mat4 MVP = this->view_proj * model_mat;
         glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
-        glDrawArrays(GL_TRIANGLES, 0, this->total_vertices);
+        glDrawArrays(GL_TRIANGLES, 0, this->total_vertices[0]);
         return;
     }
 
@@ -236,7 +272,18 @@ void RenderableObject::render() {
 	int textured_loc = glGetUniformLocation(this->shader.id, "is_textured");
 	glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
     glUniform1i(textured_loc, this->textured);
-    glDrawArrays(GL_TRIANGLES, 0, this->total_vertices);
+
+    for (int i = 0; i < this->primitives_count; ++i) {
+        if (this->tos != nullptr)
+            glBindTexture(GL_TEXTURE_2D, this->tos[i]);
+
+        glDrawArrays(GL_TRIANGLES, this->primitive_offsets[i], this->total_vertices[i]);
+    }
+}
+
+RenderableObject::~RenderableObject() {
+    delete[] tos;
+    delete[] primitive_offsets;
 }
 
 
