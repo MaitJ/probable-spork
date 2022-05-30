@@ -9,6 +9,7 @@
 
 class Transform;
 #include "../components/transform.hpp"
+#include "gltf_loader.hpp"
 
 enum PrimitiveShape {
 	PLANE
@@ -63,6 +64,7 @@ private:
     void loadTexture(std::string tex_file);
     void baseObjSetup(Utilities::Obj* obj);
 
+    void loadGLTFTexture(int i, const Mesh &mesh);
 };
 
 #endif // !RENDERABLE_ENTITY_H

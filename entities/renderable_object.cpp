@@ -131,23 +131,13 @@ void RenderableObject::loadGLTFModel(const std::string& file_name) {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glBindTexture(GL_TEXTURE_2D, this->tos[i]);
-
-        //First have to bind texture object
-        //If image isn't big enough
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-        //Setup a mipmap
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
+        loadGLTFTexture(i, meshes[i]);
 
         //this->total_vertices = model.indices;
         this->total_vertices.push_back(meshes[i].vertices);
@@ -159,6 +149,23 @@ void RenderableObject::loadGLTFModel(const std::string& file_name) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void RenderableObject::loadGLTFTexture(int i, Mesh const& mesh) {
+    glBindTexture(GL_TEXTURE_2D, this->tos[i]);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+    //Setup a mipmap
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mesh.sampler.minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mesh.sampler.magFilter);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mesh.image.width, mesh.image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, mesh.image.image.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    this->textured = true;
+
 }
 void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
     auto* obj = new Utilities::Obj(obj_file);
