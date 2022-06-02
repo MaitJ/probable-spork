@@ -10,6 +10,7 @@
 class Transform;
 #include "../components/transform.hpp"
 #include "gltf_loader.hpp"
+#include "shaders/shader_manager.hpp"
 
 enum PrimitiveShape {
 	PLANE
@@ -19,7 +20,7 @@ enum PrimitiveShape {
 class Node {
 public:
     ~Node();
-	void render();
+	void render(ShaderManager& shader_manager);
 	Node(bool gen_buffers);
 	Node(bool gen_buffers, Shader& shader);
 	Node(std::string obj_file);

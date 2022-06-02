@@ -8,11 +8,12 @@ Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity
 Shader Wireframe::wf_shader;
 Node Wireframe::wf_renderable = Node(false, Wireframe::wf_shader);
 
-void Wireframe::initWireframeModel() {
+void Wireframe::initWireframeModel(ShaderManager& shader_manager) {
     Wireframe::wf_shader.loadAndCompile("wf_vertex_shader.vert", "wf_fragment_shader.frag", "wireframe");
     Wireframe::wf_shader.layout_len = 3;
     wf_renderable.genBuffers();
-    wf_renderable.shader.use();
+    shader_manager.getShader("wireframe").use();
+    //wf_renderable.shader.use();
     wf_renderable.glBind();
 
     wf_renderable.view_proj = RenderableManager::getViewProjMat();
@@ -69,13 +70,13 @@ void Wireframe::initWireframeModel() {
 }
 
 
-void Wireframe::render() const {
+void Wireframe::render(ShaderManager& shader_manager) const {
     //Calli wf_renderable this->transformi asjadega ja renderda wf
     wf_renderable.setPos(this->ent_transform.getPosition());
     wf_renderable.setOrientation(this->ent_transform.getOrientation());
     wf_renderable.setScale((this->ent_transform.getDimensions() / 2.f));
     //RenderableManager::addWireframe(*this);
-    wf_renderable.render();
+    wf_renderable.render(shader_manager);
 }
 
 //Node Wireframe::wf_renderable = Node();

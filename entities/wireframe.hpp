@@ -2,6 +2,7 @@
 #define WIREFRAME_H
 
 #include "node.hpp"
+#include "shaders/shader_manager.hpp"
 
 class Wireframe {
     static Shader wf_shader;
@@ -13,8 +14,8 @@ class Wireframe {
 public:
     Wireframe(Transform& transform, int entity_id);
     //Transformi sees on yhine render obj
-    static void initWireframeModel();
-    void render() const;
+    static void initWireframeModel(ShaderManager& shader_manager);
+    void render(ShaderManager& shader_manager) const;
 };
 
 

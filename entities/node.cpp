@@ -250,14 +250,16 @@ void Node::glBind() const {
 }
 
 
-void Node::render() {
+void Node::render(ShaderManager& shader_manager) {
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
-	this->shader.use();
+	//this->shader.use();
+    shader_manager.getShader("textured").use();
     this->glBind();
     //assert(this->view_proj != nullptr);
     calcModel();
     if (is_wireframe) {
+        shader_manager.getShader("wireframe").use();
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
         glm::mat4 MVP = this->view_proj * model_mat;

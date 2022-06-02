@@ -11,6 +11,7 @@ namespace RenderableManager {
     void renderObjects();
     void enableDimensionWireframes();
     void initPerspectiveMatrix(float window_width, float window_height, float fov);
+    void setShaderManager(ShaderManager* shader_manager);
     glm::mat4 const& getPerspectiveMat();
     glm::mat4& getViewProjMat();
 

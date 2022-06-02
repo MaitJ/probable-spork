@@ -27,7 +27,7 @@ void main() {
         FragColor = vec4(ambi_diff_color, 1.0f);
     } else {
         vec3 def_color = vec3(0.9f, 0.9f, 0.9f);
-        vec3 ambient = def_color * ambient_strength;
+        vec3 ambient = calculateAmbientColor(def_color, ambient_strength);
         vec3 ambi_diff_color = (ambient + diffuse + specular) * def_color;
         FragColor = vec4(ambi_diff_color, 1.0f);
     }

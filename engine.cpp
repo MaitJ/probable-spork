@@ -27,9 +27,11 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
 
     this->view_proj = this->persp_proj * camera.getCameraMat();
 
-    Wireframe::initWireframeModel();
-    // TODO: Replace MainShader::getShader with ShaderManager
     this->initializeShaders();
+    RenderableManager::setShaderManager(&this->shader_manager);
+
+    // TODO: Replace MainShader::getShader with ShaderManager
+    Wireframe::initWireframeModel(this->shader_manager);
 }
 
 void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end) {
