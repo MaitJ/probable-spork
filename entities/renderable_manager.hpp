@@ -1,12 +1,12 @@
 #ifndef RENDERABLE_MANAGER_H
 #define RENDERABLE_MANAGER_H
 
-#include "renderable_object.hpp"
+#include "node.hpp"
 #include "wireframe.hpp"
 
 namespace RenderableManager {
 
-    void addRenderable(RenderableObject* obj);
+    void addRenderable(Node* obj);
     void addWireframe(Wireframe const& wireframe);
     void renderObjects();
     void enableDimensionWireframes();

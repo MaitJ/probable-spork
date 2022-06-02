@@ -1,7 +1,7 @@
 #include "engine.hpp"
 #include "utilities/gl_conf.hpp"
 #include <functional>
-#include "entities/renderable_object.hpp"
+#include "entities/node.hpp"
 #include "entities/player.hpp"
 #include "events/event_handler.hpp"
 #include "entities/entity.hpp"

@@ -1,11 +1,11 @@
 #ifndef WIREFRAME_H
 #define WIREFRAME_H
 
-#include "renderable_object.hpp"
+#include "node.hpp"
 
 class Wireframe {
     static Shader wf_shader;
-    static RenderableObject wf_renderable;
+    static Node wf_renderable;
 
     int entity_id;
     Transform& ent_transform;

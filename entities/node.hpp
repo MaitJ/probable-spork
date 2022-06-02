@@ -16,14 +16,14 @@ enum PrimitiveShape {
 };
 
 //Right handed coord system
-class RenderableObject {
+class Node {
 public:
-    ~RenderableObject();
+    ~Node();
 	void render();
-	RenderableObject(bool gen_buffers);
-	RenderableObject(bool gen_buffers, Shader& shader);
-	RenderableObject(std::string obj_file);
-	RenderableObject(std::string obj_file, std::string tex_file);
+	Node(bool gen_buffers);
+	Node(bool gen_buffers, Shader& shader);
+	Node(std::string obj_file);
+	Node(std::string obj_file, std::string tex_file);
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
     void setOrientation(float x, float y, float z);

@@ -55,6 +55,29 @@ void GLTFLoader::getAttribData(int accessor_index, int num_of_components, std::v
     }
 }
 
+//If the material isn't textured the object still gets colored
+void GLTFLoader::setImageMaterial(Mesh& t_mesh, int material_index) {
+    tinygltf::Material& primitive_material = this->model.materials[material_index];
+
+    std::vector<double> const& color = primitive_material.pbrMetallicRoughness.baseColorFactor;
+    glm::vec4 node_color = {color[0], color[1], color[2], color[3]};
+    t_mesh.color = node_color;
+
+    tinygltf::Texture& texture = this->model.textures[primitive_material.
+            pbrMetallicRoughness.
+            baseColorTexture.index];
+    tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
+    tinygltf::Image& image = this->model.images[texture.source];
+
+    t_mesh.sampler = sampler;
+    t_mesh.material = primitive_material;
+    t_mesh.image = image;
+
+    if (primitive_material.pbrMetallicRoughness.baseColorTexture.index > -1)
+        t_mesh.is_textured = true;
+
+}
+
 void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
     using namespace tinygltf;
     std::vector<tinygltf::Accessor>& accessors = this->model.accessors;
@@ -69,17 +92,8 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
         std::vector<glm::vec3> normal_vertices;
         std::vector<glm::vec2> tex_vertices;
 
-        //Setting materials on the mesh for every primitive
-        tinygltf::Material& primitive_material = this->model.materials[primitive.material];
-        tinygltf::Texture& texture = this->model.textures[primitive_material.
-                                                          pbrMetallicRoughness.
-                                                          baseColorTexture.index];
-        tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
-        tinygltf::Image& image = this->model.images[texture.source];
+        setImageMaterial(t_mesh, primitive.material);
 
-        t_mesh.sampler = sampler;
-        t_mesh.material = primitive_material;
-        t_mesh.image = image;
 
         for (auto& [key, value] : primitive.attributes) {
 
@@ -122,6 +136,8 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
                     vertex_data.insert(vertex_data.end(), {position_vertices[mesh_index][0], position_vertices[mesh_index][1], position_vertices[mesh_index][2]});
                     vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
                     vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
+
+                    //vertex_data.insert(vertex_data.end(), {t_mesh.color[0], t_mesh.color[1], t_mesh.color[2], t_mesh.color[3]});
                 }
 
 
@@ -171,7 +187,6 @@ void GLTFLoader::nodeTransformMesh(glm::vec3 translation,
 
     glm::mat4 MVP = translation_mat * rotation_mat * scale_mat;
 
-    //TODO(transform_normals?) maybe I should transform the normals aswell?
     for (auto& pos : position_vertices) {
         glm::vec4 result = glm::vec4(pos, 1.f) * MVP;
         pos = result;

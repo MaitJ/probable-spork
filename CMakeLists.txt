@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 set(SOURCE_FILES shader.cpp window.cpp engine.cpp)
 
-set(ENTITY_FILES entities/renderable_object.cpp entities/world_light.cpp
+set(ENTITY_FILES entities/node.cpp entities/world_light.cpp
     entities/camera.cpp entities/player.cpp entities/renderable_manager.cpp
     entities/entity.cpp entities/wireframe.cpp)
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
@@ -39,8 +39,10 @@ target_link_libraries(source fmt::fmt)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/vertex_shader.vert"
     "${CMAKE_CURRENT_BINARY_DIR}/shaders/vertex_shader.vert")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/fragment_shader.frag"
-    "${CMAKE_CURRENT_BINARY_DIR}/shaders/fragment_shader.frag")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/fragment_shader_mod.frag"
+    "${CMAKE_CURRENT_BINARY_DIR}/shaders/fragment_shader_mod.frag")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/lightning_calculations.glsl"
+        "${CMAKE_CURRENT_BINARY_DIR}/shaders/lightning_calculations.glsl")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/test_obj.obj"
     "${CMAKE_CURRENT_BINARY_DIR}/tests/test_obj.obj")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.sh"

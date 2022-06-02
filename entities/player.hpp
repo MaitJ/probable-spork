@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include <glm/glm.hpp>
-#include "renderable_object.hpp"
+#include "node.hpp"
 #include "../components/transform.hpp"
 #include "entity.hpp"
 #include "camera.hpp"
@@ -33,7 +33,7 @@ struct Player {
 private:
     bool is_visible = false;
 
-    RenderableObject render_obj;
+    Node render_obj;
     void setupRenderable(glm::mat4& view_proj, Shader* shader);
 
     void getMovementInputs();

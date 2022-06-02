@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <utilities/types.hpp>
-#include "renderable_object.hpp"
+#include "node.hpp"
 #include "../components/transform.hpp"
 #include "wireframe.hpp"
 
@@ -22,7 +22,7 @@ public:
     Transform transform;
     Wireframe wireframe;
     //Renderer uses this for scale/rot etcetera
-	RenderableObject renderable;
+	Node renderable;
 
     Context const& ctx;
 
@@ -32,7 +32,7 @@ public:
     void enableCollisions();
      */
     void loadModel(const std::string obj_file, const std::string texture_file);
-    RenderableObject& getRenderableObject();
+    Node& getRenderableObject();
     bool isVisible();
 
 };

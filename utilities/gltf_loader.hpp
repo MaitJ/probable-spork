@@ -9,8 +9,13 @@ struct Mesh {
     tinygltf::Material material;
     tinygltf::Sampler sampler;
     tinygltf::Image image;
+
+    bool is_textured = false;
+    glm::vec4 color;
+
     unsigned int vertices;
 };
+
 
 class GLTFLoader {
 public:
@@ -41,6 +46,8 @@ private:
     glm::vec3 nodeTransformToGLVec3F(std::vector<double> transform);
 
     void applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
+
+    void setImageMaterial(Mesh &t_mesh, int material_index);
 };
 
 #endif

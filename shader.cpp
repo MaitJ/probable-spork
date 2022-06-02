@@ -6,9 +6,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
-#define FRAGMENT_SHADER_FILE "fragment_shader.frag"
+#define FRAGMENT_SHADER_FILE "fragment_shader_mod.frag"
 #define WF_VERTEX_SHADER_FILE "wf_vertex_shader.vert"
 #define WF_FRAGMENT_SHADER_FILE "wf_fragment_shader.frag"
+#define LIGHTNING_CALCULATIONS_SHADER "lightning_calculations.glsl"
 
 Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
     this->loadAndCompile(vertex_shader_file, fragment_shader_file);
@@ -35,9 +36,14 @@ void Shader::loadAndCompile(const std::string vertex_shader_file, const std::str
         glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
- 
+
+    std::string lightning_calculations_string(LIGHTNING_CALCULATIONS_SHADER);
+    const char* lightning_calculations_text = Shader::read_from_file("shaders/" + lightning_calculations_string);
+
+    const char* fragment_shader_compiled[2] = {lightning_calculations_text, fragment_shader_text };
+
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
+    glShaderSource(fragment_shader, 2, fragment_shader_compiled, NULL);
     glCompileShader(fragment_shader);
 
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);

@@ -2,7 +2,7 @@
 
 Transform::Transform() {}
 
-Transform::Transform(RenderableObject* renderable) : renderable(renderable) {}
+Transform::Transform(Node* renderable) : renderable(renderable) {}
 
 Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions) {
     this->position = position;
@@ -10,14 +10,14 @@ Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimens
     this->dimensions = dimensions;
 }
 
-Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions, RenderableObject* renderable) {
+Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions, Node* renderable) {
     this->position = position;
     this->orientation = orientation;
     this->dimensions = dimensions;
     this->renderable = renderable;
 }
 
-void Transform::attachRenderable(RenderableObject* obj) {
+void Transform::attachRenderable(Node* obj) {
     this->renderable = obj;
 }
 void Transform::setOrientation(float yaw, float pitch, float roll) {

@@ -1,4 +1,4 @@
-#include "renderable_object.hpp"
+#include "node.hpp"
 #include "../utilities/obj.hpp"
 #include <glm/ext/matrix_transform.hpp>
 #include "renderable_manager.hpp"
@@ -11,14 +11,15 @@
 //#define STB_IMAGE_IMPLEMENTATION
 #include "../deps/stb_image.h"
 
-RenderableObject::RenderableObject(bool gen_buffers) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
+// TODO("Please refactor this into a builder pattern, or make a unified construction of Renderables");
+Node::Node(bool gen_buffers) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
     if (gen_buffers) {
         glGenVertexArrays(1, &this->vao);
         glGenBuffers(1, &this->vbo);
         glGenBuffers(1, &this->ebo);
     }
 }
-RenderableObject::RenderableObject(bool gen_buffers, Shader& shader) : shader(shader), view_proj(RenderableManager::getViewProjMat()) {
+Node::Node(bool gen_buffers, Shader& shader) : shader(shader), view_proj(RenderableManager::getViewProjMat()) {
     if (gen_buffers) {
         glGenVertexArrays(1, &this->vao);
         glGenBuffers(1, &this->vbo);
@@ -27,13 +28,13 @@ RenderableObject::RenderableObject(bool gen_buffers, Shader& shader) : shader(sh
     this->is_wireframe = true;
 }
 
-void RenderableObject::genBuffers() {
+void Node::genBuffers() {
     glGenVertexArrays(1, &this->vao);
     glGenBuffers(1, &this->vbo);
     glGenBuffers(1, &this->ebo);
 }
 
-void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
+void Node::baseObjSetup(Utilities::Obj* obj) {
 
 	glGenVertexArrays(1, &this->vao);
 	glGenBuffers(1, &this->vbo);
@@ -75,7 +76,7 @@ void RenderableObject::baseObjSetup(Utilities::Obj* obj) {
     RenderableManager::addRenderable(this);
 }
 
-RenderableObject::RenderableObject(std::string obj_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
+Node::Node(std::string obj_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
     this->baseObjSetup(obj);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -93,7 +94,7 @@ unsigned int sumOfVerticesBytes(std::vector<Mesh> const& meshes) {
     return sum;
 }
 
-void RenderableObject::loadGLTFModel(const std::string& file_name) {
+void Node::loadGLTFModel(const std::string& file_name) {
     bool loaded;
     GLTFLoader model(file_name, loaded);
 
@@ -151,7 +152,7 @@ void RenderableObject::loadGLTFModel(const std::string& file_name) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void RenderableObject::loadGLTFTexture(int i, Mesh const& mesh) {
+void Node::loadGLTFTexture(int i, Mesh const& mesh) {
     glBindTexture(GL_TEXTURE_2D, this->tos[i]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -167,7 +168,7 @@ void RenderableObject::loadGLTFTexture(int i, Mesh const& mesh) {
     this->textured = true;
 
 }
-void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
+void Node::loadModel(std::string obj_file, std::string tex_file) {
     auto* obj = new Utilities::Obj(obj_file);
 
     //Throws error because this call doesn't include shader
@@ -180,7 +181,7 @@ void RenderableObject::loadModel(std::string obj_file, std::string tex_file) {
     delete obj;
 }
 
-void RenderableObject::loadTexture(std::string tex_file) {
+void Node::loadTexture(std::string tex_file) {
     int tex_width, tex_height, tex_nrchannels;
     unsigned char* img_data = stbi_load(tex_file.c_str(), &tex_width, &tex_height, &tex_nrchannels, 0);
 
@@ -196,7 +197,7 @@ void RenderableObject::loadTexture(std::string tex_file) {
     stbi_image_free(img_data);
 }
 
-RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
+Node::Node(std::string obj_file, std::string tex_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
     Utilities::Obj* obj = new Utilities::Obj(obj_file);
     this->baseObjSetup(obj);
 
@@ -208,14 +209,14 @@ RenderableObject::RenderableObject(std::string obj_file, std::string tex_file) :
     delete obj;
 }
 
-void RenderableObject::setScale(glm::vec3 const& scale) {
+void Node::setScale(glm::vec3 const& scale) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
 }
-void RenderableObject::setPos(glm::vec3 const& pos) {
+void Node::setPos(glm::vec3 const& pos) {
 	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(pos));
 }
 
-void RenderableObject::setOrientation(glm::vec3 const& orientation) {
+void Node::setOrientation(glm::vec3 const& orientation) {
     glm::quat x_rot = glm::angleAxis(glm::radians(orientation.x), glm::vec3(1.f, .0f, .0f));
     glm::quat y_rot = glm::angleAxis(glm::radians(orientation.y), glm::vec3(0.f, 1.f, .0f));
     glm::quat z_rot = glm::angleAxis(glm::radians(orientation.z), glm::vec3(0.f, .0f, 1.f));
@@ -224,18 +225,18 @@ void RenderableObject::setOrientation(glm::vec3 const& orientation) {
 }
 
 
-void RenderableObject::setScale(float x, float y, float z) {
+void Node::setScale(float x, float y, float z) {
 	this->scale_mat = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));
 }
-void RenderableObject::setPos(float x, float y, float z) {
+void Node::setPos(float x, float y, float z) {
 	this->pos_mat = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));
 }
 
-void RenderableObject::calcModel() {
+void Node::calcModel() {
     this->model_mat = this->pos_mat * this->scale_mat * glm::toMat4(this->orientation);
 }
 
-void RenderableObject::setOrientation(float x, float y, float z) {
+void Node::setOrientation(float x, float y, float z) {
     glm::quat x_rot = glm::angleAxis(glm::radians(x), glm::vec3(1.f, .0f, .0f));
     glm::quat y_rot = glm::angleAxis(glm::radians(y), glm::vec3(0.f, 1.f, .0f));
     glm::quat z_rot = glm::angleAxis(glm::radians(z), glm::vec3(0.f, .0f, 1.f));
@@ -243,13 +244,13 @@ void RenderableObject::setOrientation(float x, float y, float z) {
     this->orientation = x_rot * y_rot * z_rot;
 }
 
-void RenderableObject::glBind() const {
+void Node::glBind() const {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
 }
 
 
-void RenderableObject::render() {
+void Node::render() {
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
 	this->shader.use();
@@ -288,7 +289,7 @@ void RenderableObject::render() {
     }
 }
 
-RenderableObject::~RenderableObject() {
+Node::~Node() {
     delete[] tos;
     delete[] primitive_offsets;
 }

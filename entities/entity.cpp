@@ -30,7 +30,7 @@ void Entity::enableCollisions() {
 bool Entity::isVisible() {
     return this->is_visible;
 }
-RenderableObject& Entity::getRenderableObject() {
+Node& Entity::getRenderableObject() {
     return this->renderable;
 }
 
@@ -41,7 +41,7 @@ namespace PrimitiveObjects {
 
 	template <>
 	void loadPrimitive<PLANE>(Entity& ent) {
-        RenderableObject& ent_renderable = ent.getRenderableObject();
+        Node& ent_renderable = ent.getRenderableObject();
         ent_renderable.genBuffers();
         ent_renderable.glBind();
 

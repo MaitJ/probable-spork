@@ -6,7 +6,7 @@
 namespace RenderableManager {
     using namespace glm;
     namespace {
-        std::vector<RenderableObject*> renderables;
+        std::vector<Node*> renderables;
         std::vector<std::reference_wrapper<const Wireframe>> wireframes;
         mat4 view_proj = mat4(1.f);
         mat4 persp_mat = mat4(1.f);
@@ -27,12 +27,12 @@ namespace RenderableManager {
         return persp_mat;
     }
 
-    void addRenderable(RenderableObject* obj) {
+    void addRenderable(Node* obj) {
         renderables.push_back(obj);
     }
 
     void renderObjects() {
-        for (RenderableObject* obj : renderables) {
+        for (Node* obj : renderables) {
             obj->render();
         }
 

@@ -6,7 +6,7 @@
 Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity_id}, ent_transform(ent_transform)  {}
 
 Shader Wireframe::wf_shader;
-RenderableObject Wireframe::wf_renderable = RenderableObject(false, Wireframe::wf_shader);
+Node Wireframe::wf_renderable = Node(false, Wireframe::wf_shader);
 
 void Wireframe::initWireframeModel() {
     Wireframe::wf_shader.loadAndCompile("wf_vertex_shader.vert", "wf_fragment_shader.frag");
@@ -78,4 +78,4 @@ void Wireframe::render() const {
     wf_renderable.render();
 }
 
-//RenderableObject Wireframe::wf_renderable = RenderableObject();
+//Node Wireframe::wf_renderable = Node();
