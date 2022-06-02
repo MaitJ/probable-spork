@@ -5,7 +5,7 @@ set(DEPS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
-set(SOURCE_FILES shader.cpp window.cpp engine.cpp)
+set(SOURCE_FILES shader.cpp window.cpp engine.cpp shaders/shader_manager.cpp)
 
 set(ENTITY_FILES entities/node.cpp entities/world_light.cpp
     entities/camera.cpp entities/player.cpp entities/renderable_manager.cpp

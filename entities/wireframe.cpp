@@ -9,7 +9,7 @@ Shader Wireframe::wf_shader;
 Node Wireframe::wf_renderable = Node(false, Wireframe::wf_shader);
 
 void Wireframe::initWireframeModel() {
-    Wireframe::wf_shader.loadAndCompile("wf_vertex_shader.vert", "wf_fragment_shader.frag");
+    Wireframe::wf_shader.loadAndCompile("wf_vertex_shader.vert", "wf_fragment_shader.frag", "wireframe");
     Wireframe::wf_shader.layout_len = 3;
     wf_renderable.genBuffers();
     wf_renderable.shader.use();

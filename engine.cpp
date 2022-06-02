@@ -28,6 +28,8 @@ Engine::Engine(float window_width, float window_height, float fov) : default_sha
     this->view_proj = this->persp_proj * camera.getCameraMat();
 
     Wireframe::initWireframeModel();
+    // TODO: Replace MainShader::getShader with ShaderManager
+    this->initializeShaders();
 }
 
 void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end) {
@@ -113,4 +115,18 @@ void Engine::close() {
  
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
+}
+
+void Engine::initializeShaders() {
+    std::vector<std::string> shader_names = {"textured", "wireframe"};
+    std::vector<std::string> vertex_shader_files = {"vertex_shader.vert", "wf_vertex_shader.vert"};
+    std::vector<std::string> fragment_shader_files = {"fragment_shader_mod.frag", "wf_fragment_shader.frag"};
+
+    for (int i = 0; i < shader_names.size(); ++i) {
+        Shader shader;
+        shader.loadAndCompile(vertex_shader_files[i], fragment_shader_files[i], shader_names[i]);
+
+        this->shader_manager.addShader(shader);
+    }
+
 }

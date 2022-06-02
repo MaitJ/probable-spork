@@ -11,13 +11,15 @@
 #define WF_FRAGMENT_SHADER_FILE "wf_fragment_shader.frag"
 #define LIGHTNING_CALCULATIONS_SHADER "lightning_calculations.glsl"
 
-Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file) {
-    this->loadAndCompile(vertex_shader_file, fragment_shader_file);
+Shader::Shader(std::string vertex_shader_file, std::string fragment_shader_file, std::string name) {
+    this->loadAndCompile(vertex_shader_file, fragment_shader_file, name);
 }
 
 Shader::Shader() {}
 
-void Shader::loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file) {
+void Shader::loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file, std::string name) {
+
+    this->name = name;
 
     const char* vertex_shader_text = Shader::read_from_file("shaders/" + vertex_shader_file);
     const char* fragment_shader_text = Shader::read_from_file("shaders/" + fragment_shader_file);
@@ -120,13 +122,13 @@ namespace MainShaders {
     }
 
     Shader* loadDefaultShader() {
-        default_shader.loadAndCompile(VERTEX_SHADER_FILE, FRAGMENT_SHADER_FILE);
+        default_shader.loadAndCompile(VERTEX_SHADER_FILE, FRAGMENT_SHADER_FILE, "default");
         default_shader.layout_len = 8;
         return &default_shader;
     }
 
     Shader* loadWfShader() {
-        wf_shader.loadAndCompile(WF_VERTEX_SHADER_FILE, WF_FRAGMENT_SHADER_FILE);
+        wf_shader.loadAndCompile(WF_VERTEX_SHADER_FILE, WF_FRAGMENT_SHADER_FILE, "wireframe");
         wf_shader.layout_len = 3;
         return &wf_shader;
     }

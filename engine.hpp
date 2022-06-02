@@ -11,6 +11,7 @@
 #include "world/context.hpp"
 #include "deltatime.hpp"
 #include <chrono>
+#include "shaders/shader_manager.hpp"
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader.frag"
@@ -25,8 +26,12 @@ class Engine {
     WorldLight world_light;
     Context ctx;
     DeltaTime dt;
+    ShaderManager shader_manager;
+
 
     glm::mat4 createPerspectiveMatrix(float window_width, float window_height, float fov);
+
+    void initializeShaders();
 
 public:
     Engine(float window_width, float window_height, float fov);
