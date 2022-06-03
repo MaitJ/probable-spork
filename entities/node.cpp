@@ -11,78 +11,14 @@
 //#define STB_IMAGE_IMPLEMENTATION
 #include "../deps/stb_image.h"
 
-// TODO("Please refactor this into a builder pattern, or make a unified construction of Renderables");
-Node::Node(bool gen_buffers) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
-    if (gen_buffers) {
-        glGenVertexArrays(1, &this->vao);
-        glGenBuffers(1, &this->vbo);
-        glGenBuffers(1, &this->ebo);
-    }
-}
-Node::Node(bool gen_buffers, Shader& shader) : shader(shader), view_proj(RenderableManager::getViewProjMat()) {
-    if (gen_buffers) {
-        glGenVertexArrays(1, &this->vao);
-        glGenBuffers(1, &this->vbo);
-        glGenBuffers(1, &this->ebo);
-    }
-    this->is_wireframe = true;
-}
+Node::Node() : view_proj(RenderableManager::getViewProjMat()) {}
+
+Node::Node(ShaderManager &shader_manager, std::string shader_name) : shader(&shader_manager.getShader(shader_name)), view_proj(RenderableManager::getViewProjMat()) {}
 
 void Node::genBuffers() {
     glGenVertexArrays(1, &this->vao);
     glGenBuffers(1, &this->vbo);
     glGenBuffers(1, &this->ebo);
-}
-
-void Node::baseObjSetup(Utilities::Obj* obj) {
-
-	glGenVertexArrays(1, &this->vao);
-	glGenBuffers(1, &this->vbo);
-	glGenBuffers(1, &this->ebo);
-	glBindVertexArray(this->vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-	glBufferData(GL_ARRAY_BUFFER, obj->triangles.size() * sizeof(float), obj->triangles.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-    this->tos = new unsigned int[1];
-    glGenTextures(1, this->tos);
-    glBindTexture(GL_TEXTURE_2D, this->tos[0]);
-    this->texture_count = 1;
-
-    this->primitives_count = 1;
-    this->primitive_offsets = new unsigned int[1] { 0};
-
-    //First have to bind texture object
-    //If image isn't big enough
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-    //Setup a mipmap
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    
-
-    this->total_vertices.push_back(obj->total_vertices);
-
-    RenderableManager::addRenderable(this);
-}
-
-Node::Node(std::string obj_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
-    Utilities::Obj* obj = new Utilities::Obj(obj_file);
-    this->baseObjSetup(obj);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    delete obj;
 }
 
 template <typename T>
@@ -129,13 +65,13 @@ void Node::loadGLTFModel(const std::string& file_name) {
         glBufferSubData(GL_ARRAY_BUFFER, this->primitive_offsets[i] * 8 * sizeof(float), meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data());
         //glBufferData(GL_ARRAY_BUFFER, meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, this->shader.layout_len * sizeof(float), (void*)(5 * sizeof(float)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
         loadGLTFTexture(i, meshes[i]);
@@ -167,46 +103,6 @@ void Node::loadGLTFTexture(int i, Mesh const& mesh) {
 
     this->textured = true;
 
-}
-void Node::loadModel(std::string obj_file, std::string tex_file) {
-    auto* obj = new Utilities::Obj(obj_file);
-
-    //Throws error because this call doesn't include shader
-    this->baseObjSetup(obj);
-    this->loadTexture(tex_file);
-    
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    delete obj;
-}
-
-void Node::loadTexture(std::string tex_file) {
-    int tex_width, tex_height, tex_nrchannels;
-    unsigned char* img_data = stbi_load(tex_file.c_str(), &tex_width, &tex_height, &tex_nrchannels, 0);
-
-    if (!img_data) {
-        std::cerr << "Couldn't open image file" << std::endl;
-        return;
-    }
-    this->textured = true;
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(img_data);
-}
-
-Node::Node(std::string obj_file, std::string tex_file) : shader(MainShaders::getDefaultShader()), view_proj(RenderableManager::getViewProjMat()) {
-    Utilities::Obj* obj = new Utilities::Obj(obj_file);
-    this->baseObjSetup(obj);
-
-    this->loadTexture(tex_file);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    delete obj;
 }
 
 void Node::setScale(glm::vec3 const& scale) {
@@ -250,18 +146,18 @@ void Node::glBind() const {
 }
 
 
-void Node::render(ShaderManager& shader_manager) {
+void Node::render() {
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
 	//this->shader.use();
-    shader_manager.getShader("textured").use();
+    this->shader->use();
     this->glBind();
     //assert(this->view_proj != nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
     calcModel();
     if (is_wireframe) {
-        shader_manager.getShader("wireframe").use();
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
+        int MVPLoc = glGetUniformLocation(this->shader->id, "MVP");
         glm::mat4 MVP = this->view_proj * model_mat;
         glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
         glDrawArrays(GL_TRIANGLES, 0, this->total_vertices[0]);
@@ -270,16 +166,16 @@ void Node::render(ShaderManager& shader_manager) {
 
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    int model_loc = glGetUniformLocation(this->shader.id, "Model");
+    int model_loc = glGetUniformLocation(this->shader->id, "Model");
 	glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(this->model_mat));
 
     glm::mat3 normal_mat = glm::transpose(glm::inverse(this->model_mat));
-    int normal_mat_loc = glGetUniformLocation(this->shader.id, "normal_mat");
+    int normal_mat_loc = glGetUniformLocation(this->shader->id, "normal_mat");
 	glUniformMatrix3fv(normal_mat_loc, 1, GL_FALSE, glm::value_ptr(normal_mat));
 
-	int MVPLoc = glGetUniformLocation(this->shader.id, "MVP");
+	int MVPLoc = glGetUniformLocation(this->shader->id, "MVP");
 	glm::mat4 MVP = this->view_proj * model_mat;
-	int textured_loc = glGetUniformLocation(this->shader.id, "is_textured");
+	int textured_loc = glGetUniformLocation(this->shader->id, "is_textured");
 	glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
     glUniform1i(textured_loc, this->textured);
 
@@ -295,5 +191,7 @@ Node::~Node() {
     delete[] tos;
     delete[] primitive_offsets;
 }
+
+
 
 

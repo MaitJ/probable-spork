@@ -31,7 +31,8 @@ public:
     /*Excluded because there's a better way
     void enableCollisions();
      */
-    void loadModel(const std::string obj_file, const std::string texture_file);
+    void loadGLTFModel(const std::string file_name);
+
     Node& getRenderableObject();
     bool isVisible();
 

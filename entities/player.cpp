@@ -6,18 +6,19 @@
 #include "../collisions/collision_manager.hpp"
 #include "../controls/keyboard.hpp"
 
-#define PLAYER_MODEL "assets/koksal.obj"
-#define PLAYER_TEXTURE "assets/koksal_baba.jpg"
+#define PLAYER_MODEL "assets/chair.gltf"
 
 
-Player::Player(Camera& camera, Context& ctx) : game_ent(ctx.createEntity().lock()), camera(camera), render_obj(true) {}
+Player::Player(Camera& camera, Context& ctx, ShaderManager& shader_manager) : game_ent(ctx.createEntity().lock()), camera(camera) {}
 
-Player::Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx) :  game_ent(ctx.createEntity().lock()), camera(camera), render_obj(true) {
-    this->setupRenderable(view_proj, shader);
+Player::Player(glm::mat4& view_proj, Camera& camera, Context& ctx, ShaderManager& shader_manager) :  game_ent(ctx.createEntity().lock()), camera(camera) {
+    Shader const& textured_shader = shader_manager.getShader("textured");
+    this->setupRenderable(view_proj, &textured_shader);
 }
 
-void Player::setupRenderable(glm::mat4& view_proj, Shader* shader) {
-    this->game_ent->loadModel(PLAYER_MODEL, PLAYER_TEXTURE);
+void Player::setupRenderable(glm::mat4& view_proj, Shader const* shader) {
+    this->game_ent->loadGLTFModel(PLAYER_MODEL);
+    this->game_ent->renderable.shader = shader;
     this->is_visible = true;
 
 }

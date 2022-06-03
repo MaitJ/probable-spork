@@ -16,18 +16,20 @@ glm::mat4 Engine::createPerspectiveMatrix(float window_width, float window_heigh
 	return glm::perspective(glm::radians(fov), window_width/window_height, 0.1f, 1000.0f);
 }
 
-Engine::Engine(float window_width, float window_height, float fov) : default_shader(MainShaders::loadDefaultShader()), view_proj(RenderableManager::getViewProjMat()), persp_proj(RenderableManager::getPerspectiveMat()), camera(RenderableManager::getViewProjMat()) {
+Engine::Engine(float window_width, float window_height, float fov) : view_proj(RenderableManager::getViewProjMat()), persp_proj(RenderableManager::getPerspectiveMat()), camera(RenderableManager::getViewProjMat()) {
     //assert(this->view_proj != nullptr);
     Utilities::setupGl();
     camera.setPosition(0.f, 50.f, 0.f);
 
+    this->initializeShaders();
 
-    this->world_light.shader = default_shader;
+
+    Shader const& textured_shader = this->shader_manager.getShader("textured");
+    this->world_light.shader = &textured_shader;
     this->world_light.setPosition(100.0f, 150.0f, 100.0f);
 
     this->view_proj = this->persp_proj * camera.getCameraMat();
 
-    this->initializeShaders();
     RenderableManager::setShaderManager(&this->shader_manager);
 
     // TODO: Replace MainShader::getShader with ShaderManager
@@ -43,30 +45,17 @@ void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock
 
 void Engine::start() {
     using namespace std;
-    assert(this->default_shader != nullptr);
-
-    shared_ptr<Entity> chair = ctx.createEntity().lock();
-    chair->loadModel("assets/chair_textured.obj", "assets/wood.jpg");
-    
-	chair->renderable.setScale(10.0f, 10.0f, 10.0f);
-    chair->renderable.setPos(20.f, 0.0f, -100.f);
-    chair->renderable.setOrientation(0.f, .0f, .0f);
-
-    chair->transform.setPosition(20.f, 0.0f, -100.f);
-    chair->transform.setDimensions(25.f, 60.f, 25.f);
-    chair->transform.setOrientation(0.f, .0f, .0f);
-    chair->enableWireframe();
-    //chair.enableCollisions();
 
 
     shared_ptr<Entity> plane = ctx.createEntity().lock();
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
+    plane->renderable.shader = &this->shader_manager.getShader("textured");
 	plane->transform.setDimensions(500.0f, 1.0f, 500.0f);
 	plane->transform.setPosition(0.0f, 0.0f, .0f);
     plane->transform.setOrientation(0.f, .0f, .0f);
     plane->enableWireframe();
 
-    Player test_player(view_proj, default_shader, this->camera, this->ctx);
+    Player test_player(view_proj, this->camera, this->ctx, this->shader_manager);
     test_player.game_ent->transform.setPosition(0.f, 20.f, 0.f);
     test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
     test_player.game_ent->transform.setOrientation(0.f, 0.f, 0.f);
@@ -76,6 +65,7 @@ void Engine::start() {
     test_player.resetCameraPos();
 
     shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
+    chair_gltf->renderable.shader = &this->shader_manager.getShader("textured");
     chair_gltf->renderable.loadGLTFModel("assets/chair.gltf");
     chair_gltf->renderable.setScale(10.f, 10.f, 10.f);
     chair_gltf->renderable.setPos(-25.0f, 0.f, -50.f);
@@ -112,7 +102,6 @@ void Engine::start() {
 }
 
 void Engine::close() {
-	this->default_shader->close();
 	glfwDestroyWindow(this->game_window.window);
  
 	glfwTerminate();

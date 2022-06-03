@@ -8,7 +8,7 @@ struct WorldLight {
     WorldLight();
 
     glm::vec3 position;
-    Shader* shader = nullptr;
+    Shader const* shader = nullptr;
 
     void setPosition(float x, float y, float z);
 };

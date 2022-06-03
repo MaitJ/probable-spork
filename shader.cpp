@@ -114,30 +114,3 @@ const char* Shader::read_from_file(std::string file_name) {
 
     return file_content;
 }
-
-namespace MainShaders {
-    namespace {
-        Shader default_shader;
-        Shader wf_shader;
-    }
-
-    Shader* loadDefaultShader() {
-        default_shader.loadAndCompile(VERTEX_SHADER_FILE, FRAGMENT_SHADER_FILE, "default");
-        default_shader.layout_len = 8;
-        return &default_shader;
-    }
-
-    Shader* loadWfShader() {
-        wf_shader.loadAndCompile(WF_VERTEX_SHADER_FILE, WF_FRAGMENT_SHADER_FILE, "wireframe");
-        wf_shader.layout_len = 3;
-        return &wf_shader;
-    }
-
-    Shader& getDefaultShader() {
-        return default_shader;
-    }
-
-    Shader const& getWfShader() {
-        return wf_shader;
-    }
-}

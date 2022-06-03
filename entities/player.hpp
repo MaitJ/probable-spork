@@ -19,8 +19,8 @@ enum CollisionAxis {
 
 struct Player {
 
-    Player(Camera& camera, Context& ctx);
-    Player(glm::mat4& view_proj, Shader* shader, Camera& camera, Context& ctx);
+    Player(Camera& camera, Context& ctx, ShaderManager& shader_manager);
+    Player(glm::mat4& view_proj, Camera& camera, Context& ctx, ShaderManager& shader_manager);
     bool isVisible();
 
     void updateMovement(DeltaTime const& dt);
@@ -33,8 +33,7 @@ struct Player {
 private:
     bool is_visible = false;
 
-    Node render_obj;
-    void setupRenderable(glm::mat4& view_proj, Shader* shader);
+    void setupRenderable(glm::mat4& view_proj, Shader const* shader);
 
     void getMovementInputs();
     void handleCollisions();

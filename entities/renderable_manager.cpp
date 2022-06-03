@@ -38,12 +38,12 @@ namespace RenderableManager {
 
     void renderObjects() {
         for (Node* obj : renderables) {
-            obj->render(*shader_manager);
+            obj->render();
         }
 
         for (auto& wireframe_ref : wireframes) {
             Wireframe const& wireframe = wireframe_ref.get();
-            wireframe.render(*shader_manager);
+            wireframe.render();
             
         }
     }

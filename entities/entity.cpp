@@ -4,7 +4,7 @@
 #include <functional>
 
 
-Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), renderable(false), ctx(ctx) {
+Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), renderable(), ctx(ctx) {
     this->entity_id = entity_id;
 }
 Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe(this->transform, old_ent.entity_id), renderable(old_ent.renderable), ctx(old_ent.ctx){
@@ -14,9 +14,9 @@ void Entity::enableWireframe() {
     this->is_wireframed = true;
     RenderableManager::addWireframe(this->wireframe);
 }
-void Entity::loadModel(const std::string obj_file, const std::string texture_file) {
+void Entity::loadGLTFModel(const std::string file_name) {
     //Currently doesn't have a MVP matrix
-    this->renderable.loadModel(obj_file, texture_file);
+    this->renderable.loadGLTFModel(file_name);
     //this->transform.attachRenderable(&this->renderable);
 }
 

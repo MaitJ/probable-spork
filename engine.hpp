@@ -19,7 +19,6 @@
 class Engine {
 
     GameWindow game_window;
-    Shader* default_shader = nullptr;
     glm::mat4& view_proj;
     glm::mat4 const& persp_proj;
     Camera camera;

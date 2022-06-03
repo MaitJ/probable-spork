@@ -1,19 +1,17 @@
 #include "wireframe.hpp"
 #include "renderable_manager.hpp"
 #include <fmt/core.h>
-#include <glm/gtx/string_cast.hpp>
 
 Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity_id}, ent_transform(ent_transform)  {}
 
 Shader Wireframe::wf_shader;
-Node Wireframe::wf_renderable = Node(false, Wireframe::wf_shader);
+Node Wireframe::wf_renderable = Node();
 
 void Wireframe::initWireframeModel(ShaderManager& shader_manager) {
-    Wireframe::wf_shader.loadAndCompile("wf_vertex_shader.vert", "wf_fragment_shader.frag", "wireframe");
-    Wireframe::wf_shader.layout_len = 3;
+    Wireframe::wf_shader = shader_manager.getShader("wireframe");
+    wf_renderable.is_wireframe = true;
     wf_renderable.genBuffers();
-    shader_manager.getShader("wireframe").use();
-    //wf_renderable.shader.use();
+    wf_renderable.shader = &wf_shader;
     wf_renderable.glBind();
 
     wf_renderable.view_proj = RenderableManager::getViewProjMat();
@@ -70,13 +68,13 @@ void Wireframe::initWireframeModel(ShaderManager& shader_manager) {
 }
 
 
-void Wireframe::render(ShaderManager& shader_manager) const {
+void Wireframe::render() const {
     //Calli wf_renderable this->transformi asjadega ja renderda wf
     wf_renderable.setPos(this->ent_transform.getPosition());
     wf_renderable.setOrientation(this->ent_transform.getOrientation());
     wf_renderable.setScale((this->ent_transform.getDimensions() / 2.f));
     //RenderableManager::addWireframe(*this);
-    wf_renderable.render(shader_manager);
+    wf_renderable.render();
 }
 
 //Node Wireframe::wf_renderable = Node();
