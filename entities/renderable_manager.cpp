@@ -1,4 +1,5 @@
 #include "renderable_manager.hpp"
+#include "context.hpp"
 #include <functional>
 
 
@@ -10,7 +11,6 @@ namespace RenderableManager {
         std::vector<std::reference_wrapper<const Wireframe>> wireframes;
         mat4 view_proj = mat4(1.f);
         mat4 persp_mat = mat4(1.f);
-        ShaderManager* shader_manager = nullptr;
     }
 
     void initPerspectiveMatrix(float window_width, float window_height, float fov) {
@@ -32,18 +32,15 @@ namespace RenderableManager {
         renderables.push_back(obj);
     }
 
-    void setShaderManager(ShaderManager* shader_manager) {
-        RenderableManager::shader_manager = shader_manager;
-    };
 
-    void renderObjects() {
+    void renderObjects(Context& ctx) {
         for (Node* obj : renderables) {
-            obj->render();
+            obj->render(ctx);
         }
 
         for (auto& wireframe_ref : wireframes) {
             Wireframe const& wireframe = wireframe_ref.get();
-            wireframe.render();
+            wireframe.render(ctx);
             
         }
     }

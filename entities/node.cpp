@@ -42,10 +42,10 @@ void Node::loadGLTFModel(const std::string& file_name) {
 
     this->tos = new unsigned int[meshes.size()];
     glGenBuffers(meshes.size(), this->tos);
-    this->texture_count = meshes.size();
+
+    this->colors = new glm::vec3[meshes.size()];
 
     this->primitives_count = meshes.size();
-
     this->primitive_offsets = new unsigned int[meshes.size()];
     this->primitive_offsets[0] = 0;
 
@@ -74,7 +74,10 @@ void Node::loadGLTFModel(const std::string& file_name) {
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
-        loadGLTFTexture(i, meshes[i]);
+        if (meshes[i].is_textured)
+            loadGLTFTexture(i, meshes[i]);
+        else
+            this->colors[i] = meshes[i].color;
 
         //this->total_vertices = model.indices;
         this->total_vertices.push_back(meshes[i].vertices);
@@ -146,7 +149,7 @@ void Node::glBind() const {
 }
 
 
-void Node::render() {
+void Node::render(Context& ctx) {
 
 	assert(this->vbo != 0 && this->vao != 0 && this->ebo != 0);
 	//this->shader.use();
@@ -164,6 +167,8 @@ void Node::render() {
         return;
     }
 
+    int light_pos_loc = glGetUniformLocation(this->shader->id, "light_pos");
+    glUniform3fv(light_pos_loc, 1, glm::value_ptr(ctx.world_light.position));
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     int model_loc = glGetUniformLocation(this->shader->id, "Model");
@@ -175,13 +180,15 @@ void Node::render() {
 
 	int MVPLoc = glGetUniformLocation(this->shader->id, "MVP");
 	glm::mat4 MVP = this->view_proj * model_mat;
-	int textured_loc = glGetUniformLocation(this->shader->id, "is_textured");
-	glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
-    glUniform1i(textured_loc, this->textured);
+    glUniformMatrix4fv(MVPLoc, 1, GL_FALSE, glm::value_ptr(MVP));
 
     for (int i = 0; i < this->primitives_count; ++i) {
-        if (this->tos != nullptr)
+        if (!textured) {
+            int color_loc = glGetUniformLocation(this->shader->id, "vertex_color");
+            glUniform3fv(color_loc, 1, glm::value_ptr(this->colors[i]));
+        } else {
             glBindTexture(GL_TEXTURE_2D, this->tos[i]);
+        }
 
         glDrawArrays(GL_TRIANGLES, this->primitive_offsets[i], this->total_vertices[i]);
     }

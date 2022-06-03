@@ -1,4 +1,5 @@
 #include "context.hpp"
+#include "../entities/entity.hpp"
 #include <stdexcept>
 
 int Context::ent_counters[2] = {0, 0};
@@ -27,10 +28,8 @@ int Context::getNewEntId(EntityType ent_type) {
     switch (ent_type) {
         case EntityType::REGULAR:
             return ent_counters[EntityType::REGULAR]++;
-        break;
         case EntityType::STATIC:
             return ent_counters[EntityType::STATIC]++;
-        break;
     }
 
     return EntityType::REGULAR;

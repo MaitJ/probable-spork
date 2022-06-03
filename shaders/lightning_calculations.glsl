@@ -1,5 +1,7 @@
 #version 330 core
 
+void testFunction() {}
+
 vec3 calculateAmbientColor(in vec3 color, in float ambient_strength) {
     return(color * ambient_strength);
 }

@@ -7,13 +7,11 @@
 
 class ShaderManager {
 public:
-    ShaderManager();
-
-    Shader const& getShader(std::string shader_name) const;
-    void addShader(Shader shader);
+    static Shader const& getShader(std::string shader_name);
+    static void addShader(Shader shader);
 
 private:
-    std::vector<Shader> shaders;
+    inline static std::vector<Shader> shaders = {};
 };
 
 #endif

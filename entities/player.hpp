@@ -2,7 +2,6 @@
 #define PLAYER_H
 
 #include <glm/glm.hpp>
-#include "node.hpp"
 #include "../components/transform.hpp"
 #include "entity.hpp"
 #include "camera.hpp"
@@ -19,8 +18,8 @@ enum CollisionAxis {
 
 struct Player {
 
-    Player(Camera& camera, Context& ctx, ShaderManager& shader_manager);
-    Player(glm::mat4& view_proj, Camera& camera, Context& ctx, ShaderManager& shader_manager);
+    Player(Camera& camera, Context& ctx);
+    Player(glm::mat4& view_proj, Camera& camera, Context& ctx);
     bool isVisible();
 
     void updateMovement(DeltaTime const& dt);

@@ -6,11 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include "obj.hpp"
-
-class Transform;
 #include "../components/transform.hpp"
 #include "gltf_loader.hpp"
 #include "shaders/shader_manager.hpp"
+#include "../world/context.hpp"
 
 enum PrimitiveShape {
 	PLANE
@@ -21,7 +20,7 @@ class Node {
 public:
     Node();
     ~Node();
-	void render();
+	void render(Context& ctx);
 	Node(ShaderManager& shader_manager, std::string shader_name);
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
@@ -43,7 +42,7 @@ public:
     glm::mat4& view_proj;
 
     unsigned int* tos = nullptr;
-    int texture_count = 0;
+    glm::vec3* colors = nullptr;
 
     int primitives_count;
     unsigned int* primitive_offsets = nullptr;
@@ -60,6 +59,7 @@ private:
     glm::quat orientation = glm::quat(1.0f, .0f, .0f, .0f);
 
     void loadGLTFTexture(int i, const Mesh &mesh);
+
 };
 
 #endif // !RENDERABLE_ENTITY_H

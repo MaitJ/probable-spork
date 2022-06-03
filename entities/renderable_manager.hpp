@@ -8,10 +8,8 @@ namespace RenderableManager {
 
     void addRenderable(Node* obj);
     void addWireframe(Wireframe const& wireframe);
-    void renderObjects();
-    void enableDimensionWireframes();
+    void renderObjects(Context& ctx);
     void initPerspectiveMatrix(float window_width, float window_height, float fov);
-    void setShaderManager(ShaderManager* shader_manager);
     glm::mat4 const& getPerspectiveMat();
     glm::mat4& getViewProjMat();
 

@@ -37,20 +37,13 @@ target_link_libraries(source OpenGL::GL)
 find_package(fmt)
 target_link_libraries(source fmt::fmt)
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/vertex_shader.vert"
-    "${CMAKE_CURRENT_BINARY_DIR}/shaders/vertex_shader.vert")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/fragment_shader_mod.frag"
-    "${CMAKE_CURRENT_BINARY_DIR}/shaders/fragment_shader_mod.frag")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/lightning_calculations.glsl"
-        "${CMAKE_CURRENT_BINARY_DIR}/shaders/lightning_calculations.glsl")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/test_obj.obj"
-    "${CMAKE_CURRENT_BINARY_DIR}/tests/test_obj.obj")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.sh"
-    "${CMAKE_CURRENT_BINARY_DIR}/tests.sh")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/wf_vertex_shader.vert"
-    "${CMAKE_CURRENT_BINARY_DIR}/shaders/wf_vertex_shader.vert")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/shaders/wf_fragment_shader.frag"
-    "${CMAKE_CURRENT_BINARY_DIR}/shaders/wf_fragment_shader.frag")
+add_custom_target(assets
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets)
+add_dependencies(${PROJECT_NAME} assets)
+
+add_custom_target(shaders
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+add_dependencies(${PROJECT_NAME} shaders)
 
 add_library(glad STATIC "${DEPS_DIR}/glad/glad.c")
 target_include_directories(glad PUBLIC "${DEPS_DIR}/")

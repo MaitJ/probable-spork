@@ -14,8 +14,8 @@ class Wireframe {
 public:
     Wireframe(Transform& transform, int entity_id);
     //Transformi sees on yhine render obj
-    static void initWireframeModel(ShaderManager& shader_manager);
-    void render() const;
+    static void initWireframeModel();
+    void render(Context& ctx) const;
 };
 
 

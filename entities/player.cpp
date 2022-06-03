@@ -9,10 +9,10 @@
 #define PLAYER_MODEL "assets/chair.gltf"
 
 
-Player::Player(Camera& camera, Context& ctx, ShaderManager& shader_manager) : game_ent(ctx.createEntity().lock()), camera(camera) {}
+Player::Player(Camera& camera, Context& ctx) : game_ent(ctx.createEntity().lock()), camera(camera) {}
 
-Player::Player(glm::mat4& view_proj, Camera& camera, Context& ctx, ShaderManager& shader_manager) :  game_ent(ctx.createEntity().lock()), camera(camera) {
-    Shader const& textured_shader = shader_manager.getShader("textured");
+Player::Player(glm::mat4& view_proj, Camera& camera, Context& ctx) :  game_ent(ctx.createEntity().lock()), camera(camera) {
+    Shader const& textured_shader = ShaderManager::getShader("textured");
     this->setupRenderable(view_proj, &textured_shader);
 }
 

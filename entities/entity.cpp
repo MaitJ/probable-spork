@@ -11,21 +11,11 @@ Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe
 }
 
 void Entity::enableWireframe() {
-    this->is_wireframed = true;
     RenderableManager::addWireframe(this->wireframe);
 }
 void Entity::loadGLTFModel(const std::string file_name) {
-    //Currently doesn't have a MVP matrix
     this->renderable.loadGLTFModel(file_name);
-    //this->transform.attachRenderable(&this->renderable);
 }
-
-//
-/* 
-void Entity::enableCollisions() {
-    CollisionManager::addCollidable(*this);
-}
-*/
 
 bool Entity::isVisible() {
     return this->is_visible;
@@ -60,6 +50,8 @@ namespace PrimitiveObjects {
         ent_renderable.primitive_offsets = new unsigned int[1] {0};
         ent_renderable.primitives_count = 1;
 
+        ent_renderable.colors = new glm::vec3[1] {glm::vec3(.2f, .9f, .9f)};
+
         glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
@@ -69,7 +61,6 @@ namespace PrimitiveObjects {
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
         glEnableVertexAttribArray(2);
         RenderableManager::addRenderable(&ent_renderable);
-        ent.transform.attachRenderable(&ent_renderable);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

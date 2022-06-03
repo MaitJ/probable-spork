@@ -3,23 +3,15 @@
 
 #include <glm/glm.hpp>
 
-class Node;
-#include "../entities/node.hpp"
 
 class Transform {
-
-    Node* renderable = nullptr;
     glm::vec3 position = glm::vec3(0.f);
     glm::vec3 orientation = glm::vec3(1.f);
     glm::vec3 dimensions = glm::vec3(1.f);
 
 public:
     Transform();
-    Transform(Node* renderable);
     Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions);
-    Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions, Node* renderable);
-
-    void attachRenderable(Node* obj);
 
     void setOrientation(float yaw, float pitch, float roll);
     void setPosition(float x, float y, float z);

@@ -13,22 +13,14 @@
 #include <chrono>
 #include "shaders/shader_manager.hpp"
 
-#define VERTEX_SHADER_FILE "vertex_shader.vert"
-#define FRAGMENT_SHADER_FILE "fragment_shader.frag"
-
 class Engine {
 
     GameWindow game_window;
     glm::mat4& view_proj;
     glm::mat4 const& persp_proj;
     Camera camera;
-    WorldLight world_light;
     Context ctx;
     DeltaTime dt;
-    ShaderManager shader_manager;
-
-
-    glm::mat4 createPerspectiveMatrix(float window_width, float window_height, float fov);
 
     void initializeShaders();
 

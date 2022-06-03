@@ -63,18 +63,19 @@ void GLTFLoader::setImageMaterial(Mesh& t_mesh, int material_index) {
     glm::vec4 node_color = {color[0], color[1], color[2], color[3]};
     t_mesh.color = node_color;
 
-    tinygltf::Texture& texture = this->model.textures[primitive_material.
-            pbrMetallicRoughness.
-            baseColorTexture.index];
-    tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
-    tinygltf::Image& image = this->model.images[texture.source];
 
-    t_mesh.sampler = sampler;
-    t_mesh.material = primitive_material;
-    t_mesh.image = image;
+    if (primitive_material.pbrMetallicRoughness.baseColorTexture.index > -1) {
+        tinygltf::Texture& texture = this->model.textures[primitive_material.
+                pbrMetallicRoughness.
+                baseColorTexture.index];
+        tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
+        tinygltf::Image& image = this->model.images[texture.source];
 
-    if (primitive_material.pbrMetallicRoughness.baseColorTexture.index > -1)
+        t_mesh.sampler = sampler;
+        t_mesh.material = primitive_material;
+        t_mesh.image = image;
         t_mesh.is_textured = true;
+    }
 
 }
 

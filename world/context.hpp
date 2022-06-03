@@ -3,12 +3,9 @@
 
 #include <vector>
 #include <memory>
+#include "../entities/world_light.hpp"
 
 class Entity;
-#include "../entities/entity.hpp"
-
-struct Player;
-#include "../entities/player.hpp"
 
 enum EntityType {
     REGULAR = 0,
@@ -36,6 +33,7 @@ public:
 
     //Variables
     float gravity = 3.f;
+    WorldLight world_light;
 };
 
 #endif
