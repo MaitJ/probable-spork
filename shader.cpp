@@ -36,6 +36,7 @@ void Shader::loadAndCompile(const std::string vertex_shader_file, const std::str
     if (!success)
     {
         glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
+        std::cout << "Vertex shader name: " << vertex_shader_file << "\n";
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
@@ -52,6 +53,7 @@ void Shader::loadAndCompile(const std::string vertex_shader_file, const std::str
     if (!success)
     {
         glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
+        std::cout << "Fragment shader name: " << fragment_shader_file << "\n";
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
  

@@ -1,5 +1,4 @@
 out vec4 FragColor;
-in vec2 tex_coords;
 in vec3 Normals;
 in vec3 frag_pos_world;
 uniform vec3 light_pos;

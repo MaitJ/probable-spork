@@ -7,7 +7,12 @@
 #include "entities/entity.hpp"
 #include "collisions/collision_manager.hpp"
 
-Engine::Engine(float window_width, float window_height, float fov) : view_proj(RenderableManager::getViewProjMat()), persp_proj(RenderableManager::getPerspectiveMat()), camera(RenderableManager::getViewProjMat()) {
+Engine::Engine(float window_width, float window_height) :
+game_window(window_width, window_height),
+view_proj(RenderableManager::getViewProjMat()),
+persp_proj(RenderableManager::getPerspectiveMat()),
+camera(RenderableManager::getViewProjMat()) {
+
     //assert(this->view_proj != nullptr);
     Utilities::setupGl();
     camera.setPosition(0.f, 50.f, 0.f);
@@ -63,6 +68,13 @@ void Engine::start() {
     chair_gltf->transform.setOrientation(0.f, .0f, .0f);
     chair_gltf->enableWireframe();
 
+    shared_ptr<Entity> rigged_simple = ctx.createStaticEntity().lock();
+    rigged_simple->renderable.shader = &ShaderManager::getShader("colored");
+    rigged_simple->renderable.loadGLTFModel("assets/RiggedSimple.gltf");
+    rigged_simple->renderable.setScale(5.f, 5.f, 5.f);
+    rigged_simple->renderable.setPos(25.f, 10.f, 50.f);
+    chair_gltf->renderable.setOrientation(0.f, .0f, .0f);
+
 
 
 
@@ -97,7 +109,7 @@ void Engine::close() {
 
 void Engine::initializeShaders() {
     std::vector<std::string> shader_names = {"textured", "wireframe", "colored"};
-    std::vector<std::string> vertex_shader_files = {"vertex_shader.vert", "wf_vertex_shader.vert", "vertex_shader.vert"};
+    std::vector<std::string> vertex_shader_files = {"vertex_shader_textured.vert", "wf_vertex_shader.vert", "vertex_shader_colored.vert"};
     std::vector<std::string> fragment_shader_files = {"fragment_shader_textured.frag", "wf_fragment_shader.frag", "fragment_shader_colored.frag"};
 
     for (int i = 0; i < shader_names.size(); ++i) {

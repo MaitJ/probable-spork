@@ -25,7 +25,7 @@ class Engine {
     void initializeShaders();
 
 public:
-    Engine(float window_width, float window_height, float fov);
+    Engine(float window_width, float window_height);
     void start();
     void close();
     void updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end);

@@ -10,18 +10,39 @@
 #include "gltf_loader.hpp"
 #include "shaders/shader_manager.hpp"
 #include "../world/context.hpp"
+#include "mesh.hpp"
 
 enum PrimitiveShape {
 	PLANE
 };
 
-//Right handed coord system
+namespace Renderable {
+    class Node {
+    public:
+        std::vector<Renderable::Node> nodes;
+        //Don't need to make separate class for mesh because
+        //a mesh only has primitives and nothing else
+        std::vector<Renderable::Primitive> primitives;
+
+        glm::mat4 transform;
+
+        void loadGLTFModel(std::string const file_name);
+        void render(glm::mat4 transform);
+    };
+
+}
+
+
+//Right-handed coord system
 class Node {
 public:
     Node();
     ~Node();
 	void render(Context& ctx);
 	Node(ShaderManager& shader_manager, std::string shader_name);
+
+    std::vector<Renderable::Mesh> meshes;
+
 	void setScale(float x, float y, float z);
 	void setPos(float x, float y, float z);
     void setOrientation(float x, float y, float z);

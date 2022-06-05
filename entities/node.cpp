@@ -65,19 +65,23 @@ void Node::loadGLTFModel(const std::string& file_name) {
         glBufferSubData(GL_ARRAY_BUFFER, this->primitive_offsets[i] * 8 * sizeof(float), meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data());
         //glBufferData(GL_ARRAY_BUFFER, meshes[i].vertex_data.size() * sizeof(float), meshes[i].vertex_data.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
+        if(meshes[i].is_textured) {
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) 0);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (5 * sizeof(float)));
+            glEnableVertexAttribArray(2);
 
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-
-        if (meshes[i].is_textured)
             loadGLTFTexture(i, meshes[i]);
-        else
+        } else {
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+            glEnableVertexAttribArray(2);
+
             this->colors[i] = meshes[i].color;
+        }
 
         //this->total_vertices = model.indices;
         this->total_vertices.push_back(meshes[i].vertices);

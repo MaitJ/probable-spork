@@ -3,26 +3,22 @@
 
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
+#include "mesh.hpp"
 
-struct Mesh {
-    std::vector<float> vertex_data;
-    tinygltf::Material material;
-    tinygltf::Sampler sampler;
-    tinygltf::Image image;
-
-    bool is_textured = false;
-    glm::vec4 color;
-
-    unsigned int vertices;
-};
-
+namespace Renderable {
+    class Node;
+}
 
 class GLTFLoader {
 public:
     GLTFLoader(std::string const& file_name, bool& loaded);
 
-    std::vector<Mesh> getMeshes();
+    void loadMesh(Renderable::Node& node, int traverse_node_index);
+
+    std::vector<Renderable::Mesh> getMeshes();
+    //std::vector<SkinnedMesh> getSkinnedMeshes();
     void getMeshData(tinygltf::Node const& node, Mesh& t_mesh);
+
 
     size_t indices;
 
@@ -48,6 +44,13 @@ private:
     void applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
 
     void setImageMaterial(Mesh &t_mesh, int material_index);
+
+    void loadPrimitives(std::vector<Renderable::Primitive>& primitives, int mesh_index);
+
+    void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material, Renderable::TexturedPrimitive& textured_primitive);
+
+    void loadColoredPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
+                              Renderable::ColoredPrimitive& colored_primitive);
 };
 
 #endif

@@ -12,7 +12,7 @@
 int main(void) {
 
     RenderableManager::initPerspectiveMatrix(WINDOW_WIDTH, WINDOW_HEIGHT, FOV);
-    Engine engine(1920, 1080, 90);
+    Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
     engine.start();
     return 0;
 

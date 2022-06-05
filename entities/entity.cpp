@@ -37,13 +37,13 @@ namespace PrimitiveObjects {
 
         ent_renderable.view_proj = RenderableManager::getViewProjMat();
         float plane_vertices[] = {
-            -1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-            1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-            1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
+            -1.0f, 0.0f, 1.0f, .0f, 1.0f, .0f,
+            1.0f, 0.0f, 1.0f,  .0f, 1.0f, .0f,
+            1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
 
-            -1.0f, 0.0f, 1.0f, .0f, .0f, .0f, 1.0f, .0f,
-            -1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f,
-            1.0f, 0.0f, -1.0f, .0f, .0f, .0f, 1.0f, .0f
+            -1.0f, 0.0f, 1.0f,  .0f, 1.0f, .0f,
+            -1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
+            1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f
         };
 
         ent_renderable.total_vertices.push_back(6);
@@ -53,12 +53,12 @@ namespace PrimitiveObjects {
         ent_renderable.colors = new glm::vec3[1] {glm::vec3(.2f, .9f, .9f)};
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(2);
         RenderableManager::addRenderable(&ent_renderable);
 

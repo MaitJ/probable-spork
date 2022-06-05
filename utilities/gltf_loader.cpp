@@ -2,6 +2,7 @@
 #include "glm/detail/type_quat.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include <fmt/core.h>
+#include "../entities/node.hpp"
 
 GLTFLoader::GLTFLoader(std::string const& file_name, bool& loaded) : indices{0} {
     tinygltf::TinyGLTF loader;
@@ -45,13 +46,21 @@ void GLTFLoader::getAttribData(int accessor_index, int num_of_components, std::v
     BufferView& bf_view = this->model.bufferViews[accessor.bufferView];
     std::vector<unsigned char>& p_buffer_data = this->model.buffers[bf_view.buffer].data;
 
-    unsigned char* cur_byte = &p_buffer_data[bf_view.byteOffset];
+    unsigned char* cur_vertex_start = p_buffer_data.data() + bf_view.byteOffset + accessor.byteOffset;
 
-    for (int i = 0; i < (accessor.count * num_of_components); ++i) {
-        T value = *reinterpret_cast<T*>(cur_byte);
-        o_vec.insert(o_vec.begin() + i, value);
+    for (int i = 0; i < accessor.count; ++i) {
+        unsigned char* cur_byte = cur_vertex_start;
+        for (int j = 0; j < num_of_components; ++j) {
+            T value = *reinterpret_cast<T*>(cur_byte);
+            o_vec.push_back(value);
 
-        cur_byte += sizeof(T) + bf_view.byteStride;
+            cur_byte += sizeof(T);
+        }
+        if (bf_view.byteStride == 0)
+            cur_vertex_start += sizeof(T) * num_of_components;
+        else {
+            cur_vertex_start += bf_view.byteStride;
+        }
     }
 }
 
@@ -89,6 +98,7 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
 
     for (tinygltf::Primitive& primitive : mesh.primitives) {
 
+
         std::vector<glm::vec3> position_vertices;
         std::vector<glm::vec3> normal_vertices;
         std::vector<glm::vec2> tex_vertices;
@@ -118,6 +128,7 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
                 getAttribData<float>(value, 2, tex);
 
                 groupVec2Floats(tex, tex_vertices);
+                t_mesh.is_textured = true;
             }
 
         }
@@ -133,12 +144,15 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
 
                 t_mesh.vertices = mesh_indices.size();
 
+
+                //Order depends on the layout of shader
                 for (unsigned short mesh_index : mesh_indices) {
                     vertex_data.insert(vertex_data.end(), {position_vertices[mesh_index][0], position_vertices[mesh_index][1], position_vertices[mesh_index][2]});
-                    vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
-                    vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
 
-                    //vertex_data.insert(vertex_data.end(), {t_mesh.color[0], t_mesh.color[1], t_mesh.color[2], t_mesh.color[3]});
+                    if (t_mesh.is_textured)
+                        vertex_data.insert(vertex_data.end(), {tex_vertices[mesh_index][0], tex_vertices[mesh_index][1]});
+
+                    vertex_data.insert(vertex_data.end(), {normal_vertices[mesh_index][0], normal_vertices[mesh_index][1], normal_vertices[mesh_index][2]});
                 }
 
 
@@ -154,7 +168,7 @@ void GLTFLoader::getMeshData(tinygltf::Node const& node, Mesh& t_mesh) {
 
 void GLTFLoader::applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3>& position_vertices, std::vector<glm::vec3>& normal_vertices) {
     glm::vec3 t_translation(0.f);
-    glm::quat t_rotation;
+    glm::quat t_rotation(1.f, .0f, .0f, .0f);
     glm::vec3 t_scale(1.f);
 
     if (!node.scale.empty())
@@ -227,15 +241,99 @@ void GLTFLoader::groupVec2Floats(const std::vector<float> &floats, std::vector<g
 
 std::vector<Mesh> GLTFLoader::getMeshes() {
 
-    std::vector<Mesh> meshes;
+    std::vector<BaseMesh> base_meshes;
 
     for (auto& node : this->model.nodes) {
-        Mesh t_mesh;
+        BaseMesh t_mesh;
 
-        getMeshData(node, t_mesh);
+        if (node.mesh > -1) {
+            getMeshData(node, t_mesh);
+            base_meshes.push_back(t_mesh);
+        }
 
-        meshes.push_back(t_mesh);
     }
 
     return meshes;
+}
+
+
+void GLTFLoader::loadMesh(Renderable::Node &node, int traverse_node_index) {
+    tinygltf::Node& current_node = this->model.nodes[traverse_node_index];
+
+
+    if (current_node.mesh != -1) {
+        tinygltf::Mesh& mesh = this->model.meshes[current_node.mesh];
+
+        for (tinygltf::Primitive& primitive : mesh.primitives) {
+            tinygltf::Material& material = this->model.materials[primitive.material];
+
+            Renderable::Primitive l_primitive;
+            if (material.pbrMetallicRoughness.baseColorTexture.index != -1) {
+                Shader const& textured_shader = ShaderManager::getShader("textured");
+                Renderable::TexturedPrimitive renderable_primitive(textured_shader);
+                loadTexturedPrimitive(primitive, material, renderable_primitive);
+                l_primitive = std::move(renderable_primitive);
+            } else {
+                Shader const& colored_shader = ShaderManager::getShader("colored");
+                Renderable::ColoredPrimitive renderable_primitive(colored_shader);
+                loadColoredPrimitive(primitive, material, renderable_primitive);
+                l_primitive = std::move(renderable_primitive);
+            }
+
+            node.primitives.push_back(l_primitive);
+
+        }
+    }
+
+    if (!current_node.children.empty()) {
+        for (int child_index : current_node.children) {
+            Renderable::Node new_node;
+            loadMesh(new_node, child_index);
+            node.nodes.push_back(new_node);
+        }
+    }
+
+}
+
+void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
+                                       tinygltf::Material const& material,
+                                       Renderable::TexturedPrimitive& textured_primitive) {
+    textured_primitive.genGlBuffers();
+    textured_primitive.bindBuffers();
+
+    std::vector<glm::vec3> position_vertices;
+    std::vector<glm::vec3> normal_vertices;
+    std::vector<glm::vec2> tex_vertices;
+    std::vector<>
+
+    for (auto& [key, value] : primitive.attributes) {
+        if (key == "POSITION") {
+            std::vector<float> pos;
+            getAttribData<float>(value, 3, pos);
+            groupVec3Floats(pos, position_vertices);
+        }
+
+
+        if (key == "NORMAL") {
+            std::vector<float> normals;
+            getAttribData<float>(value, 3, normals);
+
+            groupVec3Floats(normals, normal_vertices);
+        }
+
+
+        if (key == "TEXCOORD_0") {
+            std::vector<float> tex;
+            getAttribData<float>(value, 2, tex);
+            groupVec2Floats(tex, tex_vertices);
+        }
+    }
+
+}
+
+void GLTFLoader::loadColoredPrimitive(tinygltf::Primitive const& primitive,
+                                       tinygltf::Material const& material,
+                                       Renderable::ColoredPrimitive& colored_primitive) {
+
+
 }
