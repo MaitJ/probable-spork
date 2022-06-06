@@ -1,5 +1,5 @@
 #include "event_handler.hpp"
-#include "event.h"
+#include "events.hpp"
 #include <type_traits>
 
 #define NUM_OF_EVENTS 50

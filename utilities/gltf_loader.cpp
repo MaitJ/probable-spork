@@ -3,6 +3,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include <fmt/core.h>
 #include "../entities/node.hpp"
+#include <memory>
 
 GLTFLoader::GLTFLoader(std::string const& file_name, bool& loaded) : indices{0} {
     tinygltf::TinyGLTF loader;
@@ -267,20 +268,21 @@ void GLTFLoader::loadMesh(Renderable::Node &node, int traverse_node_index) {
         for (tinygltf::Primitive& primitive : mesh.primitives) {
             tinygltf::Material& material = this->model.materials[primitive.material];
 
-            Renderable::Primitive l_primitive;
+            std::shared_ptr<Renderable::Primitive> l_primitive;
+
             if (material.pbrMetallicRoughness.baseColorTexture.index != -1) {
                 Shader const& textured_shader = ShaderManager::getShader("textured");
-                Renderable::TexturedPrimitive renderable_primitive(textured_shader);
+                auto renderable_primitive = std::make_shared<Renderable::TexturedPrimitive>(textured_shader);
                 loadTexturedPrimitive(primitive, material, renderable_primitive);
-                l_primitive = std::move(renderable_primitive);
+                l_primitive = renderable_primitive;
             } else {
                 Shader const& colored_shader = ShaderManager::getShader("colored");
-                Renderable::ColoredPrimitive renderable_primitive(colored_shader);
+                auto renderable_primitive = std::make_shared<Renderable::ColoredPrimitive>(colored_shader);
                 loadColoredPrimitive(primitive, material, renderable_primitive);
-                l_primitive = std::move(renderable_primitive);
+                l_primitive = renderable_primitive;
             }
 
-            node.primitives.push_back(l_primitive);
+            node.primitives.emplace_back(l_primitive);
 
         }
     }
@@ -289,7 +291,7 @@ void GLTFLoader::loadMesh(Renderable::Node &node, int traverse_node_index) {
         for (int child_index : current_node.children) {
             Renderable::Node new_node;
             loadMesh(new_node, child_index);
-            node.nodes.push_back(new_node);
+            node.nodes.emplace_back(new_node);
         }
     }
 
@@ -297,14 +299,14 @@ void GLTFLoader::loadMesh(Renderable::Node &node, int traverse_node_index) {
 
 void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
                                        tinygltf::Material const& material,
-                                       Renderable::TexturedPrimitive& textured_primitive) {
-    textured_primitive.genGlBuffers();
-    textured_primitive.bindBuffers();
+                                       std::shared_ptr<Renderable::TexturedPrimitive> textured_primitive) {
+    textured_primitive->genGlBuffers();
+    textured_primitive->bindBuffers();
 
     std::vector<glm::vec3> position_vertices;
     std::vector<glm::vec3> normal_vertices;
     std::vector<glm::vec2> tex_vertices;
-    std::vector<>
+    std::vector<unsigned int> indices = this->getMeshIndices<unsigned int>(this->model.accessors[primitive.indices]);
 
     for (auto& [key, value] : primitive.attributes) {
         if (key == "POSITION") {
@@ -317,7 +319,6 @@ void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
         if (key == "NORMAL") {
             std::vector<float> normals;
             getAttribData<float>(value, 3, normals);
-
             groupVec3Floats(normals, normal_vertices);
         }
 
@@ -329,11 +330,37 @@ void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
         }
     }
 
+
+    textured_primitive->loadPrimitive(position_vertices, normal_vertices, tex_vertices, indices);
+    textured_primitive->loadMaterial(material);
+
 }
 
 void GLTFLoader::loadColoredPrimitive(tinygltf::Primitive const& primitive,
                                        tinygltf::Material const& material,
-                                       Renderable::ColoredPrimitive& colored_primitive) {
+                                       std::shared_ptr<Renderable::ColoredPrimitive> colored_primitive) {
+    colored_primitive->genGlBuffers();
+    colored_primitive->bindBuffers();
+
+    std::vector<glm::vec3> position_vertices;
+    std::vector<glm::vec3> normal_vertices;
+    std::vector<unsigned int> indices = this->getMeshIndices<unsigned int>(this->model.accessors[primitive.indices]);
+
+    for (auto& [key, value] : primitive.attributes) {
+        if (key == "POSITION") {
+            std::vector<float> pos;
+            getAttribData<float>(value, 3, pos);
+            groupVec3Floats(pos, position_vertices);
+        }
 
 
+        if (key == "NORMAL") {
+            std::vector<float> normals;
+            getAttribData<float>(value, 3, normals);
+            groupVec3Floats(normals, normal_vertices);
+        }
+    }
+
+    colored_primitive->loadPrimitive(position_vertices, normal_vertices, indices);
+    colored_primitive->loadMaterial(material);
 }

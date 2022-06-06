@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "shader.hpp"
+#include <tiny_gltf.h>
 
 namespace Renderable {
 
@@ -13,6 +14,7 @@ namespace Renderable {
         virtual void bindBuffers() = 0;
 
         unsigned int vbo, vao;
+        unsigned int vertices = 0;
 
         glm::mat4 local_transform;
     };
@@ -25,11 +27,16 @@ namespace Renderable {
         void bindBuffers() override;
 
         void render(glm::mat4 TRS) override;
-        void loadPrimitive(std::vector<float> positions,
-                           std::vector<float> normals,
-                           std::vector<float> indices);
+        void loadPrimitive(std::vector<glm::vec3> positions,
+                           std::vector<glm::vec3> normals,
+                           std::vector<unsigned int> indices);
+        void loadMaterial(tinygltf::Material const& material);
         glm::vec4 color = {.9f, .9f, .9f, 1.f};
         Shader const& shader;
+
+        std::vector<float>
+        assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals,
+                         std::vector<unsigned int> indices);
     };
 
     class TexturedPrimitive : public Primitive {
@@ -40,12 +47,18 @@ namespace Renderable {
         void bindBuffers() override;
 
         void render(glm::mat4 TRS) override;
-        void loadPrimitive(std::vector<float> positions,
-                           std::vector<float> normals,
-                           std::vector<float> tex_coords,
-                           std::vector<float> indices);
+        void loadPrimitive(std::vector<glm::vec3> positions,
+                           std::vector<glm::vec3> normals,
+                           std::vector<glm::vec2> tex_coords,
+                           std::vector<unsigned int> indices);
+        void loadMaterial(tinygltf::Material const& material);
         unsigned int to;
         Shader const& shader;
+
+        std::vector<float>
+        assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals,
+                         std::vector<glm::vec2> tex_coords,
+                         std::vector<unsigned int> indices);
     };
 }
 

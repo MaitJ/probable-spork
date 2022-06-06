@@ -9,7 +9,7 @@ set(SOURCE_FILES shader.cpp window.cpp engine.cpp shaders/shader_manager.cpp)
 
 set(ENTITY_FILES entities/node.cpp entities/world_light.cpp
     entities/camera.cpp entities/player.cpp entities/renderable_manager.cpp
-    entities/entity.cpp entities/wireframe.cpp)
+    entities/entity.cpp entities/wireframe.cpp entities/mesh.cpp)
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp

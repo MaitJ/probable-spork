@@ -4,6 +4,7 @@
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
 #include "mesh.hpp"
+#include <memory>
 
 namespace Renderable {
     class Node;
@@ -47,10 +48,11 @@ private:
 
     void loadPrimitives(std::vector<Renderable::Primitive>& primitives, int mesh_index);
 
-    void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material, Renderable::TexturedPrimitive& textured_primitive);
+    void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
+                               std::shared_ptr<Renderable::TexturedPrimitive> textured_primitive);
 
     void loadColoredPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
-                              Renderable::ColoredPrimitive& colored_primitive);
+                              std::shared_ptr<Renderable::ColoredPrimitive> colored_primitive);
 };
 
 #endif

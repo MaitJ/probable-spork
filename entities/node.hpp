@@ -19,10 +19,11 @@ enum PrimitiveShape {
 namespace Renderable {
     class Node {
     public:
+        Node();
         std::vector<Renderable::Node> nodes;
         //Don't need to make separate class for mesh because
         //a mesh only has primitives and nothing else
-        std::vector<Renderable::Primitive> primitives;
+        std::vector<std::shared_ptr<Renderable::Primitive>> primitives;
 
         glm::mat4 transform;
 
