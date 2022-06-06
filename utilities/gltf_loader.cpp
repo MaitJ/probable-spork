@@ -299,7 +299,7 @@ void GLTFLoader::loadMesh(Renderable::Node &node, int traverse_node_index) {
 
 void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
                                        tinygltf::Material const& material,
-                                       std::shared_ptr<Renderable::TexturedPrimitive> textured_primitive) {
+                                       std::shared_ptr<Renderable::TexturedPrimitive> const& textured_primitive) {
     textured_primitive->genGlBuffers();
     textured_primitive->bindBuffers();
 
@@ -308,7 +308,7 @@ void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
     std::vector<glm::vec2> tex_vertices;
     std::vector<unsigned int> indices = this->getMeshIndices<unsigned int>(this->model.accessors[primitive.indices]);
 
-    for (auto& [key, value] : primitive.attributes) {
+    for (auto const& [key, value] : primitive.attributes) {
         if (key == "POSITION") {
             std::vector<float> pos;
             getAttribData<float>(value, 3, pos);
@@ -331,14 +331,21 @@ void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
     }
 
 
-    textured_primitive->loadPrimitive(position_vertices, normal_vertices, tex_vertices, indices);
-    textured_primitive->loadMaterial(material);
+    textured_primitive->loadPrimitive(position_vertices, tex_vertices, normal_vertices, indices);
+
+    const int texture_index = material.pbrMetallicRoughness.baseColorTexture.index;
+    tinygltf::Texture& texture = this->model.textures[texture_index];
+    tinygltf::Image& texture_image = this->model.images[texture.source];
+    tinygltf::Sampler& sampler = this->model.samplers[texture.sampler];
+
+    textured_primitive->loadMaterial(texture_image, sampler);
+    textured_primitive->unbindBuffers();
 
 }
 
 void GLTFLoader::loadColoredPrimitive(tinygltf::Primitive const& primitive,
                                        tinygltf::Material const& material,
-                                       std::shared_ptr<Renderable::ColoredPrimitive> colored_primitive) {
+                                       std::shared_ptr<Renderable::ColoredPrimitive> const& colored_primitive) {
     colored_primitive->genGlBuffers();
     colored_primitive->bindBuffers();
 
@@ -346,7 +353,7 @@ void GLTFLoader::loadColoredPrimitive(tinygltf::Primitive const& primitive,
     std::vector<glm::vec3> normal_vertices;
     std::vector<unsigned int> indices = this->getMeshIndices<unsigned int>(this->model.accessors[primitive.indices]);
 
-    for (auto& [key, value] : primitive.attributes) {
+    for (auto const& [key, value] : primitive.attributes) {
         if (key == "POSITION") {
             std::vector<float> pos;
             getAttribData<float>(value, 3, pos);
@@ -363,4 +370,5 @@ void GLTFLoader::loadColoredPrimitive(tinygltf::Primitive const& primitive,
 
     colored_primitive->loadPrimitive(position_vertices, normal_vertices, indices);
     colored_primitive->loadMaterial(material);
+    colored_primitive->unbindBuffers();
 }

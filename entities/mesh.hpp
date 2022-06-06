@@ -4,61 +4,71 @@
 #include <glm/glm.hpp>
 #include "shader.hpp"
 #include <tiny_gltf.h>
+#include "../world/context.hpp"
 
 namespace Renderable {
 
     class Primitive {
     public:
-        virtual void render(glm::mat4 TRS) = 0;
+        virtual void render(glm::mat4& global_transform, glm::mat4& model_matrix, Context const& ctx) = 0;
         virtual void genGlBuffers() = 0;
         virtual void bindBuffers() = 0;
+        void unbindBuffers();
 
+    protected:
         unsigned int vbo, vao;
-        unsigned int vertices = 0;
+        size_t vertices = 0;
 
         glm::mat4 local_transform;
     };
 
     class ColoredPrimitive : public Primitive {
     public:
-        ColoredPrimitive(Shader const& shader);
+        explicit ColoredPrimitive(Shader const& shader);
 
         void genGlBuffers() override;
         void bindBuffers() override;
 
-        void render(glm::mat4 TRS) override;
-        void loadPrimitive(std::vector<glm::vec3> positions,
-                           std::vector<glm::vec3> normals,
-                           std::vector<unsigned int> indices);
+        void render(glm::mat4& global_transform, glm::mat4& model_matrix, Context const& ctx) override;
+        void loadPrimitive(std::vector<glm::vec3> const& positions,
+                           std::vector<glm::vec3> const& normals,
+                           std::vector<unsigned int> const& indices);
         void loadMaterial(tinygltf::Material const& material);
-        glm::vec4 color = {.9f, .9f, .9f, 1.f};
-        Shader const& shader;
 
-        std::vector<float>
-        assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals,
-                         std::vector<unsigned int> indices);
+        auto assembleVertices(
+                std::vector<glm::vec3> const& positions,
+                std::vector<unsigned int> const& indices,
+                std::vector<glm::vec3> const& normals
+                ) -> std::vector<float>;
+
+    private:
+        //Default color of mesh is grey
+        glm::vec4 color = {.9f, .9f, .9f, 1.f}; // NOLINT
+        Shader const& shader;
     };
 
     class TexturedPrimitive : public Primitive {
     public:
-        TexturedPrimitive(Shader const& shader);
+        explicit TexturedPrimitive(Shader const& shader);
 
         void genGlBuffers() override;
         void bindBuffers() override;
 
-        void render(glm::mat4 TRS) override;
-        void loadPrimitive(std::vector<glm::vec3> positions,
-                           std::vector<glm::vec3> normals,
-                           std::vector<glm::vec2> tex_coords,
-                           std::vector<unsigned int> indices);
-        void loadMaterial(tinygltf::Material const& material);
+        void render(glm::mat4& global_transform, glm::mat4& model_matrix, Context const& ctx) override;
+        void loadPrimitive(std::vector<glm::vec3> const& positions,
+                           std::vector<glm::vec2> const& tex_coords,
+                           std::vector<glm::vec3> const& normals,
+                           std::vector<unsigned int> const& indices);
+        void loadMaterial(tinygltf::Image const& image, tinygltf::Sampler const& sampler);
+
+        auto
+        assembleVertices(std::vector<glm::vec3> const& positions,
+                         std::vector<glm::vec2> const& tex_coords,
+                         std::vector<glm::vec3> const& normals,
+                         std::vector<unsigned int> const& indices) -> std::vector<float>;
+    private:
         unsigned int to;
         Shader const& shader;
-
-        std::vector<float>
-        assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals,
-                         std::vector<glm::vec2> tex_coords,
-                         std::vector<unsigned int> indices);
     };
 }
 

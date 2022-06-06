@@ -35,12 +35,12 @@ private:
     static void groupVec3Floats(std::vector<float> const& floats, std::vector<glm::vec3>& o_vertices);
     static void groupVec2Floats(std::vector<float> const& floats, std::vector<glm::vec2>& o_vertices);
 
-    glm::quat nodeQuatToGLQuat(std::vector<double> quaternion);
+    auto nodeQuatToGLQuat(std::vector<double> quaternion) -> glm::quat;
     void nodeTransformMesh(glm::vec3 translation, glm::quat rotation, glm::vec3 scale,
                            std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
 
 
-    glm::vec3 nodeTransformToGLVec3F(std::vector<double> transform);
+    auto nodeTransformToGLVec3F(std::vector<double> transform) -> glm::vec3;
 
     void applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
 
@@ -49,10 +49,10 @@ private:
     void loadPrimitives(std::vector<Renderable::Primitive>& primitives, int mesh_index);
 
     void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
-                               std::shared_ptr<Renderable::TexturedPrimitive> textured_primitive);
+                               std::shared_ptr<Renderable::TexturedPrimitive> const& textured_primitive);
 
     void loadColoredPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
-                              std::shared_ptr<Renderable::ColoredPrimitive> colored_primitive);
+                              std::shared_ptr<Renderable::ColoredPrimitive> const& colored_primitive);
 };
 
 #endif
