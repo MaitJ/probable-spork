@@ -5,8 +5,11 @@
 #include <utilities/types.hpp>
 #include "../components/transform.hpp"
 #include "wireframe.hpp"
+#include "mesh.hpp"
+
 
 class Context;
+
 
 class Entity {
 
@@ -18,14 +21,13 @@ public:
     Entity(Entity const& old_ent);
 
     void enableWireframe();
-    void loadGLTFModel(const std::string file_name);
-    Node& getRenderableObject();
+    Renderable::Mesh& getRenderableObject();
     bool isVisible();
 
     Transform transform;
     Wireframe wireframe;
     Context const& ctx;
-	Node renderable;
+	Renderable::Mesh mesh;
 };
 
 namespace PrimitiveObjects {

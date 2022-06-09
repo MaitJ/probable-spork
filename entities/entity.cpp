@@ -4,24 +4,21 @@
 #include <functional>
 
 
-Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), renderable(), ctx(ctx) {
+Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), ctx(ctx) {
     this->entity_id = entity_id;
 }
-Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe(this->transform, old_ent.entity_id), renderable(old_ent.renderable), ctx(old_ent.ctx){
+Entity::Entity(Entity const& old_ent) :  entity_id{old_ent.entity_id}, wireframe(this->transform, old_ent.entity_id), ctx(old_ent.ctx){
 }
 
 void Entity::enableWireframe() {
     RenderableManager::addWireframe(this->wireframe);
 }
-void Entity::loadGLTFModel(const std::string file_name) {
-    this->renderable.loadGLTFModel(file_name);
-}
 
 bool Entity::isVisible() {
     return this->is_visible;
 }
-Node& Entity::getRenderableObject() {
-    return this->renderable;
+Renderable::Mesh& Entity::getRenderableObject() {
+    return this->mesh;
 }
 
 namespace PrimitiveObjects {
@@ -31,12 +28,16 @@ namespace PrimitiveObjects {
 
 	template <>
 	void loadPrimitive<PLANE>(Entity& ent) {
-        Node& ent_renderable = ent.getRenderableObject();
-        ent_renderable.genBuffers();
-        ent_renderable.glBind();
+        Renderable::Mesh& ent_renderable = ent.getRenderableObject();
+        Shader const& colored_shader = ShaderManager::getShader("colored");
+        Renderable::Node base_node;
+        auto primitive = std::make_shared<Renderable::ColoredPrimitive>(colored_shader);
+        base_node.primitives.push_back(primitive);
+        primitive->genGlBuffers();
+        primitive->bindBuffers();
 
-        ent_renderable.view_proj = RenderableManager::getViewProjMat();
-        float plane_vertices[] = {
+
+        std::vector<float> plane_vertices = {
             -1.0f, 0.0f, 1.0f, .0f, 1.0f, .0f,
             1.0f, 0.0f, 1.0f,  .0f, 1.0f, .0f,
             1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
@@ -45,22 +46,11 @@ namespace PrimitiveObjects {
             -1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
             1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f
         };
+        primitive->loadPrimitive(plane_vertices, 6);
+        primitive->loadColor(glm::vec4(.9f, .9f, .9f, 1.f));
+        ent_renderable.nodes.push_back(base_node);
 
-        ent_renderable.total_vertices.push_back(6);
-        ent_renderable.primitive_offsets = new unsigned int[1] {0};
-        ent_renderable.primitives_count = 1;
-
-        ent_renderable.colors = new glm::vec3[1] {glm::vec3(.2f, .9f, .9f)};
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        RenderableManager::addRenderable(&ent_renderable);
+        RenderableManager::addRenderableMesh(&ent_renderable);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

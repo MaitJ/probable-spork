@@ -1,21 +1,20 @@
 #include "wireframe.hpp"
 #include "renderable_manager.hpp"
 #include <fmt/core.h>
+#include "mesh.hpp"
 
 Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity_id}, ent_transform(ent_transform)  {}
 
-Shader Wireframe::wf_shader;
-Node Wireframe::wf_renderable = Node();
+Renderable::Node Wireframe::wf_renderable = Renderable::Node();
 
 void Wireframe::initWireframeModel() {
-    Wireframe::wf_shader = ShaderManager::getShader("wireframe");
-    wf_renderable.is_wireframe = true;
-    wf_renderable.genBuffers();
-    wf_renderable.shader = &wf_shader;
-    wf_renderable.glBind();
+    Shader const& colored_shader = ShaderManager::getShader("colored");
+    auto primitive = std::make_shared<Renderable::ColoredPrimitive>(colored_shader);
+    wf_renderable.primitives.push_back(primitive);
+    primitive->genGlBuffers();
+    primitive->bindBuffers();
 
-    wf_renderable.view_proj = RenderableManager::getViewProjMat();
-    float wf_vertices[] = {
+    std::vector<float> wf_vertices = {
         //Front triangles
         -1.f, -1.0f, 1.f,
         1.f, -1.0f, 1.f,
@@ -50,31 +49,18 @@ void Wireframe::initWireframeModel() {
         1.f, 1.0f, -1.f,
         1.f, 1.0f, 1.f,
     };
-    wf_renderable.calcModel();
+    primitive->loadPrimitive(wf_vertices, 24);
+    primitive->loadColor(glm::vec4(.0f, 1.f, .0f, 1.f));
 
-    wf_renderable.total_vertices.push_back(24);
-    wf_renderable.primitive_offsets = new unsigned int[1] {0};
-    wf_renderable.primitives_count = 1;
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(wf_vertices), wf_vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, wf_shader.layout_len * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    Wireframe::wf_shader.unbind();
+    primitive->unbindBuffers();
 }
 
 
 void Wireframe::render(Context& ctx) const {
-    //Calli wf_renderable this->transformi asjadega ja renderda wf
-    wf_renderable.setPos(this->ent_transform.getPosition());
-    wf_renderable.setOrientation(this->ent_transform.getOrientation());
-    wf_renderable.setScale((this->ent_transform.getDimensions() / 2.f));
-    //RenderableManager::addWireframe(*this);
+    wf_renderable.local_transform = this->ent_transform.getTransformationMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     wf_renderable.render(ctx);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 //Node Wireframe::wf_renderable = Node();

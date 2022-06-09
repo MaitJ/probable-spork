@@ -40,28 +40,26 @@ void Engine::start() {
 
     shared_ptr<Entity> plane = ctx.createEntity().lock();
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
-    plane->renderable.shader = &ShaderManager::getShader("colored");
-    plane->renderable.setScale(500.0f, 1.0f, 500.0f);
+    plane->mesh.transform.setDimensions(500.f, 1.f, 500.f);
 	plane->transform.setDimensions(500.0f, 1.0f, 500.0f);
 	plane->transform.setPosition(0.0f, 0.0f, .0f);
     plane->transform.setOrientation(0.f, .0f, .0f);
-    plane->enableWireframe();
+    //plane->enableWireframe();
 
     Player test_player(view_proj, this->camera, this->ctx);
     test_player.game_ent->transform.setPosition(0.f, 20.f, 0.f);
     test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
     test_player.game_ent->transform.setOrientation(0.f, 0.f, 0.f);
-    test_player.game_ent->renderable.setScale(20.f, 20.f, 20.f);
-    //test_player.game_ent.enableCollisions();
-    test_player.game_ent->enableWireframe();
+    test_player.game_ent->mesh.transform.setDimensions(20.f, 20.f, 20.f);
+    //test_player.game_ent->enableWireframe();
     test_player.resetCameraPos();
+    /*
 
     shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
-    chair_gltf->renderable.shader = &ShaderManager::getShader("textured");
-    chair_gltf->renderable.loadGLTFModel("assets/chair.gltf");
-    chair_gltf->renderable.setScale(10.f, 10.f, 10.f);
-    chair_gltf->renderable.setPos(-25.0f, 0.f, -50.f);
-    chair_gltf->renderable.setOrientation(0.f, .0f, .0f);
+    chair_gltf->mesh.loadGLTFModel("assets/chair.gltf");
+    chair_gltf->mesh.transform.setDimensions(10.f, 10.f, 10.f);
+    chair_gltf->mesh.transform.setPosition(-25.0f, 0.f, -50.f);
+    chair_gltf->mesh.transform.setOrientation(0.f, .0f, .0f);
 
     chair_gltf->transform.setPosition(-25.f, 0.f, -50.f);
     chair_gltf->transform.setDimensions(50.f, 50.f, 50.f);
@@ -69,11 +67,11 @@ void Engine::start() {
     chair_gltf->enableWireframe();
 
     shared_ptr<Entity> rigged_simple = ctx.createStaticEntity().lock();
-    rigged_simple->renderable.shader = &ShaderManager::getShader("colored");
-    rigged_simple->renderable.loadGLTFModel("assets/RiggedSimple.gltf");
-    rigged_simple->renderable.setScale(5.f, 5.f, 5.f);
-    rigged_simple->renderable.setPos(25.f, 10.f, 50.f);
-    chair_gltf->renderable.setOrientation(0.f, .0f, .0f);
+    rigged_simple->mesh.loadGLTFModel("assets/RiggedSimple.gltf");
+    rigged_simple->mesh.transform.setDimensions(5.f, 5.f, 5.f);
+    rigged_simple->mesh.transform.setPosition(25.f, 10.f, 50.f);
+    chair_gltf->mesh.transform.setOrientation(0.f, .0f, .0f);
+     */
 
 
 
@@ -89,7 +87,7 @@ void Engine::start() {
 
         //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        RenderableManager::renderObjects(this->ctx);
+        RenderableManager::renderObjects(this->ctx, this->view_proj);
 
 		glfwSwapBuffers(game_window.window);
 		glfwPollEvents();

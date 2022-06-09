@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 class Transform {
@@ -20,12 +21,14 @@ public:
     glm::vec3& getOrientation();
     glm::vec3& getPosition();
     glm::vec3& getDimensions();
+    auto getTransformationMatrix() -> glm::mat4;
 
     glm::vec3 left() const;
     glm::vec3 right() const;
     void setLeft(glm::vec3 left);
     void setRight(glm::vec3 right);
 
+    glm::quat getRotation();
 };
 
 #endif

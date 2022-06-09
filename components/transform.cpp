@@ -1,5 +1,7 @@
 #include "transform.hpp"
 
+#include <glm/gtc/quaternion.hpp>
+
 Transform::Transform() {}
 
 Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimensions) {
@@ -33,6 +35,9 @@ glm::vec3& Transform::getPosition() {
 glm::vec3& Transform::getOrientation() {
     return this->orientation;
 }
+glm::quat Transform::getRotation() {
+    return glm::quat(glm::vec3(this->orientation.x, this->orientation.y, this->orientation.z));
+}
 glm::vec3& Transform::getDimensions() {
     return this->dimensions;
 }
@@ -62,4 +67,16 @@ void Transform::setRight(glm::vec3 right) {
     this->position.x = right.x - (this->dimensions.x / 2.0f);
     this->position.y = right.y - (this->dimensions.y / 2.0f);
     this->position.z = right.z - (this->dimensions.z / 2.0f);
+}
+
+auto Transform::getTransformationMatrix() -> glm::mat4 {
+    // Scale -> Rotate -> Transform
+    glm::mat4 transformation_matrix(1.f);
+
+    glm::scale(transformation_matrix, this->dimensions);
+    glm::mat4 rotation = glm::mat4_cast(this->getRotation());
+    transformation_matrix = rotation * transformation_matrix;
+    glm::translate(transformation_matrix, this->position);
+
+    return transformation_matrix;
 }

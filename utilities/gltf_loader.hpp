@@ -3,25 +3,21 @@
 
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
-#include "mesh.hpp"
 #include <memory>
 
 namespace Renderable {
     class Node;
+    class Primitive;
+    class TexturedPrimitive;
+    class ColoredPrimitive;
+    class Mesh;
 }
 
 class GLTFLoader {
 public:
-    GLTFLoader(std::string const& file_name, bool& loaded);
+    GLTFLoader(std::string const& file_name);
 
-    void loadMesh(Renderable::Node& node, int traverse_node_index);
-
-    std::vector<Renderable::Mesh> getMeshes();
-    //std::vector<SkinnedMesh> getSkinnedMeshes();
-    void getMeshData(tinygltf::Node const& node, Mesh& t_mesh);
-
-
-    size_t indices;
+    void loadMesh(Renderable::Mesh& mesh);
 
 private:
     tinygltf::Model model;
@@ -36,23 +32,15 @@ private:
     static void groupVec2Floats(std::vector<float> const& floats, std::vector<glm::vec2>& o_vertices);
 
     auto nodeQuatToGLQuat(std::vector<double> quaternion) -> glm::quat;
-    void nodeTransformMesh(glm::vec3 translation, glm::quat rotation, glm::vec3 scale,
-                           std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
-
-
     auto nodeTransformToGLVec3F(std::vector<double> transform) -> glm::vec3;
 
-    void applyNodeTransformations(tinygltf::Node const& node, std::vector<glm::vec3> &position_vertices, std::vector<glm::vec3>& normal_vertices);
-
-    void setImageMaterial(Mesh &t_mesh, int material_index);
-
+    void loadMeshRecursive(Renderable::Node& node, int traverse_node_index);
     void loadPrimitives(std::vector<Renderable::Primitive>& primitives, int mesh_index);
-
     void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
                                std::shared_ptr<Renderable::TexturedPrimitive> const& textured_primitive);
-
     void loadColoredPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
                               std::shared_ptr<Renderable::ColoredPrimitive> const& colored_primitive);
+    void setNodeTransform(tinygltf::Node const& t_node, Renderable::Node& node);
 };
 
 #endif

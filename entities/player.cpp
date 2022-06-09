@@ -17,8 +17,7 @@ Player::Player(glm::mat4& view_proj, Camera& camera, Context& ctx) :  game_ent(c
 }
 
 void Player::setupRenderable(glm::mat4& view_proj, Shader const* shader) {
-    this->game_ent->loadGLTFModel(PLAYER_MODEL);
-    this->game_ent->renderable.shader = shader;
+    this->game_ent->mesh.loadGLTFModel(PLAYER_MODEL);
     this->is_visible = true;
 
 }

@@ -4,9 +4,12 @@
 #include "node.hpp"
 #include "shaders/shader_manager.hpp"
 
+namespace Renderable {
+    class Mesh;
+}
+
 class Wireframe {
-    static Shader wf_shader;
-    static Node wf_renderable;
+    static Renderable::Node wf_renderable;
 
     int entity_id;
     Transform& ent_transform;

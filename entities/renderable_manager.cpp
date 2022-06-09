@@ -1,13 +1,12 @@
 #include "renderable_manager.hpp"
 #include "context.hpp"
 #include <functional>
-
-
+#include "mesh.hpp"
 
 namespace RenderableManager {
     using namespace glm;
     namespace {
-        std::vector<Node*> renderables;
+        std::vector<Renderable::Mesh*> renderables;
         std::vector<std::reference_wrapper<const Wireframe>> wireframes;
         mat4 view_proj = mat4(1.f);
         mat4 persp_mat = mat4(1.f);
@@ -28,14 +27,14 @@ namespace RenderableManager {
         return persp_mat;
     }
 
-    void addRenderable(Node* obj) {
+    void addRenderableMesh(Renderable::Mesh* obj) {
         renderables.push_back(obj);
     }
 
 
-    void renderObjects(Context& ctx) {
-        for (Node* obj : renderables) {
-            obj->render(ctx);
+    void renderObjects(Context& ctx, glm::mat4 const& VP) {
+        for (Renderable::Mesh* obj : renderables) {
+            obj->render(ctx, VP);
         }
 
         for (auto& wireframe_ref : wireframes) {
@@ -43,11 +42,6 @@ namespace RenderableManager {
             wireframe.render(ctx);
             
         }
-    }
-
-    void enableDimensionWireframes() {
-        //Not implemented yet.
-        return;
     }
 }
 
