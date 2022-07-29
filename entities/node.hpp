@@ -31,7 +31,7 @@ namespace Renderable {
         glm::mat4 local_transform;
 
         void loadGLTFModel(std::string const& file_name);
-        void render(Context const& ctx, glm::mat4 global_transform = glm::mat4(1.f));
+        void render(Context const& ctx, glm::mat4 VP = glm::mat4(1.f), glm::mat4 model_matrix = glm::mat4(1.f));
     };
 
 }

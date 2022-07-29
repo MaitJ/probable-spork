@@ -89,7 +89,7 @@ namespace Renderable {
     void ColoredPrimitive::loadPrimitive(std::vector<float> const& vertex_data, int vertices) {
         this->vertices = vertices;
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data) * vertices, vertex_data.data(), GL_STATIC_DRAW); // NOLINT
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_data.size(), vertex_data.data(), GL_STATIC_DRAW); // NOLINT
 
         const GLint vertex_length = 6;
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_length * sizeof(float), (void*)0);
@@ -140,7 +140,7 @@ namespace Renderable {
         std::vector<float> vertex_data = this->assembleVertices(positions, tex_coords, normals, indices);
         this->vertices = indices.size();
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data) * vertices, vertex_data.data(), GL_STATIC_DRAW); // NOLINT
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_data.size(), vertex_data.data(), GL_STATIC_DRAW); // NOLINT
 
         const GLint vertex_length = 8;
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_length * sizeof(float), (void*)0);
@@ -206,10 +206,10 @@ namespace Renderable {
 
     void Mesh::render(const Context &ctx, glm::mat4 const& VP) {
         //View projection matrix and camera matrix are missing
-        glm::mat4 MVP = VP * this->transform.getTransformationMatrix();
+        glm::mat4 model_matrix = this->transform.getTransformationMatrix();
 
         for (auto& node : this->nodes){
-            node.render(ctx, MVP);
+            node.render(ctx, VP, model_matrix);
         }
     }
 

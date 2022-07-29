@@ -47,31 +47,32 @@ void Engine::start() {
     //plane->enableWireframe();
 
     Player test_player(view_proj, this->camera, this->ctx);
+
     test_player.game_ent->transform.setPosition(0.f, 20.f, 0.f);
     test_player.game_ent->transform.setDimensions(20.f, 20.f, 20.f);
     test_player.game_ent->transform.setOrientation(0.f, 0.f, 0.f);
     test_player.game_ent->mesh.transform.setDimensions(20.f, 20.f, 20.f);
+    //test_player.game_ent->mesh.transform.setOrientation(0.f, 90.f, 0.f);
+    test_player.game_ent->mesh.transform.setPosition(0.f, 0.f, 0.f);
     //test_player.game_ent->enableWireframe();
     test_player.resetCameraPos();
-    /*
 
     shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
-    chair_gltf->mesh.loadGLTFModel("assets/chair.gltf");
+    chair_gltf->mesh.loadGLTFModel("assets/chair_w_root.gltf");
     chair_gltf->mesh.transform.setDimensions(10.f, 10.f, 10.f);
-    chair_gltf->mesh.transform.setPosition(-25.0f, 0.f, -50.f);
-    chair_gltf->mesh.transform.setOrientation(0.f, .0f, .0f);
+    chair_gltf->mesh.transform.setPosition(-5.0f, 0.f, -5.f);
+    chair_gltf->mesh.transform.setOrientation(0.f, 90.0f, .0f);
 
-    chair_gltf->transform.setPosition(-25.f, 0.f, -50.f);
+    chair_gltf->transform.setPosition(-5.f, 0.f, -5.f);
     chair_gltf->transform.setDimensions(50.f, 50.f, 50.f);
     chair_gltf->transform.setOrientation(0.f, .0f, .0f);
-    chair_gltf->enableWireframe();
+    //chair_gltf->enableWireframe();
 
     shared_ptr<Entity> rigged_simple = ctx.createStaticEntity().lock();
     rigged_simple->mesh.loadGLTFModel("assets/RiggedSimple.gltf");
-    rigged_simple->mesh.transform.setDimensions(5.f, 5.f, 5.f);
-    rigged_simple->mesh.transform.setPosition(25.f, 10.f, 50.f);
-    chair_gltf->mesh.transform.setOrientation(0.f, .0f, .0f);
-     */
+    rigged_simple->mesh.transform.setDimensions(10.f, 10.f, 10.f);
+    rigged_simple->mesh.transform.setPosition(25.f, 10.f, 5.f);
+    rigged_simple->mesh.transform.setOrientation(0.f, 90.0f, .0f);
 
 
 

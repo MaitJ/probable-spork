@@ -8,14 +8,14 @@
 namespace Renderable {
     Node::Node() : local_transform(1.f) {}
 
-    void Node::render(Context const& ctx, glm::mat4 global_transform) {
+    void Node::render(Context const& ctx, glm::mat4 VP, glm::mat4 model_matrix) {
+        model_matrix = model_matrix * this->local_transform;
         for (auto const& primitive : this->primitives) {
-            primitive->render(global_transform, this->local_transform, ctx);
+            primitive->render(VP, model_matrix, ctx);
         }
 
-        glm::mat4 recursive_transform = global_transform * this->local_transform;
         for (auto& node : this->nodes) {
-            node.render(ctx, recursive_transform);
+            node.render(ctx, VP, model_matrix);
         }
         
     }

@@ -133,6 +133,8 @@ void GLTFLoader::loadMeshRecursive(Renderable::Node &node, int traverse_node_ind
             node.primitives.emplace_back(l_primitive);
 
         }
+
+        setNodeTransform(current_node, node);
     }
 
     if (!current_node.children.empty()) {
@@ -148,35 +150,41 @@ void GLTFLoader::loadMeshRecursive(Renderable::Node &node, int traverse_node_ind
 
 void GLTFLoader::setNodeTransform(tinygltf::Node const& t_node, Renderable::Node& node) {
     glm::mat4 transform_matrix(1.f);
+    glm::mat4 scale_mat(1.f);
+    glm::mat4 rotation_mat(1.f);
+    glm::mat4 translation_mat(1.f);
+
+    if (!t_node.scale.empty()) {
+        std::vector<double> const& scale = t_node.scale;
+        scale_mat = glm::scale(transform_matrix, glm::vec3(
+                scale[0],
+                scale[1],
+                scale[2]
+        ));
+    }
+
+    if (!t_node.rotation.empty()) {
+        //Quaternion
+        rotation_mat = glm::toMat4(glm::quat(
+                static_cast<float>(t_node.rotation[0]),
+                static_cast<float>(t_node.rotation[1]),
+                static_cast<float>(t_node.rotation[2]),
+                static_cast<float>(t_node.rotation[3])
+        ));
+
+    }
 
     if (!t_node.translation.empty()) {
         std::vector<double> const& translation = t_node.translation;
-        glm::translate(transform_matrix, glm::vec3(
+        translation_mat = glm::translate(transform_matrix, glm::vec3(
                     translation[0], 
                     translation[1], 
                     translation[2]
                     ));
     }
 
-    if (!t_node.scale.empty()) {
-        std::vector<double> const& scale = t_node.scale;
-        glm::scale(transform_matrix, glm::vec3(
-                    scale[0],
-                    scale[1],
-                    scale[2]
-                    ));
-    }
 
-    if (!t_node.rotation.empty()) {
-        //Quaternion
-        glm::mat4 rotation = glm::toMat4(glm::quat(
-                    static_cast<float>(t_node.rotation[0]),
-                    static_cast<float>(t_node.rotation[1]),
-                    static_cast<float>(t_node.rotation[2]),
-                    static_cast<float>(t_node.rotation[3])
-                    ));
-    }
-    node.local_transform = transform_matrix;
+    node.local_transform = translation_mat * rotation_mat * scale_mat;
 }
 
 void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,

@@ -11,8 +11,8 @@ Transform::Transform(glm::vec3 position, glm::vec3 orientation, glm::vec3 dimens
 }
 
 void Transform::setOrientation(float yaw, float pitch, float roll) {
-    this->orientation.y = yaw;
     this->orientation.x = pitch;
+    this->orientation.y = yaw;
     this->orientation.z = roll;
 
 
@@ -36,7 +36,7 @@ glm::vec3& Transform::getOrientation() {
     return this->orientation;
 }
 glm::quat Transform::getRotation() {
-    return glm::quat(glm::vec3(this->orientation.x, this->orientation.y, this->orientation.z));
+    return glm::quat(glm::vec3(glm::radians(this->orientation.x), glm::radians(this->orientation.y), glm::radians(this->orientation.z)));
 }
 glm::vec3& Transform::getDimensions() {
     return this->dimensions;
@@ -73,10 +73,9 @@ auto Transform::getTransformationMatrix() -> glm::mat4 {
     // Scale -> Rotate -> Transform
     glm::mat4 transformation_matrix(1.f);
 
-    glm::scale(transformation_matrix, this->dimensions);
-    glm::mat4 rotation = glm::mat4_cast(this->getRotation());
-    transformation_matrix = rotation * transformation_matrix;
-    glm::translate(transformation_matrix, this->position);
+    glm::mat4 scale_mat= glm::scale(transformation_matrix, this->dimensions);
+    glm::mat4 rotation_mat = glm::mat4_cast(this->getRotation());
+    glm::mat4 translation_mat = glm::translate(transformation_matrix, this->position);
 
-    return transformation_matrix;
+    return translation_mat * rotation_mat * scale_mat;
 }
