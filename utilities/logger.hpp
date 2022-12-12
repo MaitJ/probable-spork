@@ -9,7 +9,7 @@ class Logger {
     static std::string current_timestamp();
 
 public:
-    static const char* LOG_FILE;
+    static const char* const LOG_FILE;
     static void warn(std::string const& msg);
     static void log(std::string const& msg);
 

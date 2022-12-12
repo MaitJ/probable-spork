@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <cassert>
 
-const char* Logger::LOG_FILE = "log.txt";
+const char* const Logger::LOG_FILE = "log.txt";
 
 std::ofstream Logger::open_log_file() {
     std::ofstream log_file(Logger::LOG_FILE);
@@ -18,11 +18,11 @@ std::ofstream Logger::open_log_file() {
 std::string Logger::current_timestamp() {
     const auto now = std::chrono::system_clock::now();
     const auto time_t = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss.imbue(std::locale("en-US"));
-    ss << std::put_time(std::localtime(&time_t), "%F %T");
+    std::stringstream str_s;
+    str_s.imbue(std::locale("en_US.utf8"));
+    str_s << std::put_time(std::localtime(&time_t), "%F %T");
 
-    return ss.str();
+    return str_s.str();
 }
 
 void Logger::warn(std::string const& msg) {

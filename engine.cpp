@@ -9,10 +9,10 @@
 #include "logger.hpp"
 
 Engine::Engine(float window_width, float window_height) :
-game_window(window_width, window_height),
-view_proj(RenderableManager::getViewProjMat()),
-persp_proj(RenderableManager::getPerspectiveMat()),
-camera(RenderableManager::getViewProjMat()) {
+    game_window(window_width, window_height),
+    view_proj(RenderableManager::getViewProjMat()),
+    persp_proj(RenderableManager::getPerspectiveMat()),
+    camera(RenderableManager::getViewProjMat()) {
 
     //assert(this->view_proj != nullptr);
     Utilities::setupGl();
@@ -28,7 +28,8 @@ camera(RenderableManager::getViewProjMat()) {
     Wireframe::initWireframeModel();
 }
 
-void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, std::chrono::time_point<std::chrono::high_resolution_clock> end) {
+void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock> begin, 
+        std::chrono::time_point<std::chrono::high_resolution_clock> end) {
     std::chrono::duration<double> time_span(end - begin);
     auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(time_span);
     this->dt.set(seconds.count());
@@ -37,7 +38,6 @@ void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock
 
 void Engine::start() {
     using namespace std;
-    Logger::log("Engine started");
 
     shared_ptr<Entity> plane = ctx.createEntity().lock();
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
@@ -59,7 +59,7 @@ void Engine::start() {
     test_player.resetCameraPos();
 
     shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
-    chair_gltf->mesh.loadGLTFModel("assets/test_chair.gltf");
+    chair_gltf->mesh.loadGLTFModel("assets/chair_w_root.gltf");
 
     chair_gltf->mesh.transform.setDimensions(10.f, 10.f, 10.f);
     chair_gltf->mesh.transform.setPosition(-5.0f, 0.f, -5.f);
@@ -79,7 +79,7 @@ void Engine::start() {
 
 
 
-	while (!glfwWindowShouldClose(game_window.window))
+	while (!(bool) glfwWindowShouldClose(game_window.window))
     {
         auto f_start = std::chrono::high_resolution_clock::now();
         EventHandler::pollEvents();

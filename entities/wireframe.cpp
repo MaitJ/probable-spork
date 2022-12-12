@@ -49,8 +49,8 @@ void Wireframe::initWireframeModel() {
         1.f, 1.0f, -1.f,
         1.f, 1.0f, 1.f,
     };
-    primitive->loadPrimitive(wf_vertices, 24);
-    primitive->loadColor(glm::vec4(.0f, 1.f, .0f, 1.f));
+    primitive->loadPrimitive(wf_vertices, (int) wf_vertices.size() / 3);
+    primitive->loadColor(glm::vec4(.0f, 1.F, .0f, 1.F));
 
     primitive->unbindBuffers();
 }

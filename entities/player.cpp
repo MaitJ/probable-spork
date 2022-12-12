@@ -6,7 +6,7 @@
 #include "../collisions/collision_manager.hpp"
 #include "../controls/keyboard.hpp"
 
-#define PLAYER_MODEL "assets/test_chair.gltf"
+#define PLAYER_MODEL "assets/chair_w_root.gltf"
 
 
 Player::Player(Camera& camera, Context& ctx) : game_ent(ctx.createEntity().lock()), camera(camera) {}
