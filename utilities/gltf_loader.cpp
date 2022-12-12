@@ -100,10 +100,11 @@ void GLTFLoader::groupVec2Floats(const std::vector<float> &floats, std::vector<g
 }
 
 void GLTFLoader::loadMesh(Renderable::Mesh& mesh) {
+
     for (int node_index : this->model.scenes[0].nodes) {
         Renderable::Node new_node;
         loadMeshRecursive(new_node, node_index);
-        mesh.nodes.push_back(std::move(new_node));
+        mesh.nodes.push_back(new_node);
     }
 }
 
@@ -142,7 +143,7 @@ void GLTFLoader::loadMeshRecursive(Renderable::Node &node, int traverse_node_ind
             Renderable::Node new_node;
             loadMeshRecursive(new_node, child_index);
             setNodeTransform(current_node, new_node);
-            node.nodes.emplace_back(new_node);
+            node.nodes.push_back(new_node);
         }
     }
 
@@ -166,10 +167,10 @@ void GLTFLoader::setNodeTransform(tinygltf::Node const& t_node, Renderable::Node
     if (!t_node.rotation.empty()) {
         //Quaternion
         rotation_mat = glm::toMat4(glm::quat(
+                static_cast<float>(t_node.rotation[3]),
                 static_cast<float>(t_node.rotation[0]),
                 static_cast<float>(t_node.rotation[1]),
-                static_cast<float>(t_node.rotation[2]),
-                static_cast<float>(t_node.rotation[3])
+                static_cast<float>(t_node.rotation[2])
         ));
 
     }
@@ -205,13 +206,11 @@ void GLTFLoader::loadTexturedPrimitive(tinygltf::Primitive const& primitive,
             groupVec3Floats(pos, position_vertices);
         }
 
-
         if (key == "NORMAL") {
             std::vector<float> normals;
             getAttribData<float>(value, 3, normals);
             groupVec3Floats(normals, normal_vertices);
         }
-
 
         if (key == "TEXCOORD_0") {
             std::vector<float> tex;

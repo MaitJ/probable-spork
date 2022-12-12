@@ -34,7 +34,7 @@ GameWindow::GameWindow(float window_width, float window_height) {
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
  
-    this->window = glfwCreateWindow(window_width, window_height, "Simple example", primary_monitor, NULL);
+    this->window = glfwCreateWindow(window_width, window_height, "probable-spork", nullptr, nullptr);
     if (!this->window)
     {
         glfwTerminate();

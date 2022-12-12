@@ -19,6 +19,8 @@ public:
 
     void loadMesh(Renderable::Mesh& mesh);
 
+    inline static std::string const FileExtension = ".gltf";
+
 private:
     tinygltf::Model model;
 

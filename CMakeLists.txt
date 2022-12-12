@@ -13,7 +13,7 @@ set(ENTITY_FILES entities/node.cpp entities/world_light.cpp
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp
-    utilities/deltatime.cpp utilities/gltf_loader.cpp)
+    utilities/deltatime.cpp utilities/gltf_loader.cpp utilities/logger.cpp)
 set(WORLD_FILES world/context.cpp)
 set(COMPONENT_FILES components/transform.cpp)
 set(COLLISION_FILES collisions/collision_manager.cpp)

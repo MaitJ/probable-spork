@@ -23,6 +23,7 @@ namespace Renderable {
     class Node {
     public:
         Node();
+
         std::vector<Renderable::Node> nodes;
         //Don't need to make separate class for mesh because
         //a mesh only has primitives and nothing else

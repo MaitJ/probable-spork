@@ -4,6 +4,8 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
+#include <sstream>
 
 #define VERTEX_SHADER_FILE "vertex_shader.vert"
 #define FRAGMENT_SHADER_FILE "fragment_shader_mod.frag"
@@ -19,14 +21,16 @@ Shader::Shader() {}
 
 void Shader::loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file, std::string name) {
 
-    this->name = name;
+    this->name = std::move(name);
 
-    const char* vertex_shader_text = Shader::read_from_file("shaders/" + vertex_shader_file);
-    const char* fragment_shader_text = Shader::read_from_file("shaders/" + fragment_shader_file);
+    std::string vertex_shader_text = Shader::read_from_file("shaders/" + vertex_shader_file);
+    std::string fragment_shader_text = Shader::read_from_file("shaders/" + fragment_shader_file);
+
+    const char* vertex_shader_text_c = vertex_shader_text.c_str();
 
     unsigned int vertex_shader, fragment_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
+    glShaderSource(vertex_shader, 1, &vertex_shader_text_c, NULL);
     glCompileShader(vertex_shader);
 
     int success;
@@ -41,9 +45,9 @@ void Shader::loadAndCompile(const std::string vertex_shader_file, const std::str
     }
 
     std::string lightning_calculations_string(LIGHTNING_CALCULATIONS_SHADER);
-    const char* lightning_calculations_text = Shader::read_from_file("shaders/" + lightning_calculations_string);
+    std::string lightning_calculations_text = Shader::read_from_file("shaders/" + lightning_calculations_string);
 
-    const char* fragment_shader_compiled[2] = {lightning_calculations_text, fragment_shader_text };
+    const char* fragment_shader_compiled[2] = {lightning_calculations_text.c_str(), fragment_shader_text.c_str() };
 
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 2, fragment_shader_compiled, NULL);
@@ -61,9 +65,6 @@ void Shader::loadAndCompile(const std::string vertex_shader_file, const std::str
     glAttachShader(this->id, vertex_shader);
     glAttachShader(this->id, fragment_shader);
     glLinkProgram(this->id);
-
-    delete[] vertex_shader_text;
-    delete[] fragment_shader_text;
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
@@ -97,7 +98,7 @@ void Shader::setVec3f(std::string uniform_loc, glm::vec3 vec) {
 }
 
 
-const char* Shader::read_from_file(std::string file_name) {
+std::string Shader::read_from_file(std::string file_name) {
     std::ifstream shader_file(file_name);
 
     if (!shader_file) {
@@ -105,14 +106,13 @@ const char* Shader::read_from_file(std::string file_name) {
         throw new std::exception();
     }
 
-    shader_file.seekg(0, shader_file.end);
-    int file_length = shader_file.tellg();
-    shader_file.seekg(0, shader_file.beg);
+    std::stringstream buffer;
+    buffer << shader_file.rdbuf();
 
-    char* file_content = new char[file_length + (long long)1];
-    shader_file.read(file_content, file_length);
-    file_content[file_length] = '\0';
+    std::string shader_text = buffer.str();
+
+
     shader_file.close();
 
-    return file_content;
+    return shader_text;
 }

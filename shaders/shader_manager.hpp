@@ -9,6 +9,7 @@ class ShaderManager {
 public:
     static Shader const& getShader(std::string shader_name);
     static void addShader(Shader shader);
+    static void initializeShaders();
 
 private:
     inline static std::vector<Shader> shaders = {};

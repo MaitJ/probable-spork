@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <string>
 #include <glm/glm.hpp>
+#include <vector>
 
 
 class Shader {
@@ -23,7 +24,7 @@ public:
     std::string name;
 
 private:
-    const char* read_from_file(std::string file_name);
+    std::string read_from_file(std::string file_name);
 
 };
 

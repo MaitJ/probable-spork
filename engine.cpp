@@ -6,6 +6,7 @@
 #include "events/event_handler.hpp"
 #include "entities/entity.hpp"
 #include "collisions/collision_manager.hpp"
+#include "logger.hpp"
 
 Engine::Engine(float window_width, float window_height) :
 game_window(window_width, window_height),
@@ -17,7 +18,7 @@ camera(RenderableManager::getViewProjMat()) {
     Utilities::setupGl();
     camera.setPosition(0.f, 50.f, 0.f);
 
-    this->initializeShaders();
+    ShaderManager::initializeShaders();
 
     this->ctx.world_light.setPosition(100.0f, 150.0f, 100.0f);
 
@@ -36,7 +37,7 @@ void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock
 
 void Engine::start() {
     using namespace std;
-
+    Logger::log("Engine started");
 
     shared_ptr<Entity> plane = ctx.createEntity().lock();
     PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
@@ -58,7 +59,8 @@ void Engine::start() {
     test_player.resetCameraPos();
 
     shared_ptr<Entity> chair_gltf = ctx.createEntity().lock();
-    chair_gltf->mesh.loadGLTFModel("assets/chair_w_root.gltf");
+    chair_gltf->mesh.loadGLTFModel("assets/test_chair.gltf");
+
     chair_gltf->mesh.transform.setDimensions(10.f, 10.f, 10.f);
     chair_gltf->mesh.transform.setPosition(-5.0f, 0.f, -5.f);
     chair_gltf->mesh.transform.setOrientation(0.f, 90.0f, .0f);
@@ -104,18 +106,4 @@ void Engine::close() {
  
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-}
-
-void Engine::initializeShaders() {
-    std::vector<std::string> shader_names = {"textured", "wireframe", "colored"};
-    std::vector<std::string> vertex_shader_files = {"vertex_shader_textured.vert", "wf_vertex_shader.vert", "vertex_shader_colored.vert"};
-    std::vector<std::string> fragment_shader_files = {"fragment_shader_textured.frag", "wf_fragment_shader.frag", "fragment_shader_colored.frag"};
-
-    for (int i = 0; i < shader_names.size(); ++i) {
-        Shader shader;
-        shader.loadAndCompile(vertex_shader_files[i], fragment_shader_files[i], shader_names[i]);
-
-        ShaderManager::addShader(shader);
-    }
-
 }

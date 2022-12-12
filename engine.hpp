@@ -22,8 +22,6 @@ class Engine {
     Context ctx;
     DeltaTime dt;
 
-    void initializeShaders();
-
 public:
     Engine(float window_width, float window_height);
     void start();

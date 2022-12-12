@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "renderable_manager.hpp"
+#include <fmt/core.h>
 
 namespace Renderable {
     void Primitive::unbindBuffers() {
@@ -213,7 +214,14 @@ namespace Renderable {
         }
     }
 
+    //TODO Make error handling better
     void Mesh::loadGLTFModel(std::string const& file_name) {
+
+        if (file_name.find(GLTFLoader::FileExtension) == std::string::npos) {
+            fmt::print("[ERROR]: GLTFLoader (loadGLTFModel): file isn't of type .gltf");
+            return;
+        }
+
         GLTFLoader model(file_name);
         model.loadMesh(*this);
         RenderableManager::addRenderableMesh(this);
