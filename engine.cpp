@@ -1,11 +1,11 @@
 #include "engine.hpp"
-#include "utilities/gl_conf.hpp"
 #include <functional>
 #include "mesh/node.hpp"
-#include "entities/player.hpp"
-#include "events/event_handler.hpp"
 #include "entities/entity.hpp"
-#include "collisions/collision_manager.hpp"
+#include "entities/player.hpp"
+#include "utilities/gl_conf.hpp"
+#include "events/event_handler.hpp"
+#include "entities/primitive_entity_factory.hpp"
 
 Engine::Engine(float window_width, float window_height) :
     game_window(window_width, window_height),
@@ -37,13 +37,25 @@ void Engine::updateDt(std::chrono::time_point<std::chrono::high_resolution_clock
 void Engine::start() {
     using namespace std;
 
-    shared_ptr<Entity> plane = ctx.createEntity().lock();
-    PrimitiveObjects::loadPrimitive<PrimitiveShape::PLANE>(*plane);
+    PrimitiveEntityFactory planeFactory(ctx);
+    planeFactory.setShape(PrimitiveShape::PLANE);
+    planeFactory.isStatic(false);
+
+    shared_ptr<Entity> plane = planeFactory.make();
     plane->mesh.transform.setDimensions(500.f, 1.f, 500.f);
 	plane->transform.setDimensions(500.0f, 1.0f, 500.0f);
 	plane->transform.setPosition(0.0f, 0.0f, .0f);
     plane->transform.setOrientation(0.f, .0f, .0f);
     //plane->enableWireframe();
+
+    shared_ptr<Entity> plane2 = planeFactory.make();
+    plane2->mesh.transform.setDimensions(500.f, 1.f, 500.f);
+    plane2->mesh.transform.setPosition(50, 100, 50);
+    plane2->mesh.transform.setOrientation(0, 90, 0);
+    plane2->transform.setDimensions(200.f, 1.f, 200.f);
+    plane2->transform.setPosition( 50, 100, 50);
+    plane2->transform.setOrientation(0, 90, 0);
+
 
     Player test_player(view_proj, this->camera, this->ctx);
 

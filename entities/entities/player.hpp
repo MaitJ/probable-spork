@@ -1,11 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <glm/glm.hpp>
-#include "../components/transform.hpp"
+#include "glm/glm/glm.hpp"
+#include "transform.hpp"
 #include "entity.hpp"
 #include "camera.hpp"
-#include "../utilities/deltatime.hpp"
+#include "deltatime.hpp"
 #include <memory>
 
 class Context;

@@ -108,10 +108,7 @@ std::string Shader::read_from_file(std::string file_name) {
 
     std::stringstream buffer;
     buffer << shader_file.rdbuf();
-
     std::string shader_text = buffer.str();
-
-
     shader_file.close();
 
     return shader_text;

@@ -8,8 +8,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 set(SOURCE_FILES shader.cpp window.cpp engine.cpp shaders/shader_manager.cpp)
 
 set(ENTITY_FILES entities/mesh/node.cpp entities/world_light.cpp
-    entities/camera.cpp entities/player.cpp entities/renderable_manager.cpp
-    entities/entity.cpp entities/wireframe.cpp entities/mesh/mesh.cpp entities/mesh/primitive/primitive.cpp entities/mesh/primitive/colored_primitive.cpp entities/mesh/primitive/textured_primitive.cpp)
+        entities/entities/camera.cpp entities/entities/player.cpp entities/renderable_manager.cpp
+        entities/entities/entity.cpp entities/wireframe.cpp entities/mesh/mesh.cpp entities/mesh/primitive/primitive.cpp entities/mesh/primitive/colored_primitive.cpp entities/mesh/primitive/textured_primitive.cpp entities/entities/primitive_entity_factory.cpp)
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp
@@ -18,7 +18,7 @@ set(WORLD_FILES world/context.cpp)
 set(COMPONENT_FILES components/transform.cpp)
 set(COLLISION_FILES collisions/collision_manager.cpp)
 
-set(INCLUDE_PATHS utilities entities events components collisions world deps ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_PATHS utilities entities events components collisions world deps ${CMAKE_CURRENT_SOURCE_DIR} entities/entities/primitive_entity_factory.cpp)
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_PATHS})

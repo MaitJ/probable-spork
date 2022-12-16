@@ -1,10 +1,10 @@
 #include "camera.hpp"
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <event_handler.hpp>
+#include "glm/glm/ext/matrix_transform.hpp"
+#include "glm/glm/gtx/quaternion.hpp"
+#include "event_handler.hpp"
 #include <functional>
 #include <iostream>
-#include "../utilities/matrices.cpp"
+#include "matrices.cpp"
 #include <fmt/core.h>
 
 void Camera::setPosition(float x, float y, float z) {

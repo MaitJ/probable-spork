@@ -1,5 +1,5 @@
 #include "context.hpp"
-#include "../entities/entity.hpp"
+#include "entities/entity.hpp"
 #include <stdexcept>
 
 int Context::ent_counters[2] = {0, 0};

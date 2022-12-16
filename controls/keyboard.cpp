@@ -1,5 +1,5 @@
 #include "keyboard.hpp"
-#include "../entities/camera.hpp"
+#include "entities/camera.hpp"
 #include "../events/event_handler.hpp"
 
 std::unordered_map<int, bool> Keyboard::key_states;

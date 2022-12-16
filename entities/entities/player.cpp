@@ -1,10 +1,10 @@
 #include "player.hpp"
 #include "renderable_manager.hpp"
-#include "../events/event_handler.hpp"
-#include "../world/context.hpp"
-#include <glm/ext/matrix_transform.hpp>
-#include "../collisions/collision_manager.hpp"
-#include "../controls/keyboard.hpp"
+#include "event_handler.hpp"
+#include "context.hpp"
+#include "glm/glm/ext/matrix_transform.hpp"
+#include "collision_manager.hpp"
+#include "controls/keyboard.hpp"
 
 #define PLAYER_MODEL "assets/chair_w_root.gltf"
 

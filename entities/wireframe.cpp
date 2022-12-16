@@ -1,6 +1,4 @@
 #include "wireframe.hpp"
-#include "renderable_manager.hpp"
-#include <fmt/core.h>
 #include "mesh/mesh.hpp"
 #include "mesh/primitive/colored_primitive.hpp"
 

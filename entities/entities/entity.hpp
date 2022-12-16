@@ -1,9 +1,9 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <glm/glm.hpp>
-#include <utilities/types.hpp>
-#include "../components/transform.hpp"
+#include "glm/glm/glm.hpp"
+#include "types.hpp"
+#include "transform.hpp"
 #include "wireframe.hpp"
 #include "mesh/mesh.hpp"
 

@@ -2,7 +2,7 @@
 #define COLLISION_MANAGER_H
 
 #include <vector>
-#include "../entities/entity.hpp"
+#include "entities/entity.hpp"
 #include <memory>
 
 

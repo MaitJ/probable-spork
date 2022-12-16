@@ -12,7 +12,8 @@
 #include "context.hpp"
 
 enum PrimitiveShape {
-	PLANE
+	PLANE,
+    CUBE
 };
 
 namespace Renderable {

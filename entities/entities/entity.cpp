@@ -1,6 +1,5 @@
 #include "entity.hpp"
 #include "renderable_manager.hpp"
-#include "../collisions/collision_manager.hpp"
 #include <functional>
 #include "mesh/primitive/colored_primitive.hpp"
 
@@ -37,7 +36,6 @@ namespace PrimitiveObjects {
         primitive->genGlBuffers();
         primitive->bindBuffers();
 
-
         std::vector<float> plane_vertices = {
             -1.0f, 0.0f, 1.0f, .0f, 1.0f, .0f,
             1.0f, 0.0f, 1.0f,  .0f, 1.0f, .0f,
@@ -47,6 +45,7 @@ namespace PrimitiveObjects {
             -1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
             1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f
         };
+
         primitive->loadPrimitive(plane_vertices, 6);
         primitive->loadColor(glm::vec4(.9f, .9f, .9f, 1.f));
         ent_renderable.nodes.push_back(base_node);
