@@ -18,8 +18,7 @@ public:
     GLTFLoader(std::string const& file_name);
 
     void loadMesh(Renderable::Mesh& mesh);
-
-    inline static std::string const FileExtension = ".gltf";
+    inline static std::string const FILE_EXTENSION = ".gltf";
 
 private:
     tinygltf::Model model;
@@ -33,11 +32,7 @@ private:
     static void groupVec3Floats(std::vector<float> const& floats, std::vector<glm::vec3>& o_vertices);
     static void groupVec2Floats(std::vector<float> const& floats, std::vector<glm::vec2>& o_vertices);
 
-    auto nodeQuatToGLQuat(std::vector<double> quaternion) -> glm::quat;
-    auto nodeTransformToGLVec3F(std::vector<double> transform) -> glm::vec3;
-
     void loadMeshRecursive(Renderable::Node& node, int traverse_node_index);
-    void loadPrimitives(std::vector<Renderable::Primitive>& primitives, int mesh_index);
     void loadTexturedPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,
                                std::shared_ptr<Renderable::TexturedPrimitive> const& textured_primitive);
     void loadColoredPrimitive(tinygltf::Primitive const& primitive, tinygltf::Material const& material,

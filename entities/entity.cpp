@@ -2,6 +2,7 @@
 #include "renderable_manager.hpp"
 #include "../collisions/collision_manager.hpp"
 #include <functional>
+#include "mesh/primitive/colored_primitive.hpp"
 
 
 Entity::Entity(int entity_id, Context const& ctx) :    entity_id{entity_id}, wireframe(this->transform, entity_id), ctx(ctx) {

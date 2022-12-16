@@ -1,9 +1,10 @@
 #include "node.hpp"
 #include <fmt/core.h>
 #include "./mesh.hpp"
+#include "primitive/primitive.hpp"
 
 //#define STB_IMAGE_IMPLEMENTATION
-#include "../deps/stb_image.h"
+#include "stb_image.h"
 
 namespace Renderable {
     Node::Node() : local_transform(1.f) {}

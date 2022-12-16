@@ -1,7 +1,7 @@
 #ifndef SKINNED_NODE_HPP
 #define SKINNED_NODE_HPP
 
-#include "node.hpp"
+#include "mesh/node.hpp"
 
 struct Bone {
     glm::mat4 global_transform_matrix;

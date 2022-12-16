@@ -1,7 +1,7 @@
 #include "renderable_manager.hpp"
 #include "context.hpp"
 #include <functional>
-#include "mesh.hpp"
+#include "mesh/mesh.hpp"
 
 namespace RenderableManager {
     using namespace glm;

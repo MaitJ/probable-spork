@@ -5,7 +5,7 @@
 #include <utilities/types.hpp>
 #include "../components/transform.hpp"
 #include "wireframe.hpp"
-#include "mesh.hpp"
+#include "mesh/mesh.hpp"
 
 
 class Context;

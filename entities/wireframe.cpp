@@ -1,7 +1,8 @@
 #include "wireframe.hpp"
 #include "renderable_manager.hpp"
 #include <fmt/core.h>
-#include "mesh.hpp"
+#include "mesh/mesh.hpp"
+#include "mesh/primitive/colored_primitive.hpp"
 
 Wireframe::Wireframe(Transform& ent_transform, int entity_id) : entity_id{entity_id}, ent_transform(ent_transform)  {}
 

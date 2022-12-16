@@ -2,9 +2,11 @@
 #include "glm/detail/type_quat.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include <fmt/core.h>
-#include "../entities/node.hpp"
+#include "mesh/node.hpp"
 #include <memory>
-#include "mesh.hpp"
+#include "mesh/mesh.hpp"
+#include "mesh/primitive/textured_primitive.hpp"
+#include "mesh/primitive/colored_primitive.hpp"
 
 GLTFLoader::GLTFLoader(std::string const& file_name) {
     tinygltf::TinyGLTF loader;
@@ -65,15 +67,6 @@ void GLTFLoader::getAttribData(int accessor_index, int num_of_components, std::v
             cur_vertex_start += bf_view.byteStride;
         }
     }
-}
-
-//If the material isn't textured the object still gets colored
-glm::quat GLTFLoader::nodeQuatToGLQuat(std::vector<double> quaternion) {
-    return glm::inverse(glm::quat((float)quaternion[3], (float)quaternion[0], (float)quaternion[1], (float)quaternion[2]));
-}
-
-glm::vec3 GLTFLoader::nodeTransformToGLVec3F(std::vector<double> transform) {
-    return {(float)transform[0], (float)transform[1], (float)transform[2]};
 }
 
 void GLTFLoader::groupVec3Floats(const std::vector<float> &floats, std::vector<glm::vec3>& o_vertices) {

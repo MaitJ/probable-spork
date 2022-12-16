@@ -1,7 +1,7 @@
 #ifndef RENDERABLE_MANAGER_H
 #define RENDERABLE_MANAGER_H
 
-#include "node.hpp"
+#include "mesh/node.hpp"
 #include "wireframe.hpp"
 
 namespace RenderableManager {

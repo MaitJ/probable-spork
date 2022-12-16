@@ -1,7 +1,7 @@
 #ifndef WIREFRAME_H
 #define WIREFRAME_H
 
-#include "node.hpp"
+#include "mesh/node.hpp"
 #include "shaders/shader_manager.hpp"
 
 namespace Renderable {

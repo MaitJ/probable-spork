@@ -1,15 +1,15 @@
 #ifndef RENDERABLE_ENTITY_H
 #define RENDERABLE_ENTITY_H
 
-#include "../shader.hpp"
+#include "shader.hpp"
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "glm/glm/glm.hpp"
+#include "glm/glm/gtx/quaternion.hpp"
 #include "obj.hpp"
-#include "../components/transform.hpp"
+#include "transform.hpp"
 #include "gltf_loader.hpp"
 #include "shaders/shader_manager.hpp"
-#include "../world/context.hpp"
+#include "context.hpp"
 
 enum PrimitiveShape {
 	PLANE

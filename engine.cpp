@@ -1,12 +1,11 @@
 #include "engine.hpp"
 #include "utilities/gl_conf.hpp"
 #include <functional>
-#include "entities/node.hpp"
+#include "mesh/node.hpp"
 #include "entities/player.hpp"
 #include "events/event_handler.hpp"
 #include "entities/entity.hpp"
 #include "collisions/collision_manager.hpp"
-#include "logger.hpp"
 
 Engine::Engine(float window_width, float window_height) :
     game_window(window_width, window_height),
@@ -14,7 +13,6 @@ Engine::Engine(float window_width, float window_height) :
     persp_proj(RenderableManager::getPerspectiveMat()),
     camera(RenderableManager::getViewProjMat()) {
 
-    //assert(this->view_proj != nullptr);
     Utilities::setupGl();
     camera.setPosition(0.f, 50.f, 0.f);
 
@@ -88,7 +86,6 @@ void Engine::start() {
         this->camera.recalcMatrix();
         this->view_proj = this->persp_proj * camera.getCameraMat();
 
-        //Calculate view_proj
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         RenderableManager::renderObjects(this->ctx, this->view_proj);
 
