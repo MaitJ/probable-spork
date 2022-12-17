@@ -55,10 +55,11 @@ void Wireframe::initWireframeModel() {
 }
 
 
-void Wireframe::render(Context& ctx) const {
-    wf_renderable.local_transform = this->ent_transform.getTransformationMatrix();
+void Wireframe::render(Context& ctx, glm::mat4 const& VP) const {
+    //wf_renderable.local_transform = this->ent_transform.getTransformationMatrix();
+    glm::mat4 model_matrix = this->ent_transform.getTransformationMatrix();
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    wf_renderable.render(ctx);
+    wf_renderable.render(ctx, VP, model_matrix);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 

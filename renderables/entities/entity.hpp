@@ -4,8 +4,8 @@
 #include "glm/glm/glm.hpp"
 #include "types.hpp"
 #include "transform.hpp"
-#include "wireframe.hpp"
-#include "mesh/mesh.hpp"
+#include "renderables/wireframe.hpp"
+#include "renderables/mesh/mesh.hpp"
 
 
 class Context;

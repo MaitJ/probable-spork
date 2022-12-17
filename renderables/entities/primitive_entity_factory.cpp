@@ -1,6 +1,6 @@
-#include "entity.hpp"
+#include "entities/entity.hpp"
 #include "primitive_entity_factory.hpp"
-#include "entities/renderable_manager.hpp"
+#include "renderable_manager.hpp"
 #include "mesh/primitive/colored_primitive.hpp"
 
 PrimitiveEntityFactory::PrimitiveEntityFactory(Context &ctx) : ctx(ctx) {}

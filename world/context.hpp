@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include "../entities/world_light.hpp"
+#include "../renderables/world_light.hpp"
 
 class Entity;
 

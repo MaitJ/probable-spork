@@ -1,7 +1,7 @@
 #ifndef WIREFRAME_H
 #define WIREFRAME_H
 
-#include "mesh/node.hpp"
+#include "renderables/mesh/node.hpp"
 #include "shaders/shader_manager.hpp"
 
 namespace Renderable {
@@ -16,9 +16,10 @@ class Wireframe {
     
 public:
     Wireframe(Transform& transform, int entity_id);
+
     //Transformi sees on yhine render obj
     static void initWireframeModel();
-    void render(Context& ctx) const;
+    void render(Context& ctx, glm::mat4 const& VP) const;
 };
 
 

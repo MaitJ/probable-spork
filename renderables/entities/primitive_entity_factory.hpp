@@ -1,7 +1,7 @@
-#ifndef POELITE_PRIMITIVE_ENTITY_FACTORY_HPP
-#define POELITE_PRIMITIVE_ENTITY_FACTORY_HPP
+#ifndef PRIMITIVE_ENTITY_FACTORY_HPP
+#define PRIMITIVE_ENTITY_FACTORY_HPP
 
-#include "mesh/node.hpp"
+#include "renderables/mesh/node.hpp"
 
 class PrimitiveEntityFactory {
     Context& ctx;

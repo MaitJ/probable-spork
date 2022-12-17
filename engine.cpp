@@ -80,7 +80,6 @@ void Engine::start() {
     chair_gltf->transform.setPosition(-5.f, 0.f, -5.f);
     chair_gltf->transform.setDimensions(50.f, 50.f, 50.f);
     chair_gltf->transform.setOrientation(0.f, .0f, .0f);
-    chair_gltf->enableWireframe();
 
     shared_ptr<Entity> rigged_simple = ctx.createStaticEntity().lock();
     rigged_simple->mesh.loadGLTFModel("assets/RiggedSimple.gltf");

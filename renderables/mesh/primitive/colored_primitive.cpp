@@ -59,7 +59,7 @@ namespace Renderable {
         int light_pos_loc = glGetUniformLocation(this->shader.id, "light_pos");
         glUniform3fv(light_pos_loc, 1, glm::value_ptr(ctx.world_light.position));
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         int model_loc = glGetUniformLocation(this->shader.id, "Model");
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model_matrix));
 

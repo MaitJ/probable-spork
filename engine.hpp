@@ -1,17 +1,17 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <glm/glm.hpp>
+#include <chrono>
 #include "shader.hpp"
 #include "window.hpp"
-#include "entities/camera.hpp"
-#include "entities/world_light.hpp"
-#include "entities/player.hpp"
-#include "entities/renderable_manager.hpp"
-#include "world/context.hpp"
+#include <glm/glm.hpp>
 #include "deltatime.hpp"
-#include <chrono>
+#include "world/context.hpp"
 #include "shaders/shader_manager.hpp"
+#include "renderables/world_light.hpp"
+#include "renderables/entities/camera.hpp"
+#include "renderables/entities/player.hpp"
+#include "renderables/renderable_manager.hpp"
 
 class Engine {
 

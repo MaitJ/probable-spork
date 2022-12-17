@@ -39,7 +39,7 @@ namespace RenderableManager {
 
         for (auto& wireframe_ref : wireframes) {
             Wireframe const& wireframe = wireframe_ref.get();
-            wireframe.render(ctx);
+            wireframe.render(ctx, VP);
             
         }
     }
