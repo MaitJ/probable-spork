@@ -42,6 +42,7 @@ std::shared_ptr<Renderable::ColoredPrimitive> PrimitiveEntityFactory::generateRe
             };
 
             primitive->loadPrimitive(plane_vertices, 6);
+            break;
         }
         case PrimitiveShape::CUBE: {
             std::vector<float> cube_vertices = {
@@ -76,10 +77,25 @@ std::shared_ptr<Renderable::ColoredPrimitive> PrimitiveEntityFactory::generateRe
                     1.f, -1.0f, -1.f, 0.0f, 1.0f, .0f,
                     1.f,  1.0f, -1.f, 0.0f, 1.0f, .0f,
                     1.f,   1.0f, 1.f, 0.0f, 1.0f, .0f,
+
+                    -1.f,  1.f, 1.f, 0.0f, 1.0f, .0f,
+                    1.f, 1.0f, 1.f, 0.0f, 1.0f, .0f,
+                    1.f,   1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    1.f, 1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    -1.f,  1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    -1.f,   1.0f, 1.f, 0.0f, 1.0f, .0f,
+
+                    -1.f,  -1.f, 1.f, 0.0f, 1.0f, .0f,
+                    1.f, -1.0f, 1.f, 0.0f, 1.0f, .0f,
+                    1.f,   -1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    1.f, -1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    -1.f,  -1.0f, -1.f, 0.0f, 1.0f, .0f,
+                    -1.f,   -1.0f, 1.f, 0.0f, 1.0f, .0f,
+
             };
 
             primitive->loadPrimitive(cube_vertices, cube_vertices.size() / 6);
-
+            break;
         }
     }
 

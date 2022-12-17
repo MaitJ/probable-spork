@@ -30,13 +30,4 @@ public:
 	Renderable::Mesh mesh;
 };
 
-namespace PrimitiveObjects {
-
-	template <PrimitiveShape>
-	void loadPrimitive(Entity& ent);
-
-	template <>
-	void loadPrimitive<PLANE>(Entity& ent);
-
-}
 #endif // !ENTITY_H

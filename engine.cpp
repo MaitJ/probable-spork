@@ -48,13 +48,15 @@ void Engine::start() {
     plane->transform.setOrientation(0.f, .0f, .0f);
     //plane->enableWireframe();
 
-    shared_ptr<Entity> plane2 = planeFactory.make();
-    plane2->mesh.transform.setDimensions(500.f, 1.f, 500.f);
-    plane2->mesh.transform.setPosition(50, 100, 50);
-    plane2->mesh.transform.setOrientation(0, 90, 0);
-    plane2->transform.setDimensions(200.f, 1.f, 200.f);
-    plane2->transform.setPosition( 50, 100, 50);
-    plane2->transform.setOrientation(0, 90, 0);
+    PrimitiveEntityFactory cubeFactory(ctx);
+    cubeFactory.setShape(PrimitiveShape::CUBE);
+    cubeFactory.isStatic(false);
+
+    shared_ptr<Entity> cube = cubeFactory.make();
+    cube->mesh.transform.setDimensions(10, 10, 10);
+    cube->mesh.transform.setPosition(50, 50, 50);
+    cube->transform.setDimensions(10, 10, 10);
+    cube->transform.setPosition(50, 50, 50);
 
 
     Player test_player(view_proj, this->camera, this->ctx);
@@ -78,7 +80,7 @@ void Engine::start() {
     chair_gltf->transform.setPosition(-5.f, 0.f, -5.f);
     chair_gltf->transform.setDimensions(50.f, 50.f, 50.f);
     chair_gltf->transform.setOrientation(0.f, .0f, .0f);
-    //chair_gltf->enableWireframe();
+    chair_gltf->enableWireframe();
 
     shared_ptr<Entity> rigged_simple = ctx.createStaticEntity().lock();
     rigged_simple->mesh.loadGLTFModel("assets/RiggedSimple.gltf");
