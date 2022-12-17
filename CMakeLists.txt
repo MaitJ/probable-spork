@@ -11,7 +11,7 @@ set(ENTITY_FILES renderables/mesh/node.cpp renderables/world_light.cpp
         renderables/entities/camera.cpp renderables/entities/player.cpp renderables/renderable_manager.cpp
         renderables/entities/entity.cpp renderables/wireframe.cpp renderables/mesh/mesh.cpp
         renderables/mesh/primitive/primitive.cpp renderables/mesh/primitive/colored_primitive.cpp renderables/mesh/primitive/textured_primitive.cpp
-        renderables/entities/primitive_entity_factory.cpp)
+        renderables/entities/primitive_entity_factory.cpp renderables/mesh/mesh_builder.cpp)
 set(EVENT_FILES events/event_handler.cpp events/subscriber.cpp)
 set(CONTROL_FILES controls/mouse.cpp controls/keyboard.cpp)
 set(UTILITY_FILES utilities/obj.cpp utilities/matrices.cpp

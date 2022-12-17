@@ -1,37 +1,31 @@
 #include "entities/entity.hpp"
-#include "primitive_entity_factory.hpp"
 #include "renderable_manager.hpp"
+#include "primitive_entity_factory.hpp"
 #include "mesh/primitive/colored_primitive.hpp"
 
-PrimitiveEntityFactory::PrimitiveEntityFactory(Context &ctx) : ctx(ctx) {}
+PrimitiveEntityFactory::PrimitiveEntityFactory(Context &ctx) : ctx(ctx) {
+    Shader const& colored_shader = ShaderManager::getShader("colored");
+    mesh_builder.setShader(colored_shader);
+}
 
-void PrimitiveEntityFactory::setShape(PrimitiveShape shape) { this->shape = shape; }
+void PrimitiveEntityFactory::setShape(PrimitiveShape shape) {
+    std::vector<float> primitive_vertices = getShapeVertices(shape);
+    mesh_builder.addPrimitive<Renderable::ColoredPrimitive>(primitive_vertices, 6);
+}
+
 void PrimitiveEntityFactory::isStatic(bool is_static) { this->is_static = is_static;}
 
 std::shared_ptr<Entity> PrimitiveEntityFactory::make() {
     std::shared_ptr<Entity> object_entity = !is_static ? ctx.createEntity().lock() : ctx.createStaticEntity().lock();
-    Renderable::Mesh& ent_renderable = object_entity->getRenderableObject();
-    Shader const& colored_shader = ShaderManager::getShader("colored");
-    Renderable::Node base_node;
-
-    auto primitive_ptr =  generateRenderablePrimitive(colored_shader, base_node);
-
-    base_node.primitives.push_back(primitive_ptr);
-    ent_renderable.nodes.push_back(base_node);
-
-    RenderableManager::addRenderableMesh(&ent_renderable);
-
+    object_entity->mesh = mesh_builder.build();
+    RenderableManager::addRenderableMesh(&object_entity->mesh);
     return object_entity;
 }
 
-std::shared_ptr<Renderable::ColoredPrimitive> PrimitiveEntityFactory::generateRenderablePrimitive(Shader const& shader, Renderable::Node& base_node) {
-    auto primitive = std::make_shared<Renderable::ColoredPrimitive>(shader);
-    primitive->genGlBuffers();
-    primitive->bindBuffers();
-
+std::vector<float> PrimitiveEntityFactory::getShapeVertices(PrimitiveShape shape) {
     switch (shape) {
         case PrimitiveShape::PLANE: {
-            std::vector<float> plane_vertices = {
+            return {
                     -1.0f, 0.0f, 1.0f, .0f, 1.0f, .0f,
                     1.0f, 0.0f, 1.0f,  .0f, 1.0f, .0f,
                     1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
@@ -40,12 +34,9 @@ std::shared_ptr<Renderable::ColoredPrimitive> PrimitiveEntityFactory::generateRe
                     -1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f,
                     1.0f, 0.0f, -1.0f,  .0f, 1.0f, .0f
             };
-
-            primitive->loadPrimitive(plane_vertices, 6);
-            break;
         }
         case PrimitiveShape::CUBE: {
-            std::vector<float> cube_vertices = {
+            return {
                     //Front triangles
                     -1.f, -1.0f, 1.f, 0.0f, 1.0f, .0f,
                     1.f,  -1.0f, 1.f, 0.0f, 1.0f, .0f,
@@ -93,12 +84,7 @@ std::shared_ptr<Renderable::ColoredPrimitive> PrimitiveEntityFactory::generateRe
                     -1.f,   -1.0f, 1.f, 0.0f, 1.0f, .0f,
 
             };
-
-            primitive->loadPrimitive(cube_vertices, cube_vertices.size() / 6);
-            break;
         }
     }
-
-    primitive->loadColor(glm::vec4(.9f, .9f, .9f, 1.f));
-    return primitive;
+    return std::vector<float>();
 }

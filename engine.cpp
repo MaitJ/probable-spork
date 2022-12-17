@@ -3,6 +3,7 @@
 #include "mesh/node.hpp"
 #include "entities/entity.hpp"
 #include "entities/player.hpp"
+#include "mesh/mesh_builder.hpp"
 #include "utilities/gl_conf.hpp"
 #include "events/event_handler.hpp"
 #include "entities/primitive_entity_factory.hpp"
@@ -57,7 +58,6 @@ void Engine::start() {
     cube->mesh.transform.setPosition(50, 50, 50);
     cube->transform.setDimensions(10, 10, 10);
     cube->transform.setPosition(50, 50, 50);
-
 
     Player test_player(view_proj, this->camera, this->ctx);
 

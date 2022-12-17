@@ -1,20 +1,12 @@
 #include "mesh_builder.hpp"
 #include "logger.hpp"
 
-MeshBuilder& MeshBuilder::setShader(Shader const& shader) {
-    this->shader = new Shader(shader);
-    return *this;
+MeshBuilder::~MeshBuilder() {
+    if (shader != nullptr) delete shader;
 }
 
-template<class PrimitiveType>
-MeshBuilder& MeshBuilder::addPrimitive(std::vector<float> const& primitive_vertices, int layout_length) {
-    auto primitive = std::make_shared<PrimitiveType>(shader);
-    primitive->genGlBuffers();
-    primitive->bindBuffers();
-
-    primitive->loadPrimitive(primitive_vertices, primitive_vertices.size() / layout_length);
-    primitive->loadColor(glm::vec4(.9f, .9f, .9f, 1.f));
-    primitives.push_back(primitive);
+MeshBuilder& MeshBuilder::setShader(Shader const& shader) {
+    this->shader = new Shader(shader);
     return *this;
 }
 
@@ -39,3 +31,4 @@ Renderable::Mesh MeshBuilder::build() {
     mesh.nodes.push_back(base_node);
     return mesh;
 }
+

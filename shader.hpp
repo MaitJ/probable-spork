@@ -19,6 +19,7 @@ public:
     void loadAndCompile(const std::string vertex_shader_file, const std::string fragment_shader_file, std::string name);
     GLuint id = -1;
 
+    //TODO Implement shader layout length
     int layout_len = 0;
 
     std::string name;

@@ -1,15 +1,16 @@
 #ifndef PRIMITIVE_ENTITY_FACTORY_HPP
 #define PRIMITIVE_ENTITY_FACTORY_HPP
 
+#include "mesh/mesh_builder.hpp"
 #include "renderables/mesh/node.hpp"
 
 class PrimitiveEntityFactory {
     Context& ctx;
 
-    PrimitiveShape shape;
     bool is_static = false;
+    MeshBuilder mesh_builder;
 
-    std::shared_ptr<Renderable::ColoredPrimitive> generateRenderablePrimitive(Shader const& shader, Renderable::Node& base_node);
+    std::vector<float> getShapeVertices(PrimitiveShape shape);
 
 public:
     PrimitiveEntityFactory(Context& ctx);
